@@ -21,8 +21,8 @@ if (file_exists(__DIR__ . $path) && !is_dir(__DIR__ . $path)) {
 if (strpos($path, '/api/') === 0 || strpos($path, '/backend/') === 0 || strpos($path, '/admin/') === 0 || strpos($path, '/cliente/') === 0 || strpos($path, '/login') === 0 || strpos($path, '/register') === 0) {
     // Corrige o path para o router Bramus funcionar corretamente
     // O Bramus espera que a execução venha do index.php, então o base folder pode confundir
-    // Mas vamos apenas incluir o backend/index.php
-    require_once __DIR__ . '/backend/index.php';
+    // Mas vamos apenas incluir ../backend/index.php
+    require_once __DIR__ . '/../backend/index.php';
     exit;
 }
 

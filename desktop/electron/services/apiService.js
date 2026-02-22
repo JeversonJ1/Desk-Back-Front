@@ -150,6 +150,56 @@ class ApiService {
             method: 'DELETE'
         });
     }
+
+    // Health Check
+    async healthCheck() {
+        return this._fetch('/health');
+    }
+
+    // Autenticação Desktop (endpoint JSON exclusivo)
+    async authDesktop(email, senha) {
+        return this._fetch('/auth/desktop', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, senha })
+        });
+    }
+
+    // Banners
+    async getBanners() {
+        return this._fetch('/banners');
+    }
+
+    async createBanner(bannerData) {
+        return this._fetch('/banners', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bannerData)
+        });
+    }
+
+    async updateBanner(id, bannerData) {
+        return this._fetch(`/banners/${id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bannerData)
+        });
+    }
+
+    async deleteBanner(id) {
+        return this._fetch(`/banners/${id}/deletar`, {
+            method: 'POST'
+        });
+    }
+
+    // Tamanhos
+    async getTamanhos() {
+        return this._fetch('/tamanhos');
+    }
+
+    async getTamanhosPorProduto(produtoId) {
+        return this._fetch(`/tamanhos/${produtoId}`);
+    }
 }
 
 module.exports = new ApiService();

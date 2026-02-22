@@ -1013,8 +1013,8 @@ class PublicApiController {
         // Limpa o caminho se ele começar com /
         $caminhoLimpo = ltrim($caminhoRelativo, '/');
         
-        // __DIR__ é backend/Controles, precisamos subir 2 níveis para a raiz do projeto
-        $caminhoCompleto = __DIR__ . '/../../' . $caminhoLimpo;
+        // __DIR__ é backend/Controles, precisamos subir 2 níveis para a raiz do projeto e entrar em frontend/
+        $caminhoCompleto = __DIR__ . '/../../frontend/' . $caminhoLimpo;
         
         if (file_exists($caminhoCompleto) && is_file($caminhoCompleto)) {
             $conteudo = file_get_contents($caminhoCompleto);
@@ -1024,6 +1024,202 @@ class PublicApiController {
         }
         
         return null;
+    }
+
+    // ==================== BANNERS ====================
+    public function getBanners() {
+        header('Content-Type: application/json');
+        try {
+            $sql = "SELECT * FROM tbl_imagem_carrossel WHERE excluido_em IS NULL ORDER BY ordem_imagem_carrossel ASC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $banners = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            // Mapeia para formato compatível com o desktop
+            $dados = array_map(function($b) {
+                return [
+                    'id'      => (int)$b['id_carrossel'],
+                    'titulo'  => $b['link_destino_imagem_carrossel'] ?? '',
+                    'imagem'  => $b['url_imagem_imagem_carrossel'],
+                    'link'    => $b['link_destino_imagem_carrossel'] ?? '',
+                    'ordem'   => (int)$b['ordem_imagem_carrossel'],
+                    'ativo'   => (bool)$b['ativo_imagem_carrossel'],
+                ];
+            }, $banners);
+
+            http_response_code(200);
+            echo json_encode(['status' => 'success', 'data' => $dados], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    public function createBanner() {
+        header('Content-Type: application/json');
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (empty($data)) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Dados inválidos']);
+            exit;
+        }
+        try {
+            $sql = "INSERT INTO tbl_imagem_carrossel (url_imagem_imagem_carrossel, link_destino_imagem_carrossel, ordem_imagem_carrossel, ativo_imagem_carrossel) VALUES (?, ?, ?, ?)";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                $data['imagem'] ?? '',
+                $data['link'] ?? '',
+                (int)($data['ordem'] ?? 0),
+                isset($data['ativo']) ? (int)(bool)$data['ativo'] : 1,
+            ]);
+            $id = $this->db->lastInsertId();
+            http_response_code(201);
+            echo json_encode(['status' => 'success', 'id' => $id, 'message' => 'Banner criado']);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    public function updateBanner($id) {
+        header('Content-Type: application/json');
+        $id = (int)$id;
+        $data = json_decode(file_get_contents('php://input'), true);
+        try {
+            $sql = "UPDATE tbl_imagem_carrossel SET url_imagem_imagem_carrossel=?, link_destino_imagem_carrossel=?, ordem_imagem_carrossel=?, ativo_imagem_carrossel=?, atualizado_em=NOW() WHERE id_carrossel=?";
+            $this->db->prepare($sql)->execute([
+                $data['imagem'] ?? '',
+                $data['link'] ?? '',
+                (int)($data['ordem'] ?? 0),
+                isset($data['ativo']) ? (int)(bool)$data['ativo'] : 1,
+                $id,
+            ]);
+            echo json_encode(['status' => 'success', 'message' => 'Banner atualizado']);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    public function deleteBanner($id) {
+        header('Content-Type: application/json');
+        $id = (int)$id;
+        try {
+            $this->db->prepare("UPDATE tbl_imagem_carrossel SET excluido_em=NOW() WHERE id_carrossel=?")->execute([$id]);
+            echo json_encode(['status' => 'success', 'message' => 'Banner removido']);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    // ==================== CLIENTES (listagem) ====================
+    public function getClientes() {
+        header('Content-Type: application/json');
+        try {
+            $sql = "SELECT id_usuarios, nome_usuarios, email_usuarios, nivel_acesso, foto_usuarios, criado_em 
+                    FROM tbl_usuarios 
+                    WHERE nivel_acesso = 'cliente' AND excluido_em IS NULL 
+                    ORDER BY nome_usuarios ASC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $clientes = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            http_response_code(200);
+            echo json_encode(['status' => 'success', 'data' => $clientes], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    public function getClienteById($id) {
+        header('Content-Type: application/json');
+        $id = (int)$id;
+        try {
+            $sql = "SELECT u.id_usuarios, u.nome_usuarios, u.email_usuarios, u.nivel_acesso, u.foto_usuarios,
+                           p.telefone_perfil, p.endereco_perfil
+                    FROM tbl_usuarios u
+                    LEFT JOIN tbl_perfil p ON p.id_usuarios = u.id_usuarios
+                    WHERE u.id_usuarios = ? AND u.excluido_em IS NULL";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$id]);
+            $cliente = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($cliente) {
+                echo json_encode(['status' => 'success', 'data' => $cliente]);
+            } else {
+                http_response_code(404);
+                echo json_encode(['status' => 'error', 'message' => 'Cliente não encontrado']);
+            }
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    // ==================== AUTENTICAÇÃO DESKTOP (JSON) ====================
+    /**
+     * Endpoint exclusivo para o app Electron autenticar via JSON.
+     * Não usa session PHP — retorna dados do usuário para o desktop gerenciar localmente.
+     */
+    public function authDesktop() {
+        header('Content-Type: application/json');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['status' => 'error', 'message' => 'Método não permitido']);
+            exit;
+        }
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        $email = trim($data['email'] ?? '');
+        $senha = trim($data['senha'] ?? $data['password'] ?? '');
+
+        if (empty($email) || empty($senha)) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Email e senha são obrigatórios']);
+            exit;
+        }
+
+        try {
+            $sql = "SELECT id_usuarios, nome_usuarios, email_usuarios, senha_usuarios, nivel_acesso, foto_usuarios 
+                    FROM tbl_usuarios WHERE email_usuarios = ? AND excluido_em IS NULL LIMIT 1";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$email]);
+            $usuario = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$usuario || !password_verify($senha, $usuario['senha_usuarios'])) {
+                http_response_code(401);
+                echo json_encode(['status' => 'error', 'message' => 'Credenciais inválidas']);
+                exit;
+            }
+
+            // Remove a senha da resposta
+            unset($usuario['senha_usuarios']);
+
+            http_response_code(200);
+            echo json_encode(['status' => 'success', 'data' => $usuario, 'message' => 'Autenticado com sucesso']);
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    // ==================== HEALTH CHECK ====================
+    public function healthCheck() {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status'  => 'success',
+            'message' => 'API Koketsu operacional',
+            'version' => '2.0',
+            'time'    => date('Y-m-d H:i:s')
+        ]);
+        exit;
     }
 
     public function viewManutencao() {

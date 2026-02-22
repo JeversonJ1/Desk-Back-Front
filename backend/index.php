@@ -10,6 +10,22 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
+// =====================================================
+// CORS - Permite requests do Electron Desktop e do
+// frontend web. Ajuste allow-origin em produção.
+// =====================================================
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
+header("Access-Control-Allow-Origin: $origin");
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept');
+
+// Trata preflight OPTIONS e encerra imediatamente
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
+
 use Bramus\Router\Router;     
 $router = new Router();
 

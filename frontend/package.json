@@ -2,7 +2,7 @@
   "name": "koketsu-shop",
   "version": "1.0.0",
   "description": "Koketsu - E-commerce de roupas",
-  "main": "backend/index.php",
+  "main": "../backend/index.php",
   "scripts": {
     "dev": "php -S localhost:8000 -t .",
     "build": "echo 'No build needed for this project'"

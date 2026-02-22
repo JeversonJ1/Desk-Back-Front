@@ -40,10 +40,13 @@ class Rotas
                  "/cliente/meu-perfil/{id}" => "Cliente\DashboardController@viewEditarCliente",
                  "cliente/pedidos" => "Cliente\PedidosController@index",
                    // --- API REST UNIVERSAL ---
+                   // Health Check
+                   '/api/health' => 'PublicApiController@healthCheck',
                    // Produtos
                    '/api/produtos/{id}' => 'PublicApiController@getProdutoById',
                    // Clientes
-                   '/api/clientes/{id}' => 'PublicApiController@getClienteById',                                        
+                   '/api/clientes' => 'PublicApiController@getClientes',
+                   '/api/clientes/{id}' => 'PublicApiController@getClienteById',
                    // Pedidos
                    '/api/pedidos/{id}' => 'PublicApiController@getPedidoById',
                    // Usuarios
@@ -75,6 +78,9 @@ class Rotas
                    // Estoque
                    '/api/estoque' => 'PublicApiController@getEstoque',
                    '/api/estoque/{id}' => 'PublicApiController@getEstoqueById',
+                   // Banners
+                   '/api/banners' => 'PublicApiController@getBanners',
+                   '/api/banners/{id}' => 'PublicApiController@updateBanner',
                  "cliente/pedidos/detalhes/{id}" => "Cliente\PedidosController@detalhes",
                  "cliente/avaliacoes" => "Cliente\AvaliacoesController@index",
               // Perfil
@@ -175,6 +181,11 @@ class Rotas
                  "/api/produtos" => 'PublicApiController@createProduto',
                  "/api/clientes" => 'PublicApiController@createUsuario',
                  "/api/estoque" => 'PublicApiController@createEstoque',
+                 // Auth Desktop (JSON, sem session)
+                 "/api/auth/desktop" => 'PublicApiController@authDesktop',
+                 // Banners
+                 "/api/banners" => 'PublicApiController@createBanner',
+                 "/api/banners/{id}/deletar" => 'PublicApiController@deleteBanner',
                  "/configuracoes/manutencao" => 'ConfiguracoesController@salvarManutencao',
                  "/configuracoes/salvar" => 'ConfiguracoesController@salvar',
                 // Clientes

@@ -40,7 +40,7 @@ const config = {
   },
 
   api: {
-    baseUrl: 'http://localhost:8000/backend/api',
+    baseUrl: 'http://localhost:8000/api',
     timeout: 10000
   }
 };
