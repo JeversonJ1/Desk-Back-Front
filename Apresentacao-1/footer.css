@@ -1,0 +1,166 @@
+footer {
+    background-color: #000;
+    color: #fff;
+    padding-top: 80px;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+}
+
+footer .container {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 40px;
+    padding-bottom: 60px;
+}
+
+/* Estilo dos Títulos */
+.titulo {
+    color: #f1cd2f;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+}
+
+/* Colunas e Links */
+.coluna-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.coluna-footer a {
+    color: #999;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.coluna-footer a:hover {
+    color: #f1cd2f;
+    padding-left: 5px;
+}
+
+.coluna-footer p {
+    color: #999;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* --- NEWSLETTER DESTACADA --- */
+.newsletter {
+    max-width: 350px;
+}
+
+/* Container do Input (Agora uma caixa sólida) */
+.newsletter .input-group {
+    display: flex;
+    background-color: #1a1a1a; /* Cinza escuro para destacar do fundo preto */
+    border: 1px solid #333;
+    padding: 5px;
+    border-radius: 4px;
+    margin-top: 15px;
+    transition: border-color 0.3s ease;
+}
+
+/* Destaque ao clicar na caixa */
+.newsletter .input-group:focus-within {
+    border-color: #f1cd2f;
+}
+
+.form-email input[type="email"] {
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    width: 100%;
+    outline: none;
+    font-size: 14px;
+}
+
+.form-email input::placeholder {
+    color: #666;
+}
+
+/* Botão OK (Agora sólido e chamativo) */
+.form-email button {
+    background-color: #f1cd2f; /* Amarelo Koketsu */
+    color: #000;               /* Texto preto para contraste */
+    border: none;
+    font-weight: 800;
+    cursor: pointer;
+    padding: 0 20px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    font-size: 12px;
+    transition: all 0.3s ease;
+}
+
+.form-email button:hover {
+    background-color: #fff;
+    color: #000;
+    transform: scale(1.05);
+}
+
+/* --- WHATSAPP E OUTROS --- */
+.btn-whatsapp-footer {
+    margin-top: 10px;
+    background-color: #fff;
+    color: #000 !important;
+    padding: 12px 20px;
+    border-radius: 0;
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.btn-whatsapp-footer:hover {
+    background-color: #25d366;
+    color: #fff !important;
+}
+
+.copyright-container {
+    background-color: #0a0a0a;
+    padding: 25px 0;
+    border-top: 1px solid #222;
+}
+
+.copyright-container .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    grid-template-columns: none;
+    padding: 0;
+}
+
+.copyright-container p {
+    font-size: 11px;
+    color: #666;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.pagamentos {
+    color: #444;
+    font-size: 20px;
+}
+
+/* Ajustes Responsivos */
+@media (max-width: 992px) {
+    footer .container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    footer .container {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    .newsletter .input-group {
+        max-width: 100%;
+    }
+}

@@ -1,0 +1,55 @@
+ID | Nome | Imagem RAW | Caminho Gerado | Arquivo Existe?
+--------------------------------------------------------------------------------
+54 | Pack Meias Cano Alto | img/COMP3.png | img/COMP3.png | SIM
+53 | Shoulder Bag Black | img/COMP2.png | img/COMP2.png | SIM
+52 | Boné Trucker Logo | img/COMP1.png | img/COMP1.png | SIM
+9 | Bonés | produtos/6900bcd3655948.04564925.png | img/6900bcd3655948.04564925.png | NAO
+43 | Jogger Tática | img/calça 4.png | img/calça 4.png | SIM
+42 | Calça Alfaiataria S | img/calça 4.png | img/calça 4.png | SIM
+41 | Calça Moletom Confo | img/calça 4.png | img/calça 4.png | SIM
+40 | Calça Jeans Loose | img/calça 4.png | img/calça 4.png | SIM
+39 | Calça Cargo Preta | img/calça 4.png | img/calça 4.png | SIM
+32 | calça jeans cinza | produtos/6904b0699012c5.12662962.jpg | img/6904b0699012c5.12662962.jpg | NAO
+14 | Calça Sarja Bege | produtos/6900c960e47c98.19911788.jpg | img/6900c960e47c98.19911788.jpg | NAO
+13 | Calça Jeans Azul | produtos/6900c956c197f3.83160383.jpg | img/6900c956c197f3.83160383.jpg | NAO
+4 | Calça Moletom Cinza | produtos/6900bcbc9a10a6.81140691.png | img/6900bcbc9a10a6.81140691.png | NAO
+3 | Calças | img/calcccc.png | img/calcccc.png | NAO
+38 | Camiseta Preta Basic | img/COMP1.png | img/COMP1.png | SIM
+37 | Camiseta Graphic Bac | img/comp-polo-branca-frente.webp | img/comp-polo-branca-frente.webp | SIM
+36 | Camiseta Essential O | img/camiseta off white.png | img/camiseta off white.png | SIM
+35 | Camiseta Logo Minima | img/CAMISETA MARROM.png | img/CAMISETA MARROM.png | SIM
+34 | Camiseta Oversized S | img/camiseta branca.png | img/camiseta branca.png | SIM
+31 | camiseta over | produtos/6904add0772318.87472554.jpg | img/6904add0772318.87472554.jpg | NAO
+26 | Camisa Social Azul | produtos/6904abebec47e8.84023441.jpg | img/6904abebec47e8.84023441.jpg | NAO
+25 | Camisa Social Branca | produtos/6904abc19b60c8.70385698.jpg | img/6904abc19b60c8.70385698.jpg | NAO
+12 | Camiseta Preta Slim | produtos/6900bcf63340a9.57123491.png | img/6900bcf63340a9.57123491.png | NAO
+11 | Camiseta Básica Bra | produtos/6900bcecbff1f6.30088435.png | img/6900bcecbff1f6.30088435.png | NAO
+2 | Camiseta social | produtos/6901fa26cadcc2.39877173.jpg | img/6901fa26cadcc2.39877173.jpg | NAO
+1 | camisas | produtos/6900b973c2e731.30288655.png | img/6900b973c2e731.30288655.png | NAO
+51 | Hoodie Oversized | img/moletom 4.png | img/moletom 4.png | SIM
+50 | Corta-Vento Tech | img/moletom 3.png | img/moletom 3.png | SIM
+49 | Jaqueta Puffer Preta | img/moletom 2.png | img/moletom 2.png | SIM
+48 | Moletom Canguru Basi | img/moletom.png | img/moletom.png | SIM
+18 | Jaqueta Couro | produtos/6904aa2b704b92.15048865.jpg | img/6904aa2b704b92.15048865.jpg | NAO
+17 | Jaqueta Jeans | produtos/6900c920246cf7.36340499.jpg | img/6900c920246cf7.36340499.jpg | NAO
+8 | Jaqueta Corta-Vento  | produtos/6900bcc6718b78.97223680.jpg | img/6900bcc6718b78.97223680.jpg | NAO
+7 | Jaquetas | img/allll.png | img/allll.png | NAO
+30 | moletom bege | produtos/6904acf0ea8978.26173876.jpg | img/6904acf0ea8978.26173876.jpg | NAO
+20 | Moletom Zíper | produtos/6904aa97d34c19.58983274.jpg | img/6904aa97d34c19.58983274.jpg | NAO
+19 | Moletom Canguru | produtos/6904aa5cc33291.69719997.png | img/6904aa5cc33291.69719997.png | NAO
+10 | moletom | produtos/6900bce3423d27.37963478.png | img/6900bce3423d27.37963478.png | NAO
+29 | polo | produtos/6904acb5534fa2.35583982.jpg | img/6904acb5534fa2.35583982.jpg | NAO
+24 | Saia Midi Plissada | produtos/6904aba06a1372.54265986.jpg | img/6904aba06a1372.54265986.jpg | NAO
+23 | Saias | produtos/6904ab57a92163.52451897.jpg | img/6904ab57a92163.52451897.jpg | NAO
+47 | Slide Koketsu | img/TN.png | img/TN.png | SIM
+46 | Tênis Retro Basket | img/dn.png | img/dn.png | SIM
+45 | Tênis Sport Runner | img/dn vermelho.png | img/dn vermelho.png | SIM
+44 | Sneaker Chunky White | img/dn branco 3232.png | img/dn branco 3232.png | SIM
+28 | Tênis Esportivo Pre | produtos/6904ac61b640c4.93266967.jpg | img/6904ac61b640c4.93266967.jpg | NAO
+27 | Tênis Casual Branco | produtos/6904ac391f0950.27618813.jpg | img/6904ac391f0950.27618813.jpg | NAO
+16 | Bermuda Moletom | produtos/6900c917b56018.84922386.jpg | img/6900c917b56018.84922386.jpg | NAO
+15 | Bermuda Jeans | produtos/6900c96af3ccd3.96170115.jpg | img/6900c96af3ccd3.96170115.jpg | NAO
+6 | Tênis Casual Branco | produtos/6900c94b91a072.88646093.jpg | img/6900c94b91a072.88646093.jpg | NAO
+5 | Tênis  | produtos/6900c93fb83b32.55453028.jpg | img/6900c93fb83b32.55453028.jpg | NAO
+22 | Vestido Social Preto | produtos/6904ab2ee591e5.44954613.jpg | img/6904ab2ee591e5.44954613.jpg | NAO
+21 | Vestido | produtos/6904aae2116645.11718737.jpg | img/6904aae2116645.11718737.jpg | NAO

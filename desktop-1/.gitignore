@@ -1,0 +1,32 @@
+# Dependências
+node_modules/
+vendor/
+
+# Build do Vite / Electron packaged
+dist/
+out/
+release/
+
+# Banco de dados (não versionar dados reais)
+*.sqlite
+*.db
+database/data.json
+
+# Configurações e dados sensíveis
+storage/
+.env
+.env.local
+.env.production
+backend_link/.env
+
+# Logs e temporários
+*.log
+.DS_Store
+Thumbs.db
+.cache/
+.vite/
+
+# SQLite temp files
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite.bak

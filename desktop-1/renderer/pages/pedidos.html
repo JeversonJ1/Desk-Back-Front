@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <style>
+    html,
+    body {
+      background: #0f0f0f;
+      color: #fff;
+    }
+  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedidos</title>
+
+  <link href="../../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+    <aside class="sidebar">
+      <img src="../assets/img/logo.jpg" class="logo">
+      <nav class="menu">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="produtos.html">Produtos</a>
+        <a class="active" href="pedidos.html">Pedidos</a>
+        <a href="clientes.html">Clientes</a>
+        <a href="configuracoes.html">Configurações</a>
+        <a href="#" data-logout class="menu-logout">Sair</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="mobile-topbar">
+        <button class="sidebar-toggle" data-sidebar-toggle aria-label="Abrir menu" title="Menu">☰</button>
+        <span class="mobile-title">Pedidos</span>
+      </div>
+      <div class="dashboard-header">
+        <div>
+          <h1>Novo Pedido</h1>
+          <p>Selecione produtos e finalize</p>
+        </div>
+        <button class="btn btn-outline-secondary" id="btnLimparCarrinho">Limpar Carrinho</button>
+      </div>
+
+      <div class="row">
+        <!-- COLUNA ESQUERDA: PRODUTOS -->
+        <div class="col-lg-8 mb-4">
+          <div class="card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3 class="mb-0">Produtos Disponíveis</h3>
+              <button class="btn btn-sm btn-outline-warning" onclick="carregarProdutos()">
+                Atualizar
+              </button>
+            </div>
+
+            <!-- BUSCA E FILTROS -->
+            <div class="filters-row" style="display: flex; gap: 12px; margin-bottom: 16px;">
+              <input type="text" id="searchProduto" class="form-control" placeholder="Buscar por nome, categoria..."
+                style="font-size: 14px; flex: 2;">
+              <select id="filterCategoria" class="form-control" style="flex: 1;">
+                <option value="">Todas categorias</option>
+              </select>
+              <select id="filterEstoque" class="form-control" style="flex: 1;">
+                <option value="todos">Todos</option>
+                <option value="disponivel">Disponível</option>
+                <option value="baixo">Estoque baixo</option>
+              </select>
+            </div>
+
+            <!-- LISTA DE PRODUTOS -->
+            <div id="listaProdutos" class="produtos-grid">
+              <div class="col-12 text-center py-5">
+                <div class="spinner-border text-warning" role="status" style="width: 3rem; height: 3rem;">
+                  <span class="visually-hidden">Carregando...</span>
+                </div>
+                <p class="text-muted mt-3">Carregando produtos...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- HISTÓRICO PEDIDOS -->
+          <div class="card mt-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h3 class="mb-0">Últimos Pedidos</h3>
+              <button class="btn btn-sm btn-outline-warning" onclick="carregarHistorico()"
+                style="padding: 4px 10px; font-size: 12px;">
+                Atualizar
+              </button>
+            </div>
+            <div id="historicoPedidos" class="historico-container" style="max-height: 300px;">
+              <p class="text-muted text-center py-3">Carregando...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUNA DIREITA: CARRINHO -->
+        <div class="col-lg-4">
+          <div class="card position-sticky" style="top: 20px;">
+            <h3>Carrinho</h3>
+
+            <!-- SELECIONAR CLIENTE -->
+            <div class="mb-3">
+              <label
+                style="font-size: 12px; color: #bbb; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; display: block;">Cliente
+                <span style="color: #999; font-weight: 400;">(opcional)</span></label>
+              <select id="clientePedido" class="form-control">
+                <option value="">Não cadastrado</option>
+              </select>
+            </div>
+
+            <!-- ITENS CARRINHO -->
+            <div id="carrinhoItems" class="carrinho-container">
+              <p class="text-muted text-center py-5">Nenhum item adicionado</p>
+            </div>
+
+            <!-- RESUMO -->
+            <div class="carrinho-resumo">
+              <div class="row">
+                <div class="col-6"><strong>Itens:</strong></div>
+                <div class="col-6 text-end"><span id="totalItens">0</span></div>
+              </div>
+              <div class="row mt-2">
+                <div class="col-6"><strong>Subtotal:</strong></div>
+                <div class="col-6 text-end"><span id="subtotal">R$ 0.00</span></div>
+              </div>
+              <div class="row mt-2">
+                <div class="col-6">
+                  <label style="font-size: 12px; color: #bbb; margin-bottom: 4px;">Desconto (%)</label>
+                  <input type="number" id="desconto" class="form-control" min="0" max="100" value="0"
+                    style="background: #0f0f0f; border: 2px solid #333; color: #fff; padding: 6px 10px; font-size: 13px;">
+                </div>
+                <div class="col-6 text-end" style="display: flex; flex-direction: column; justify-content: flex-end;">
+                  <span id="descontoValor" style="color: #ff6b6b; font-size: 13px;">- R$ 0.00</span>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-6">
+                  <h5>TOTAL:</h5>
+                </div>
+                <div class="col-6 text-end">
+                  <h5 id="totalPedido" style="color: #ffd84d;">R$ 0.00</h5>
+                </div>
+              </div>
+            </div>
+
+            <!-- BOTÕES -->
+            <button class="btn btn-gold w-100 mt-3" id="btnFinalizar">Finalizar Pedido</button>
+            <button class="btn btn-outline-secondary w-100 mt-2" id="btnCancelar">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="sidebar-backdrop" data-sidebar-backdrop></div>
+  </div>
+
+  <script type="module" src="../js/auth.js"></script>
+  <script type="module" src="../js/pedidos.js"></script>
+</body>
+
+</html>

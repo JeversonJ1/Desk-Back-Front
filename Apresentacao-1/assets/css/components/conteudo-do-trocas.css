@@ -1,0 +1,30 @@
+body {
+    background-color: #fff;
+    color: #333;
+    font-family: 'Segoe UI', sans-serif;
+    padding-top: 70px ;
+  }
+
+  h2 {
+    color: #f4c430; /* amarelo ouro */
+    font-weight: bold;
+    margin-top: 40px 0 20px 0;
+    padding: 0;
+  }
+
+  p, li {
+    font-size: 1.05rem;
+  }
+
+  .highlight {
+    font-weight: bold;
+  }
+
+  ul {
+    margin-top: 10px;
+    padding-left: 20px;
+  }
+
+  .container {
+    max-width: 1200px;
+  }

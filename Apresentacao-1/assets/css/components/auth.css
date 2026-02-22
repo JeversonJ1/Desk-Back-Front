@@ -1,0 +1,475 @@
+/* ========================================
+   AUTH - LOGIN MODAL & USER DROPDOWN
+   ======================================== */
+
+/* --- Login Modal Overlay --- */
+.login-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.login-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* --- Login Card --- */
+.login-modal-card {
+  background: #0f0f0f;
+  border: 1px solid rgba(242, 204, 125, 0.15);
+  border-radius: 24px;
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9), 0 0 60px rgba(242, 204, 125, 0.05);
+  transform: translateY(30px) scale(0.95);
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.login-modal-overlay.active .login-modal-card {
+  transform: translateY(0) scale(1);
+}
+
+/* Aura dourada atrás do card */
+.login-modal-card::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  background: #f2cc7d;
+  filter: blur(150px);
+  opacity: 0.08;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Botão fechar */
+.login-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s, transform 0.3s;
+  z-index: 2;
+  line-height: 1;
+  padding: 4px;
+}
+
+.login-modal-close:hover {
+  color: #f2cc7d;
+  transform: rotate(90deg);
+}
+
+/* Logo */
+.login-modal-logo {
+  display: block;
+  height: 70px;
+  margin: 0 auto 24px;
+  filter: drop-shadow(0 0 15px rgba(242, 204, 125, 0.2));
+}
+
+/* Título */
+.login-modal-title {
+  font-family: 'Outfit', 'Oswald', sans-serif;
+  color: #f2cc7d;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 4px;
+  margin: 0 0 6px 0;
+}
+
+.login-modal-subtitle {
+  color: #777;
+  font-size: 0.8rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 32px;
+}
+
+/* Form groups */
+.login-modal-form .form-group-auth {
+  margin-bottom: 18px;
+  position: relative;
+}
+
+.login-modal-form .form-group-auth i {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #444;
+  font-size: 0.95rem;
+  transition: color 0.3s;
+  z-index: 1;
+}
+
+.login-modal-form .form-group-auth input {
+  width: 100%;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 0 18px 0 50px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.login-modal-form .form-group-auth input::placeholder {
+  color: #555;
+}
+
+.login-modal-form .form-group-auth input:focus {
+  outline: none;
+  border-color: #f2cc7d;
+  background: rgba(242, 204, 125, 0.04);
+  box-shadow: 0 0 15px rgba(242, 204, 125, 0.08);
+}
+
+.login-modal-form .form-group-auth input:focus ~ i {
+  color: #f2cc7d;
+}
+
+/* Botão Submit */
+.login-modal-btn {
+  width: 100%;
+  height: 56px;
+  background: linear-gradient(135deg, #f2cc7d 0%, #b8860b 100%);
+  color: #000;
+  border: none;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-modal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(184, 134, 11, 0.4);
+  filter: brightness(1.1);
+}
+
+.login-modal-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Spinner no botão */
+.login-modal-btn .spinner {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: authSpin 0.6s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.login-modal-btn.loading .spinner {
+  display: inline-block;
+}
+
+@keyframes authSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Mensagem de erro */
+.login-modal-error {
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  border-radius: 10px;
+  color: #e74c3c;
+  font-size: 0.82rem;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  text-align: center;
+  display: none;
+  animation: shakeAuth 0.4s ease;
+}
+
+.login-modal-error.visible {
+  display: block;
+}
+
+@keyframes shakeAuth {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Links */
+.login-modal-links {
+  margin-top: 28px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: #777;
+}
+
+.login-modal-links a {
+  color: #f2cc7d;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+  margin-left: 4px;
+}
+
+.login-modal-links a:hover {
+  color: #fff;
+  text-shadow: 0 0 8px rgba(242, 204, 125, 0.4);
+}
+
+/* ========================================
+   USER AVATAR & DROPDOWN (NAVBAR)
+   ======================================== */
+
+.user-nav-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(242, 204, 125, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user-avatar-btn:hover {
+  border-color: #f2cc7d;
+  transform: scale(1.08);
+  box-shadow: 0 0 15px rgba(242, 204, 125, 0.25);
+}
+
+.user-avatar-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Avatar padrão com ícone */
+.user-avatar-btn .avatar-fallback {
+  color: #f2cc7d;
+  font-size: 1.1rem;
+}
+
+/* Nome do usuário ao lado do avatar (desktop) */
+.user-nav-name {
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 500;
+  margin-left: 10px;
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Dropdown Menu */
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  background: #121212;
+  border: 1px solid rgba(242, 204, 125, 0.15);
+  border-radius: 16px;
+  min-width: 240px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(242, 204, 125, 0.05);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10000;
+  overflow: hidden;
+}
+
+.user-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Cabeçalho do dropdown */
+.user-dropdown-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-dropdown-header img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(242, 204, 125, 0.3);
+}
+
+.user-dropdown-header .avatar-fallback-lg {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  border: 2px solid rgba(242, 204, 125, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f2cc7d;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.user-dropdown-info {
+  overflow: hidden;
+}
+
+.user-dropdown-info .dd-name {
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-dropdown-info .dd-badge {
+  display: inline-block;
+  background: rgba(242, 204, 125, 0.1);
+  color: #f2cc7d;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+/* Links do dropdown */
+.user-dropdown-links {
+  padding: 8px 0;
+}
+
+.user-dropdown-links a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  color: #ccc;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  letter-spacing: 0.3px;
+}
+
+.user-dropdown-links a i {
+  width: 18px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #666;
+  transition: color 0.25s;
+}
+
+.user-dropdown-links a:hover {
+  background: rgba(242, 204, 125, 0.06);
+  color: #f2cc7d;
+  padding-left: 24px;
+}
+
+.user-dropdown-links a:hover i {
+  color: #f2cc7d;
+}
+
+/* Separador */
+.user-dropdown-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin: 4px 0;
+}
+
+/* Logout */
+.user-dropdown-links a.logout-link {
+  color: #e74c3c;
+}
+
+.user-dropdown-links a.logout-link i {
+  color: #e74c3c;
+}
+
+.user-dropdown-links a.logout-link:hover {
+  background: rgba(231, 76, 60, 0.08);
+  color: #ff6b6b;
+}
+
+.user-dropdown-links a.logout-link:hover i {
+  color: #ff6b6b;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .login-modal-card {
+    margin: 16px;
+    padding: 36px 24px;
+  }
+
+  .user-nav-name {
+    display: none;
+  }
+
+  .user-dropdown {
+    right: -8px;
+    min-width: 220px;
+  }
+}

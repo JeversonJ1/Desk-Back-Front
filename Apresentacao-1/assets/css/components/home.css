@@ -1,0 +1,343 @@
+/* ========================================
+   HOMEPAGE - ESTILOS PREMIUM EXCLUSIVOS
+   ======================================== */
+
+/* 1. Ticker / Marquee no Topo */
+.announcement-ticker {
+    background-color: var(--color-primary);
+    color: var(--color-dark);
+    height: 40px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    z-index: 1001;
+    font-size: 0.75rem;
+    font-weight: var(--font-weight-black);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.ticker-content {
+    display: flex;
+    white-space: nowrap;
+    animation: ticker 30s linear infinite;
+}
+
+.ticker-item {
+    padding: 0 50px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ticker-item i {
+    font-size: 1.1rem;
+}
+
+@keyframes ticker {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* 2. Banner Principal & Carousel Controls */
+.banner-hero {
+    margin-top: 115px;
+    /* Altura da navbar (96px) + Espaçamento (19px) */
+    padding: 0 20px;
+    /* Adiciona um respiro lateral */
+}
+
+.carousel-item {
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carousel-item img {
+    filter: brightness(0.85);
+    transition: filter 0.5s;
+    height: auto;
+    max-height: 800px;
+    object-fit: cover;
+}
+
+.carousel-item.active img {
+    filter: brightness(1);
+}
+
+/* Setas Premium que não "comem" a tela */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 60px;
+    height: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.carousel-control-prev {
+    left: -20px;
+}
+
+.carousel-control-next {
+    right: -20px;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--color-primary);
+    border-radius: 50%;
+    background-size: 50%;
+    box-shadow: 0 0 15px rgba(248, 211, 70, 0.2);
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-control-prev:hover .carousel-control-prev-icon,
+.carousel-control-next:hover .carousel-control-next-icon {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    filter: invert(1);
+}
+
+/* 3. Grid de Categorias Redesenhado */
+.mini-banners-section {
+    padding: 80px 0;
+    background: var(--color-dark);
+}
+
+.category-grid-premium {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 450px;
+    gap: 20px;
+    padding: 0 40px;
+}
+
+.premium-cat-card {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.premium-cat-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+}
+
+.premium-cat-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.9) 100%);
+    opacity: 0.8;
+    transition: opacity 0.4s;
+}
+
+.premium-cat-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 30px;
+    z-index: 2;
+}
+
+.premium-cat-tag {
+    display: inline-block;
+    background: var(--color-primary);
+    color: var(--color-dark);
+    font-size: 10px;
+    font-weight: 900;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.4s 0.1s;
+}
+
+.premium-cat-title {
+    font-size: 1.5rem;
+    font-weight: var(--font-weight-black);
+    color: var(--color-light);
+    margin: 0;
+    text-transform: uppercase;
+    line-height: 1.1;
+    transform: translateY(20px);
+    transition: all 0.4s 0.2s;
+}
+
+/* Hover Effects */
+.premium-cat-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--color-primary);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+.premium-cat-card:hover .premium-cat-img {
+    transform: scale(1.1);
+}
+
+.premium-cat-card:hover .premium-cat-overlay {
+    opacity: 1;
+}
+
+.premium-cat-card:hover .premium-cat-tag,
+.premium-cat-card:hover .premium-cat-title {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* 4. Seção "A Marca" (Storytelling) */
+.brand-story {
+    padding: 120px 0;
+    background-color: #050505;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.brand-story::before {
+    content: "KOKETSU";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 15vw;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.02);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.story-content {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.story-title {
+    font-size: var(--font-size-3xl);
+    color: var(--color-primary);
+    margin-bottom: 30px;
+}
+
+.story-text {
+    font-size: 1.2rem;
+    color: var(--color-gray-medium);
+    line-height: 1.8;
+    font-style: italic;
+}
+
+.gold-divider {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+    margin: 15px auto;
+}
+
+/* 5. Top Bar (Info Boxes) Modernizada */
+.top-bar {
+    padding: 60px 20px;
+    gap: 30px;
+    background: #080808;
+    /* Mais escuro e elegante */
+    border-top: 1px solid rgba(248, 211, 70, 0.1);
+    border-bottom: 1px solid rgba(248, 211, 70, 0.1);
+}
+
+.info-box {
+    padding: 20px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid transparent;
+    transition: all 0.4s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+}
+
+.info-box:hover {
+    background: rgba(248, 211, 70, 0.05);
+    border-color: rgba(248, 211, 70, 0.2);
+    transform: translateY(-5px);
+}
+
+.info-box i {
+    font-size: 2rem;
+    color: var(--color-primary);
+    margin-right: 20px;
+    filter: drop-shadow(0 0 5px rgba(248, 211, 70, 0.3));
+}
+
+.info-box h4 {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    color: var(--color-light);
+    font-weight: 800;
+}
+
+.info-box p {
+    font-size: 0.75rem;
+    color: var(--color-gray-medium);
+}
+
+/* 6. Ticker Posicionado */
+.announcement-ticker {
+    margin-top: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .category-grid-premium {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 400px);
+    }
+
+    .carousel-control-prev {
+        left: -10px;
+    }
+
+    .carousel-control-next {
+        right: -10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .category-grid-premium {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(4, 350px);
+        padding: 0 20px;
+    }
+
+    .top-bar {
+        padding: 40px 10px;
+    }
+
+    .info-box {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}

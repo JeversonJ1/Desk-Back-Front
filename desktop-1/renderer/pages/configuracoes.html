@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <style>
+    html,
+    body {
+      background: #0f0f0f;
+      color: #fff;
+    }
+  </style>
+  <link href="../../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurações</title>
+
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+    <aside class="sidebar">
+      <img src="../assets/img/logo.jpg" class="logo">
+
+      <nav class="menu">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="pedidos.html">Pedidos</a>
+        <a href="clientes.html">Clientes</a>
+        <a class="active" href="configuracoes.html">Configurações</a>
+        <a href="#" data-logout class="menu-logout">Sair</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="mobile-topbar">
+        <button class="sidebar-toggle" data-sidebar-toggle aria-label="Abrir menu" title="Menu">☰</button>
+        <span class="mobile-title">Configurações</span>
+      </div>
+      <div class="dashboard-header">
+        <div>
+          <h1>Configurações</h1>
+          <p>Gerencie credenciais e conteúdo do site</p>
+        </div>
+      </div>
+
+      <!-- CONTAINER DE ABAS -->
+      <div class="tabs-container" style="margin-bottom: 30px;">
+        <div class="tabs-buttons" style="display: flex; gap: 12px; border-bottom: 2px solid #333; margin-bottom: 20px;">
+          <button class="tab-btn active" data-tab="credenciais"
+            style="padding: 12px 24px; background: transparent; border: none; color: #fff; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s;"
+            onclick="mudarAba('credenciais')" onmouseover="this.style.color='#ffc107';"
+            onmouseout="this.style.color='#fff';">
+            Credenciais
+          </button>
+          <button class="tab-btn" data-tab="sincronizacao"
+            style="padding: 12px 24px; background: transparent; border: none; color: #fff; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s;"
+            onclick="mudarAba('sincronizacao')" onmouseover="this.style.color='#ffc107';"
+            onmouseout="this.style.color='#fff';">
+            Sincronização
+          </button>
+          <button class="tab-btn" data-tab="banners"
+            style="padding: 12px 24px; background: transparent; border: none; color: #fff; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s;"
+            onclick="mudarAba('banners')" onmouseover="this.style.color='#ffc107';"
+            onmouseout="this.style.color='#fff';">
+            Banners
+          </button>
+        </div>
+      </div>
+
+      <!-- ABA APLICATIVO (removida) -->
+      <div id="aplicativo" class="tab-content" style="display: none;">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="card"
+              style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid #333; padding: 30px; border-radius: 12px; margin-bottom: 20px;">
+              <h3 style="color: #ffc107; margin-bottom: 25px;">
+                ⚙️ Configurações Gerais
+              </h3>
+
+              <form id="formApp">
+                <!-- Aparência -->
+                <div class="mb-4">
+                  <label class="form-label" style="color: #fff; font-weight: 600;">Tema da Interface</label>
+                  <select id="appTheme" class="form-select"
+                    style="background: #0f0f0f; border: 2px solid #333; color: #fff; padding: 12px 15px; border-radius: 8px;">
+                    <option value="dark">Escuro (Padrão)</option>
+                    <option value="light">Claro</option>
+                  </select>
+                </div>
+
+                <!-- Auto-start -->
+                <div class="mb-4">
+                  <div class="form-check" style="padding-left: 0;">
+                    <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                      <input type="checkbox" id="appAutoStart" style="width: 20px; height: 20px; cursor: pointer;">
+                      <span style="color: #fff; font-weight: 600;">Iniciar automaticamente com o Windows</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Tray -->
+                <div class="mb-4">
+                  <div class="form-check" style="padding-left: 0;">
+                    <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                      <input type="checkbox" id="appShowInTray" style="width: 20px; height: 20px; cursor: pointer;">
+                      <span style="color: #fff; font-weight: 600;">Mostrar ícone na bandeja do sistema</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Close to Tray -->
+                <div class="mb-4">
+                  <div class="form-check" style="padding-left: 0;">
+                    <label style="display: flex; align-items: center; gap: 12px; cursor: pointer;">
+                      <input type="checkbox" id="appCloseToTray" style="width: 20px; height: 20px; cursor: pointer;">
+                      <span style="color: #fff; font-weight: 600;">Minimizar para bandeja ao fechar</span>
+                    </label>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-gold w-100"
+                  style="padding: 12px; font-weight: 600; margin-top: 10px;">Salvar Configurações</button>
+              </form>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA SINCRONIZAÇÃO -->
+      <div id="sincronizacao" class="tab-content" style="display: none;">
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="card"
+              style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid #333; padding: 30px; border-radius: 12px; margin-bottom: 20px;">
+              <h3 style="color: #ffc107; margin-bottom: 25px;">
+                🔄 Sincronização com Servidor
+              </h3>
+
+              <div class="mb-4">
+                <p style="color: #aaa; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+                  Sincronize os produtos do banco de dados local com o servidor remoto. As imagens serão convertidas
+                  automaticamente para Base64.
+                </p>
+
+                <div id="syncStatus"
+                  style="padding: 15px; border-radius: 8px; background: #0f0f0f; border: 2px solid #333; margin-bottom: 20px; display: none;">
+                  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                    <div id="syncIcon" style="font-size: 24px;">⏳</div>
+                    <div>
+                      <div id="syncMessage" style="color: #fff; font-weight: 600;">Preparando sincronização...</div>
+                      <div id="syncDetails" style="color: #888; font-size: 13px; margin-top: 4px;"></div>
+                    </div>
+                  </div>
+                  <div id="syncProgress"
+                    style="width: 100%; height: 6px; background: #222; border-radius: 3px; overflow: hidden; display: none; margin-top: 10px;">
+                    <div id="syncProgressBar"
+                      style="width: 0%; height: 100%; background: linear-gradient(90deg, #ffc107, #ff9800); transition: width 0.3s;">
+                    </div>
+                  </div>
+                </div>
+
+                <button id="btnSincronizar" type="button" class="btn btn-gold w-100"
+                  style="padding: 14px; font-weight: 600; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;"
+                  onclick="sincronizarProdutos()">
+                  <span style="font-size: 20px;">🔄</span>
+                  <span>Sincronizar Produtos Agora</span>
+                </button>
+
+                <div
+                  style="margin-top: 15px; padding: 12px; background: rgba(255,193,7,0.1); border-left: 3px solid #ffc107; border-radius: 4px;">
+                  <small style="color: #ffc107; font-size: 12px;">
+                    <strong>⚠️ Importante:</strong> Esta ação enviará todos os produtos do banco local para o servidor
+                    remoto. Certifique-se de que o servidor está acessível.
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA CREDENCIAIS -->
+      <div id="credenciais" class="tab-content" style="display: block;">
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="card"
+              style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid #333; padding: 30px; border-radius: 12px;">
+              <h3 style="color: #ffc107; margin-bottom: 25px; display: flex; align-items: center; gap: 12px;">
+                Alterar Credenciais de Acesso
+              </h3>
+
+              <form id="formCredenciais">
+                <div class="mb-3">
+                  <label class="form-label" style="color: #fff;">Login Atual *</label>
+                  <input type="text" id="loginAtual" class="form-control" placeholder="Digite seu login"
+                    autocomplete="off"
+                    style="background: #0f0f0f; border: 2px solid #333; color: #fff; padding: 12px 15px; border-radius: 8px;">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label" style="color: #fff;">Senha Atual *</label>
+                  <input type="password" id="senhaAtual" class="form-control" placeholder="Digite sua senha"
+                    autocomplete="off"
+                    style="background: #0f0f0f; border: 2px solid #333; color: #fff; padding: 12px 15px; border-radius: 8px;">
+                </div>
+
+                <hr style="border-color: #333; margin: 30px 0;">
+
+                <div class="mb-3">
+                  <label class="form-label" style="color: #ffc107; font-weight: 600;">Novo Login *</label>
+                  <input type="text" id="novoLogin" class="form-control" placeholder="Digite o novo login"
+                    autocomplete="off"
+                    style="background: #0f0f0f; border: 2px solid #333; color: #fff; padding: 12px 15px; border-radius: 8px;">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label" style="color: #ffc107; font-weight: 600;">Nova Senha *</label>
+                  <div style="position: relative;">
+                    <input type="password" id="novaSenha" class="form-control"
+                      placeholder="Digite a nova senha (mín. 6 caracteres)" autocomplete="off"
+                      style="background: #0f0f0f; border: 2px solid #333; color: #fff; padding: 12px 40px 12px 15px; border-radius: 8px;">
+                    <button type="button" id="toggleSenha" onclick="toggleSenhaVisibilidade()"
+                      style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #888; cursor: pointer; font-size: 18px;"
+                      title="Mostrar/Ocultar senha">👁️</button>
+                  </div>
+                  <div id="forcaSenha" style="margin-top: 8px; display: none;">
+                    <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                      <div class="forca-bar" style="flex: 1; height: 4px; background: #333; border-radius: 2px;"></div>
+                      <div class="forca-bar" style="flex: 1; height: 4px; background: #333; border-radius: 2px;"></div>
+                      <div class="forca-bar" style="flex: 1; height: 4px; background: #333; border-radius: 2px;"></div>
+                      <div class="forca-bar" style="flex: 1; height: 4px; background: #333; border-radius: 2px;"></div>
+                    </div>
+                    <small id="forcaTexto" style="color: #888;">Digite uma senha</small>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label" style="color: #ffc107; font-weight: 600;">Confirmar Nova Senha *</label>
+                  <input type="password" id="confirmarSenha" class="form-control" placeholder="Confirme a nova senha"
+                    autocomplete="off"
+                    style="background: #0f0f0f; border: 2px solid #333; color: #fff; padding: 12px 15px; border-radius: 8px;">
+                  <small id="senhaMatch" style="display: none; margin-top: 6px;"></small>
+                </div>
+
+                <button type="submit" class="btn btn-gold w-100"
+                  style="padding: 12px; font-weight: 600; margin-top: 20px;">Salvar Alterações</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA BANNERS -->
+      <div id="banners" class="tab-content" style="display: none;">
+        <div class="row">
+          <div class="col-lg-10">
+            <div class="card"
+              style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%); border: 1px solid #333; padding: 30px; border-radius: 12px;">
+              <h3 style="color: #ffc107; margin-bottom: 25px; display: flex; align-items: center; gap: 12px;">
+                Gerenciar Banners do Site
+              </h3>
+
+              <!-- LISTA DE BANNERS EXISTENTES -->
+              <div id="bannersList" style="margin-bottom: 40px; max-height: 400px; overflow-y: auto;"></div>
+
+              <hr style="border-color: #333; margin: 30px 0;">
+
+              <h4 style="color: #fff; margin-bottom: 20px;">Adicionar Novo Banner</h4>
+
+              <form id="formBanners">
+                <div class="mb-4">
+                  <label class="form-label" style="color: #fff; font-weight: 600;">Nome do Banner *</label>
+                  <input type="text" id="nomeBanner" class="form-control" placeholder="Ex: Promoção Verão, Black Friday"
+                    autocomplete="off"
+                    style="background: #0f0f0f; border: 2px solid #333; color: #fff; padding: 12px 15px; border-radius: 8px;">
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label" style="color: #fff; font-weight: 600;">Imagem do Banner *</label>
+                  <div
+                    style="border: 2px dashed #ffc107; border-radius: 12px; padding: 40px; text-align: center; background: rgba(255,193,7,0.05); transition: all 0.3s; cursor: pointer;"
+                    id="dropZone" onclick="document.getElementById('imagemBanner').click();">
+                    <input type="file" id="imagemBanner" accept="image/*" style="display: none;"
+                      onchange="previewBanner(this, 'previewNovo')">
+                    <div style="font-size: 48px; margin-bottom: 15px; color: #ffc107;">⬆</div>
+                    <div style="color: #ffc107; font-weight: 600; margin-bottom: 8px;">Clique ou arraste uma imagem
+                    </div>
+                    <div style="color: #888; font-size: 13px;">PNG, JPG, GIF (máx. 5MB) • Recomendado: 1920x720px</div>
+                    <img id="previewNovo"
+                      style="max-width: 100%; max-height: 260px; margin-top: 15px; border-radius: 8px; display: none; object-fit: cover;">
+                    <div id="previewInfo" style="margin-top: 10px; color: #ddd; font-size: 12px; display:none;"></div>
+                    <div id="simulacaoBanner"
+                      style="aspect-ratio: 8 / 3; width: 100%; border: 1px dashed #ffc107; margin-top: 12px; overflow: hidden; border-radius: 8px; display:none;">
+                      <img id="simulacaoImg" style="width: 100%; height: 100%; object-fit: cover;"
+                        alt="Simulação do recorte">
+                    </div>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-gold w-100"
+                  style="padding: 12px; font-weight: 600; margin-top: 20px;">Adicionar Banner</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="sidebar-backdrop" data-sidebar-backdrop></div>
+  </div>
+
+  <script type="module" src="../js/auth.js"></script>
+  <script type="module" src="../js/configuracoes.js"></script>
+</body>
+
+</html>

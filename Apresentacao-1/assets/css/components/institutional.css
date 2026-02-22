@@ -1,0 +1,151 @@
+/* ========================================
+   ESTILOS PARA PÁGINAS INSTITUCIONAIS
+   (Sobre, Frete, Fidelidade, Trocas, etc.)
+   ======================================== */
+
+.inst-page-header {
+    height: 40vh;
+    min-height: 300px;
+    background-color: #000;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    margin-top: -60px;
+    /* Compensa a navbar sticky */
+}
+
+.inst-page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(190, 155, 75, 0.1) 0%, rgba(0, 0, 0, 0.9) 100%);
+    z-index: 1;
+}
+
+.inst-header-content {
+    position: relative;
+    z-index: 2;
+}
+
+.inst-header-content h1 {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.inst-header-content .divider {
+    width: 80px;
+    height: 4px;
+    background-color: var(--color-primary);
+    margin: 0 auto;
+}
+
+/* Container do Conteúdo */
+.inst-content-wrapper {
+    margin-top: -100px;
+    padding-bottom: 80px;
+    position: relative;
+    z-index: 3;
+}
+
+.inst-card {
+    background: rgba(15, 15, 15, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-lg);
+    padding: 60px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.inst-section {
+    margin-bottom: 50px;
+}
+
+.inst-section:last-child {
+    margin-bottom: 0;
+}
+
+.inst-section h2 {
+    font-family: var(--font-heading);
+    color: var(--color-primary);
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.inst-section h2 i {
+    font-size: 1.25rem;
+    opacity: 0.8;
+}
+
+.inst-section p,
+.inst-section li {
+    color: #bbb;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+.inst-section ul {
+    padding-left: 20px;
+    list-style-type: none;
+}
+
+.inst-section ul li {
+    position: relative;
+    padding-left: 25px;
+}
+
+.inst-section ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-weight: bold;
+}
+
+.inst-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid transparent;
+}
+
+.inst-link:hover {
+    color: #fff;
+    border-bottom-color: #fff;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .inst-card {
+        padding: 30px;
+        border-radius: var(--radius-md);
+    }
+
+    .inst-page-header {
+        height: 30vh;
+    }
+
+    .inst-content-wrapper {
+        margin-top: -60px;
+    }
+}

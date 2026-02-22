@@ -1,0 +1,1 @@
+ALTER TABLE tbl_itens_pedidos ADD COLUMN cor VARCHAR(30) DEFAULT NULL AFTER tamanho;

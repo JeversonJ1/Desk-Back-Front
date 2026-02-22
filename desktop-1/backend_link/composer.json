@@ -1,0 +1,14 @@
+{
+    "name": "koketsu/backend",
+    "description": "Backend API para Koketsu Desktop",
+    "type": "project",
+    "require": {
+        "php": ">=8.0",
+        "bramus/router": "^1.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\Koketsu\\": ""
+        }
+    }
+}

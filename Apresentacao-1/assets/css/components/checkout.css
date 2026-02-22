@@ -1,0 +1,106 @@
+/* ========================================
+   ESTILOS DE CHECKOUT
+   ======================================== */
+
+.checkout-section {
+    padding: 120px 0 80px;
+    background-color: var(--color-dark);
+}
+
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: var(--spacing-2xl);
+}
+
+.checkout-card {
+    background-color: var(--color-dark-secondary);
+    border: 1px solid var(--color-dark-border);
+    padding: var(--spacing-2xl);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.checkout-step-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+    color: var(--color-primary);
+    font-weight: var(--font-weight-extra-bold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.step-number {
+    width: 30px;
+    height: 30px;
+    background-color: var(--color-primary);
+    color: var(--color-dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-black);
+}
+
+.form-premium .form-label {
+    color: var(--color-gray-text);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: var(--spacing-xs);
+}
+
+.form-premium .form-control {
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-dark-border);
+    color: var(--color-light);
+    padding: 12px 15px;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-normal);
+}
+
+.form-premium .form-control:focus {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 10px rgba(248, 211, 70, 0.1);
+    outline: none;
+}
+
+.payment-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+.payment-method {
+    border: 1px solid var(--color-dark-border);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--color-gray-medium);
+}
+
+.payment-method.active {
+    border-color: var(--color-primary);
+    background: rgba(248, 211, 70, 0.05);
+    color: var(--color-primary);
+}
+
+.payment-method i {
+    font-size: var(--font-size-2xl);
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .checkout-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <style>
+    html,
+    body {
+      background: #0f0f0f;
+      color: #fff;
+    }
+  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Koketsu</title>
+
+  <link href="../../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .login-container {
+      background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
+      border-radius: 15px;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 216, 77, 0.2);
+      padding: 50px 40px;
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid rgba(255, 216, 77, 0.1);
+    }
+
+    .logo-container {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo-container img {
+      width: 240px;
+      height: 240px;
+      border-radius: 25px;
+      box-shadow: 0 12px 40px rgba(255, 216, 77, 0.5);
+      border: 5px solid #ffd84d;
+      object-fit: cover;
+    }
+
+    .login-container h1 {
+      color: #ffd84d;
+      margin-bottom: 10px;
+      font-size: 32px;
+      font-weight: 700;
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(255, 216, 77, 0.3);
+    }
+
+    .login-container p {
+      color: #aaa;
+      margin-bottom: 30px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .form-control {
+      margin-bottom: 15px;
+      height: 50px;
+      border: 2px solid #3a3a3a;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #1a1a1a;
+      color: #fff;
+      transition: all 0.3s;
+    }
+
+    .form-control::placeholder {
+      color: #666;
+    }
+
+    .form-control:focus {
+      border-color: #ffd84d;
+      box-shadow: 0 0 0 0.2rem rgba(255, 216, 77, 0.15);
+      background: #1f1f1f;
+      color: #fff;
+    }
+
+    .btn-login {
+      width: 100%;
+      height: 50px;
+      background: linear-gradient(135deg, #ffd84d 0%, #ffb300 100%);
+      border: none;
+      color: #000;
+      font-weight: 700;
+      border-radius: 8px;
+      margin-top: 20px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(255, 216, 77, 0.3);
+      font-size: 15px;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(255, 216, 77, 0.5);
+      color: #000;
+      background: linear-gradient(135deg, #ffdc5e 0%, #ffc107 100%);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .btn-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .forgot-link {
+      display: block;
+      text-align: center;
+      margin-top: 14px;
+      color: #888;
+      font-size: 13px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .forgot-link:hover {
+      color: #ffd84d;
+    }
+
+    /* Modal de recuperação */
+    .modal-content {
+      background: #2a2a2a;
+      border: 1px solid rgba(255, 216, 77, 0.2);
+      border-radius: 12px;
+      color: #fff;
+    }
+
+    .modal-header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px 24px 16px;
+    }
+
+    .modal-title {
+      color: #ffd84d;
+      font-weight: 700;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 16px 24px;
+    }
+
+    .btn-close {
+      filter: invert(1);
+    }
+
+    .step-label {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .step-indicator {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .step-dot {
+      height: 4px;
+      flex: 1;
+      border-radius: 2px;
+      background: #444;
+      transition: background 0.3s;
+    }
+
+    .step-dot.active {
+      background: #ffd84d;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper .toggle-pw {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #888;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0;
+    }
+
+    .password-wrapper .toggle-pw:hover {
+      color: #ffd84d;
+    }
+
+    .btn-recovery {
+      background: linear-gradient(135deg, #ffd84d 0%, #ffb300 100%);
+      border: none;
+      color: #000;
+      font-weight: 700;
+      border-radius: 8px;
+      height: 44px;
+      width: 100%;
+      transition: all 0.3s;
+    }
+
+    .btn-recovery:hover {
+      background: linear-gradient(135deg, #ffdc5e 0%, #ffc107 100%);
+    }
+
+    .btn-recovery:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .alert {
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid;
+    }
+
+    .alert-danger {
+      background: rgba(220, 53, 69, 0.1);
+      color: #ff6b6b;
+      border-color: rgba(220, 53, 69, 0.3);
+    }
+
+    .alert-success {
+      background: rgba(40, 167, 69, 0.1);
+      color: #51cf66;
+      border-color: rgba(40, 167, 69, 0.3);
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 216, 77, 0.2);
+      border-top: 2px solid #ffd84d;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .login-container {
+        padding: 32px 24px;
+        max-width: 360px;
+      }
+
+      .logo-container img {
+        width: 180px;
+        height: 180px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 16px;
+      }
+
+      .login-container {
+        padding: 24px 18px;
+        max-width: 100%;
+      }
+
+      .logo-container img {
+        width: 140px;
+        height: 140px;
+      }
+
+      .login-container h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-container">
+    <div class="logo-container">
+      <img src="../assets/img/logo.jpg" alt="Koketsu Logo">
+    </div>
+    <h1>Koketsu</h1>
+    <p>Acesso ao Sistema</p>
+
+    <div id="alertContainer"></div>
+
+    <form id="loginForm">
+      <input type="text" id="username" class="form-control" placeholder="Usuário" required autocomplete="username">
+      <input type="password" id="password" class="form-control" placeholder="Senha" required
+        autocomplete="current-password">
+      <button type="submit" class="btn btn-login" id="loginBtn">
+        <span id="btnText">Entrar</span>
+      </button>
+    </form>
+    <a class="forgot-link" id="forgotPasswordLink">&#128273; Esqueci minha senha</a>
+  </div>
+
+  <!-- Modal de Recuperação de Senha -->
+  <div class="modal fade" id="recoveryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">&#128273; Recuperar Senha</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="step-indicator">
+            <div class="step-dot active" id="dot1"></div>
+            <div class="step-dot" id="dot2"></div>
+          </div>
+
+          <!-- Etapa 1: E-mail -->
+          <div id="recoveryStep1">
+            <div class="step-label">Etapa 1 de 2</div>
+            <p style="color:#aaa;font-size:14px;margin-bottom:16px">
+              Informe o e-mail cadastrado na sua conta para prosseguir.
+            </p>
+            <input type="email" id="recoveryEmail" class="form-control" placeholder="E-mail cadastrado"
+              autocomplete="email">
+            <div id="recoveryAlert1" class="mt-2"></div>
+          </div>
+
+          <!-- Etapa 2: Nova Senha -->
+          <div id="recoveryStep2" style="display:none">
+            <div class="step-label">Etapa 2 de 2</div>
+            <p style="color:#aaa;font-size:14px;margin-bottom:16px">
+              Conta encontrada. Defina sua nova senha.
+            </p>
+            <div class="password-wrapper mb-3">
+              <input type="password" id="newPassword" class="form-control" placeholder="Nova senha (mín. 6 caracteres)"
+                autocomplete="new-password">
+              <button type="button" class="toggle-pw" onclick="togglePw('newPassword',this)">&#128065;</button>
+            </div>
+            <div class="password-wrapper">
+              <input type="password" id="confirmPassword" class="form-control" placeholder="Confirmar nova senha"
+                autocomplete="new-password">
+              <button type="button" class="toggle-pw" onclick="togglePw('confirmPassword',this)">&#128065;</button>
+            </div>
+            <div id="recoveryAlert2" class="mt-2"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="recoveryBack"
+            style="display:none;border-radius:8px;height:44px" data-bs-dismiss="modal">
+            Cancelar
+          </button>
+          <button type="button" class="btn btn-recovery" id="recoveryNextBtn">
+            <span id="recoveryBtnText">Verificar e-mail</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="../js/login.js"></script>
+</body>
+
+</html>

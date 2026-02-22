@@ -1,0 +1,171 @@
+/* vitrine-camisetas.css */
+
+/* 1. Layout Geral da Vitrine */
+.dark-theme {
+    background-color: #000;
+    color: #fff;
+    margin: 0;
+}
+
+/* 2. Banner de Impacto (Estilo Comp Supply) */
+.banner-promocional {
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('../../img/banner-oversized.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.banner-content h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: -2px;
+    margin: 0;
+}
+
+.banner-content h1 span { color: #f1cd2f; }
+
+.promo-tag {
+    font-size: 4.5rem;
+    font-weight: 900;
+    color: #f1cd2f;
+    margin: 5px 0;
+}
+
+.promo-sub {
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: #888;
+}
+
+/* 3. Barra de Filtros Minimalista */
+.filtros-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 30px 5%;
+    border-bottom: 1px solid #1a1a1a;
+    background: #000;
+}
+
+.filtros-bar select {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #333;
+    padding: 10px 15px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    outline: none;
+    transition: 0.3s;
+}
+
+.filtros-bar select:hover { border-color: #f1cd2f; }
+
+/* 4. Grid de Produtos (4 Colunas) */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px; /* Linha fina separando os cards */
+    background: #1a1a1a; /* Cor da borda entre os produtos */
+    border-bottom: 1px solid #1a1a1a;
+}
+
+.product-card {
+    background: #000;
+    padding-bottom: 30px;
+    transition: 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 5. Imagem e Efeito de Hover */
+.product-image {
+    background: #f2f2f2; /* Fundo claro para destacar a roupa */
+    position: relative;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.08);
+}
+
+/* Botão que sobe no Hover */
+.btn-quick-add {
+    position: absolute;
+    bottom: -60px;
+    width: 100%;
+    padding: 18px;
+    background: #f1cd2f;
+    color: #000;
+    border: none;
+    font-weight: 900;
+    font-size: 12px;
+    cursor: pointer;
+    transition: bottom 0.4s ease;
+}
+
+.product-card:hover .btn-quick-add {
+    bottom: 0;
+}
+
+/* 6. Informações do Produto */
+.product-info {
+    padding: 20px 15px;
+    text-align: center;
+}
+
+.product-info h3 {
+    font-size: 13px;
+    font-weight: 400;
+    color: #aaa;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+}
+
+.price-old {
+    text-decoration: line-through;
+    color: #555;
+    font-size: 12px;
+    display: block;
+}
+
+.price-current {
+    font-size: 20px;
+    font-weight: 800;
+    color: #f1cd2f;
+    margin: 5px 0;
+}
+
+.installments {
+    font-size: 11px;
+    color: #666;
+}
+
+/* Selo (Tag) no topo da imagem */
+.badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: #000;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 10px;
+    font-weight: bold;
+    z-index: 2;
+}

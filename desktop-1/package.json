@@ -1,0 +1,31 @@
+{
+  "name": "desk-koketsu",
+  "version": "1.0.0",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "concurrently \"vite\" \"wait-on tcp:5173 && electron .\"",
+    "build": "vite build",
+    "seed:sqlite": "node database/seed-sqlite.js",
+    "perf:db": "node tools/perf/benchmark-db.js",
+    "perf:render": "node tools/perf/benchmark-render.js",
+    "perf:electron": "node electron/start-perf-render.js",
+    "open:multi": "node tools/open-multi-electron.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "electron": "^39.2.7",
+    "electron-rebuild": "^3.2.9",
+    "electron-reload": "^2.0.0-alpha.1",
+    "vite": "^7.3.1",
+    "wait-on": "^9.0.3"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.6.2",
+    "bootstrap": "^5.3.3",
+    "chart.js": "^4.5.1",
+    "mysql2": "^3.17.2",
+    "sql.js": "^1.10.2"
+  }
+}

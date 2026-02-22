@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <style>
+    html,
+    body {
+      background: #0f0f0f;
+      color: #fff;
+    }
+  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+
+  <link href="../../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+  <div class="app">
+    <aside class="sidebar">
+      <img src="../assets/img/logo.jpg" class="logo">
+
+      <nav class="menu">
+        <a class="active" href="dashboard.html">Dashboard</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="pedidos.html">Pedidos</a>
+        <a href="clientes.html">Clientes</a>
+        <a href="configuracoes.html">Configurações</a>
+        <a href="#" data-logout class="menu-logout">Sair</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="mobile-topbar">
+        <button class="sidebar-toggle" data-sidebar-toggle aria-label="Abrir menu" title="Menu">☰</button>
+        <span class="mobile-title">Dashboard</span>
+      </div>
+      <div class="dashboard-header">
+        <div>
+          <h1>Dashboard</h1>
+          <p>Bem-vindo, Administrador</p>
+        </div>
+        <button class="btn btn-gold" id="btnAtualizar" title="Atualizar dados">Atualizar</button>
+      </div>
+
+      <!-- CARDS DE MÉTRICAS -->
+      <div class="row mb-4 mt-3">
+        <div class="col-md-6 col-lg-3 mb-3">
+          <div class="card metric-card metric-produtos" onclick="window.location.href='produtos.html'"
+            style="cursor: pointer;">
+            <div class="card-body">
+              <h6 class="card-title">Produtos</h6>
+              <h3 id="totalProdutos">0</h3>
+              <small id="tendenciaProdutos" class="text-muted"></small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-3">
+          <div class="card metric-card metric-estoque" onclick="window.location.href='produtos.html'"
+            style="cursor: pointer;">
+            <div class="card-body">
+              <h6 class="card-title">Estoque</h6>
+              <h3 id="totalEstoque">0</h3>
+              <small id="tendenciaEstoque" class="text-muted"></small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-3">
+          <div class="card metric-card metric-pedidos" onclick="window.location.href='pedidos.html'"
+            style="cursor: pointer;">
+            <div class="card-body">
+              <h6 class="card-title">Pedidos</h6>
+              <h3 id="totalPedidos">0</h3>
+              <small id="tendenciaPedidos" class="text-muted"></small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-3">
+          <div class="card metric-card metric-valor" onclick="window.location.href='produtos.html'"
+            style="cursor: pointer;">
+            <div class="card-body">
+              <h6 class="card-title">Valor Total</h6>
+              <h3 id="valorEstoque">R$ 0</h3>
+              <small id="tendenciaValor" class="text-muted"></small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO DE GRÁFICOS -->
+      <div class="row mb-4">
+        <div class="col-lg-8">
+          <div class="card">
+            <h3>Vendas por Mês</h3>
+            <div class="chart-container vendas">
+              <canvas id="vendasChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card">
+            <h3>Estoque Baixo</h3>
+            <div id="alertasEstoque" class="alerts-container">
+              <p class="text-muted">Nenhum alerta</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO 2: ESTOQUE E TOP PRODUTOS -->
+      <div class="row">
+        <div class="col-lg-6 mb-4">
+          <div class="card">
+            <h3>Top 5 Produtos em Estoque</h3>
+            <div id="topEstoque" class="products-list">
+              <p class="text-muted">Carregando...</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+          <div class="card">
+            <h3>Distribuição de Estoque</h3>
+            <div class="chart-container estoque">
+              <canvas id="estoqueChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ÚLTIMA ATUALIZAÇÃO -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card text-center">
+            <small id="ultimaAtualizacao" class="text-muted">Última atualização: agora</small>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="sidebar-backdrop" data-sidebar-backdrop></div>
+  </div>
+
+  <script type="module" src="../js/auth.js"></script>
+  <script type="module" src="../js/dashboard.js"></script>
+</body>
+
+</html>
