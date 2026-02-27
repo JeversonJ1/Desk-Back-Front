@@ -166,6 +166,9 @@ class Rotas
                  '/admin' => 'AuthController@loginadmin',
                  '/login' => 'AuthController@login',
                  '/logout' => 'AuthController@logout',
+                 // Aliases legados (URLs antigas — redirecionam para as rotas corretas)
+                 '/backend/login' => 'AuthController@login',
+                 '/backend/admin' => 'AuthController@loginadmin',
                  '/admin/dashboard' => 'Admin\DashboardController@index',
                  '/configuracoes' => 'ConfiguracoesController@index',
                  '/configuracoes/exportar' => 'ConfiguracoesController@exportarDados',

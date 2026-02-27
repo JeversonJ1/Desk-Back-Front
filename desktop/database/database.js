@@ -1,2 +1,2 @@
-const Database = require('./sqlite-database.cjs');
+const Database = require('./mysql-database.cjs');
 module.exports = Database;

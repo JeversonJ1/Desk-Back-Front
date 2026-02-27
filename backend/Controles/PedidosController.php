@@ -21,7 +21,7 @@ public function __construct() {
         $this->db = Database::getInstance();
         $this->pedidos = new Pedidos($this->db);
         $this->itenspedidos = new ItensPedidos($this->db); 
-        $this->gerenciarImagem = new FileManager('upload');
+        $this->gerenciarImagem = new FileManager(__DIR__ . '/../../backend/upload');
     }
 
     public function index(){

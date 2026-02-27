@@ -28,6 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 use Bramus\Router\Router;     
 $router = new Router();
+// Força o basePath para '/' pois o index.php pode ser carregado via include
+// a partir de frontend/router.php (o Bramus calcula o basePath do __FILE__ original)
+$router->setBasePath('/');
 
 // --- INÍCIO MODO MANUTENÇÃO GLOBAL ---
 $configFile = __DIR__ . '/Config/settings.json';

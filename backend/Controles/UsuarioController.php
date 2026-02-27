@@ -19,7 +19,7 @@ class UsuarioController extends AdminController{
         parent::__construct();
         $this->db = Database::getInstance();
         $this->usuario = new Usuario($this->db);
-        $this->gerenciarImagem = new FileManager('upload');
+        $this->gerenciarImagem = new FileManager(__DIR__ . '/../../backend/upload');
     }
     // index
 
@@ -27,8 +27,8 @@ class UsuarioController extends AdminController{
     $dados = $this->usuario->paginacao($pagina);
     $total_admin = $this->usuario->buscarUsuariosAdmin();
     $total = $this->usuario->totalDeUsuarios();
-    $total_inativos = $this->usuario->buscarUsuariosInativos($pagina);
-    $total_ativos = $this->usuario->buscarUsuariosAtivos($pagina);
+    $total_inativos = $this->usuario->buscarUsuariosInativos();
+    $total_ativos = $this->usuario->buscarUsuariosAtivos();
     view::render('usuario/index', 
     [
         "usuarios" => $dados['data'],

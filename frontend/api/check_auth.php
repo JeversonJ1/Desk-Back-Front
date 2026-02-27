@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 use App\Koketsu\Core\Session;
 
 header('Content-Type: application/json; charset=utf-8');

@@ -24,7 +24,7 @@ public function __construct() {
     $this->produtos = new Produtos($this->db);
     $this->corModel = new Cor($this->db);
     $this->tamanhoModel = new Tamanho($this->db);
-    $this->gerenciarImagem = new FileManager('upload');
+    $this->gerenciarImagem = new FileManager(__DIR__ . '/../../backend/upload');
 }
 // index
 public function index(){

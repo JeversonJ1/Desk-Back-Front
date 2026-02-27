@@ -14,7 +14,7 @@ class CoresController {
     public function __construct() {
         $this->db = Database::getInstance();
         $this->cores = new Cor($this->db);
-        $this->gerenciarImagem = new FileManager('upload');
+        $this->gerenciarImagem = new FileManager(__DIR__ . '/../../backend/upload');
     }
     // index
     public function index(){
@@ -23,9 +23,9 @@ class CoresController {
     }
      public function viewListarCores($pagina){
         $dados = $this->cores->paginacao($pagina);
-        $total = $this->cores->totalDeCores($pagina);
-        $total_inativos = $this->cores->buscarCoresInativos($pagina);
-        $total_ativos = $this->cores->buscarCoresAtivos($pagina);
+        $total = $this->cores->totalDeCores();
+        $total_inativos = $this->cores->buscarCoresInativos();
+        $total_ativos = $this->cores->buscarCoresAtivos();
          view::render('cores/index', 
     [
         "cores" => $dados['data'],
@@ -76,8 +76,7 @@ class CoresController {
        if($this->cores->inserirCor(
             $_POST["id_produto"],
             $_POST["cor_cores"],
-            $_POST["quantidade_cores"],
-            "Ativo"
+            $_POST["quantidade_cores"]
         )){
             Redirect::redirecionarComMensagem("cor/listar", "success", "Cor criada com sucesso!");
         }else{

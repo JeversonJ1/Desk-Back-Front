@@ -23,7 +23,7 @@ class DashboardController extends AuthenticatedController{
         $this->usuario = new Usuario($this->db);
         $this->perfil = new Perfil($this->db);
         $this->pedidos = new Pedidos($this->db);
-        $this->gerenciarImagem = new FileManager('upload');
+        $this->gerenciarImagem = new FileManager(__DIR__ . '/../../../backend/upload');
     }
     
     public function index(): void{
