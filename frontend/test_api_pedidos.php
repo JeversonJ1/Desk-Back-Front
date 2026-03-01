@@ -1,6 +1,6 @@
 <?php
 // Test script for API filtering
-$baseUrl = "http://localhost:4000/api/pedidos";
+$baseUrl = "http://localhost:8000/api/pedidos";
 $userId = 64; // Itachi's ID
 
 function testApi($url) {
@@ -30,8 +30,8 @@ function testApi($url) {
 }
 
 // Test 1: Vitrine (should work)
-testApi("http://localhost:4000/api/vitrine");
-
+testApi("http://localhost:8000/api/vitrine");
+  
 // Test 2: Pedidos without filter
 testApi($baseUrl);
 

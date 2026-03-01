@@ -47,7 +47,7 @@ function processarCaminhoImagem(imagePath) {
   // Se for caminho relativo de API (ex: "produtos/698b1ca4e86730.png")
   // Construir URL completa apontando para o servidor PHP
   if (imagePath.includes('produtos/') || imagePath.includes('upload/')) {
-    const base = 'http://localhost:4000/backend/upload/';
+    const base = 'http://localhost:8000/backend/upload/';
     const cleanPath = imagePath.replace(/^upload\//, '');
     return base + cleanPath;
   }

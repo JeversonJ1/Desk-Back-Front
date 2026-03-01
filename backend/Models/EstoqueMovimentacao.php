@@ -1,7 +1,8 @@
 <?php
 namespace App\Koketsu\Models;
 use PDO;
- class EstoqueMovimentacao {
+class EstoqueMovimentacao
+{
     private $id_estoque_movimentacao;
     private $id_produto;
     private $tipo_estoque_movimentacao;
@@ -13,12 +14,14 @@ use PDO;
     private $excluido_em;
     private $db;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->db = $db;
     }
 
     // Buscar todas as movimentações (não excluídas)
-    public function buscarMovimentacoes() {
+    public function buscarMovimentacoes()
+    {
         $sql = "SELECT * FROM tbl_estoque_movimentacao WHERE excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
@@ -26,7 +29,8 @@ use PDO;
     }
 
     // Buscar movimentações de um produto específico
-    public function buscarPorProduto($id_produto) {
+    public function buscarPorProduto($id_produto)
+    {
         $sql = "SELECT * FROM tbl_estoque_movimentacao 
                 WHERE id_produto = :id_produto AND excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
@@ -36,7 +40,8 @@ use PDO;
     }
 
     // Buscar movimentação específica por ID
-    public function buscarPorId($id_estoque_movimentacao) {
+    public function buscarPorId($id_estoque_movimentacao)
+    {
         $sql = "SELECT * FROM tbl_estoque_movimentacao 
                 WHERE id_estoque_movimentacao = :id AND excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
@@ -46,25 +51,32 @@ use PDO;
     }
 
     // Inserir nova movimentação
-    public function inserirMovimentacao($id_produto, $tipo, $quantidade, $descricao = null) {
+    public function inserirMovimentacao($id_produto, $tipo, $quantidade, $descricao = null)
+    {
+        // Gerar próximo ID manualmente (workaround para tabelas sem AUTO_INCREMENT)
+        $stmtMax = $this->db->query("SELECT COALESCE(MAX(id_estoque_movimentacao), 0) + 1 AS next_id FROM tbl_estoque_movimentacao");
+        $nextId = (int) $stmtMax->fetch(PDO::FETCH_ASSOC)['next_id'];
+
         $sql = "INSERT INTO tbl_estoque_movimentacao 
-                (id_produto, tipo_estoque_movimentacao, quantidade_estoque_movimentacao, 
-                 data_movimentacao_estoque_movimentacao, descricao_estoque_movimentacao, criado_em)
-                VALUES (:id_produto, :tipo, :quantidade, NOW(), :descricao, NOW())";
+                (id_estoque_movimentacao, id_produto, tipo_estoque_movimentacao, quantidade_estoque_movimentacao, 
+                 data_estoque_movimentacao, descricao_estoque_movimentacao, criado_em)
+                VALUES (:id, :id_produto, :tipo, :quantidade, NOW(), :descricao, NOW())";
         $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id', $nextId, PDO::PARAM_INT);
         $stmt->bindParam(':id_produto', $id_produto);
         $stmt->bindParam(':tipo', $tipo);
         $stmt->bindParam(':quantidade', $quantidade);
         $stmt->bindParam(':descricao', $descricao);
 
         if ($stmt->execute()) {
-            return $this->db->lastInsertId();
+            return $nextId;
         }
         return false;
     }
 
     // Atualizar movimentação (apenas descrição ou quantidade)
-    public function atualizarMovimentacao($id_estoque_movimentacao, $quantidade = null, $descricao = null) {
+    public function atualizarMovimentacao($id_estoque_movimentacao, $quantidade = null, $descricao = null)
+    {
         $sql = "UPDATE tbl_estoque_movimentacao SET ";
         $updates = [];
 
@@ -91,7 +103,8 @@ use PDO;
     }
 
     // Exclusão lógica da movimentação
-    public function excluirMovimentacao($id_estoque_movimentacao) {
+    public function excluirMovimentacao($id_estoque_movimentacao)
+    {
         $sql = "UPDATE tbl_estoque_movimentacao SET excluido_em = NOW() WHERE id_estoque_movimentacao = :id";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id', $id_estoque_movimentacao);

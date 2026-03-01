@@ -1,0 +1,162 @@
+﻿[1m
+======================================================================[0m
+[1m   TESTE DE TODAS AS APIs - KOKETSU[0m
+[1m======================================================================[0m
+   Base URL: http://localhost:8000
+   Data: 2026-03-01 05:32:42
+----------------------------------------------------------------------
+
+[1m[36m
+­ƒôí HEALTH CHECK
+[0m[0m----------------------------------------
+  GET     /api/health                              [32mOK 200[0m  (76ms)
+          [36mVerifica se o servidor est├í online[0m
+          [32msuccess - API Koketsu operacional[0m
+
+[1m[36m
+­ƒôï API GET - LISTAGENS
+[0m[0m----------------------------------------
+  GET     /api/produtos                            [32mOK 200[0m  (28ms)
+          [36mLista todos os produtos[0m
+          [32m10 registros retornados[0m
+
+  GET     /api/clientes                            [32mOK 200[0m  (28ms)
+          [36mLista todos os clientes[0m
+          [32m7 registros retornados[0m
+
+  GET     /api/pedidos                             [32mOK 200[0m  (17ms)
+          [36mLista todos os pedidos[0m
+          [32m10 registros retornados[0m
+
+  GET     /api/usuarios                            [32mOK 200[0m  (23ms)
+          [36mLista todos os usu├írios[0m
+          [32m10 registros retornados[0m
+
+  GET     /api/categorias                          [32mOK 200[0m  (34ms)
+          [36mLista todas as categorias[0m
+          [32m10 registros retornados[0m
+
+  GET     /api/cores                               [32mOK 200[0m  (13ms)
+          [36mLista todas as cores[0m
+          [32m10 registros retornados[0m
+
+  GET     /api/perfis                              [32mOK 200[0m  (12ms)
+          [36mLista todos os perfis[0m
+          [32m10 registros retornados[0m
+
+  GET     /api/tamanhos                            [32mOK 200[0m  (36ms)
+          [36mLista todos os tamanhos[0m
+          [32m10 registros retornados[0m
+
+  GET     /api/itenspedidos                        [32mOK 200[0m  (13ms)
+          [36mLista todos os itens de pedidos[0m
+          [32m10 registros retornados[0m
+
+  GET     /api/avaliacoes                          [32mOK 200[0m  (14ms)
+          [36mLista todas as avalia├º├Áes[0m
+          [32m18 registros retornados[0m
+
+  GET     /api/imagens                             [32mOK 200[0m  (12ms)
+          [36mLista todas as imagens[0m
+          [32m10 registros retornados[0m
+
+  GET     /api/carrinho                            [32mOK 200[0m  (12ms)
+          [36mLista itens do carrinho[0m
+          [32m10 registros retornados[0m
+
+  GET     /api/estoque                             [32mOK 200[0m  (13ms)
+          [36mLista movimenta├º├Áes de estoque[0m
+          [32m10 registros retornados[0m
+
+  GET     /api/banners                             [32mOK 200[0m  (27ms)
+          [36mLista todos os banners[0m
+          [32m20 registros retornados[0m
+
+[1m[36m
+­ƒöì API GET - BY ID (id=1)
+[0m[0m----------------------------------------
+  GET     /api/produtos/1                          [32mOK 200[0m  (13ms)
+          [36mProduto por ID[0m
+          [32m11 registros retornados[0m
+
+  GET     /api/clientes/1                          [32mOK 200[0m  (14ms)
+          [36mCliente por ID[0m
+          [32m7 registros retornados[0m
+
+  GET     /api/pedidos/1                           [32mOK 200[0m  (12ms)
+          [36mPedido por ID[0m
+          [32m11 registros retornados[0m
+
+  GET     /api/usuarios/1                          [32mOK 200[0m  (12ms)
+          [36mUsu├írio por ID[0m
+          [32m6 registros retornados[0m
+
+  GET     /api/categorias/1                        [32mOK 200[0m  (25ms)
+          [36mCategoria por ID[0m
+          [32m2 registros retornados[0m
+
+  GET     /api/cores/1                             [32mOK 200[0m  (13ms)
+          [36mCor por ID[0m
+          [32m2 registros retornados[0m
+
+  GET     /api/perfis/1                            [32mOK 200[0m  (12ms)
+          [36mPerfil por ID[0m
+          [32m3 registros retornados[0m
+
+  GET     /api/tamanhos/1                          [32mOK 200[0m  (11ms)
+          [36mTamanho por ID[0m
+          [32m2 registros retornados[0m
+
+  GET     /api/itenspedidos/1                      [32mOK 200[0m  (12ms)
+          [36mItem de pedido por ID[0m
+          [32m5 registros retornados[0m
+
+  GET     /api/avaliacoes/1                        [32mOK 200[0m  (12ms)
+          [36mAvalia├º├úo por ID[0m
+          [32m11 registros retornados[0m
+
+  GET     /api/imagens/1                           [32mOK 200[0m  (11ms)
+          [36mImagem por ID[0m
+          [32m3 registros retornados[0m
+
+  GET     /api/carrinho/1                          [32mOK 200[0m  (10ms)
+          [36mCarrinho por ID[0m
+          [32m4 registros retornados[0m
+
+  GET     /api/estoque/1                           [32mOK 200[0m  (12ms)
+          [36mEstoque por ID[0m
+          [32m5 registros retornados[0m
+
+  GET     /api/banners/1                           [32mOK 200[0m  (12ms)
+          [36mBanner por ID[0m
+          [32msuccess - Banner atualizado[0m
+
+[1m[36m
+­ƒöÉ API POST - AUTENTICA├ç├âO
+[0m[0m----------------------------------------
+  POST    /api/auth/desktop                        [33mAUTH 401[0m  (11ms)
+          [36mAuth desktop com credenciais de teste[0m
+          [33mAutentica├º├úo necess├íria (esperado)[0m
+
+[1m[36m
+­ƒôº NEWSLETTER
+[0m[0m----------------------------------------
+  POST    /api/newsletter/inscrever                [31mHTTP 400[0m  (10ms)
+          [36mInscrever email na newsletter[0m
+          [31m{"success":false,"message":"Por favor, informe um e-mail v\u00e1lido."}[0m
+
+[1m
+======================================================================[0m
+[1m   RESUMO DOS TESTES[0m
+======================================================================
+   Total de endpoints testados:  31
+   [32mÔ£à Sucesso (2xx):             29[0m
+   [33m­ƒöÆ Auth necess├íria (401/403): 1[0m
+   [31mÔØî Falha (4xx/5xx/erro):       1[0m
+======================================================================
+
+[1m[31m
+ÔÜá´©Å  ENDPOINTS COM FALHA:
+[0m[0m----------------------------------------
+[31m  ÔØî POST /api/newsletter/inscrever ÔåÆ HTTP 400[0m
+

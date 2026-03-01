@@ -14,42 +14,45 @@ use App\Koketsu\Models\Carrinho;
 use App\Koketsu\Models\EstoqueMovimentacao;
 use App\Koketsu\Database\Database;
 
-class PublicApiController {
+class PublicApiController
+{
     private $produtosModel;
     private $pedidosModel;
     private $db;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = Database::getInstance();
         $this->produtosModel = new Produtos($this->db);
         $this->pedidosModel = new Pedidos($this->db);
     }
 
     // ==================== PRODUTOS ====================
-    public function getProdutos() {
-        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    public function getProdutos()
+    {
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
         $registros_por_pagina = 10;
         $offset = ($page - 1) * $registros_por_pagina;
-        
+
         // Total de registros
         $sqlCount = "SELECT COUNT(*) as total FROM tbl_produtos WHERE excluido_em IS NULL";
         $stmtCount = $this->db->prepare($sqlCount);
         $stmtCount->execute();
         $total = $stmtCount->fetch(\PDO::FETCH_ASSOC)['total'];
         $total_paginas = ceil($total / $registros_por_pagina);
-        
+
         // Dados paginados
         $sql = "SELECT * FROM tbl_produtos WHERE excluido_em IS NULL LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $dados = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         foreach ($dados as &$produto) {
             $caminho = 'backend/upload/' . $produto['imagem_produtos'];
             $produto['caminho_imagem'] = $this->converterParaBase64($caminho);
         }
         unset($produto);
-        
+
         header('Content-Type: application/json');
         http_response_code(200);
         echo json_encode([
@@ -65,10 +68,11 @@ class PublicApiController {
         exit;
     }
 
-    public function getProdutoById($id) {
-        $id = (int)$id;
+    public function getProdutoById($id)
+    {
+        $id = (int) $id;
         $produto = $this->produtosModel->buscarPorId($id);
-        
+
         header('Content-Type: application/json');
         if ($produto) {
             $caminho = 'backend/upload/' . $produto['imagem_produtos'];
@@ -82,7 +86,8 @@ class PublicApiController {
         exit;
     }
 
-    public function createProduto() {
+    public function createProduto()
+    {
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data)) {
@@ -91,28 +96,34 @@ class PublicApiController {
             exit;
         }
 
-        $id = $this->produtosModel->inserirProduto(
-            $data['nome_produtos'],
-            $data['descricao_produtos'] ?? '',
-            (float)$data['preco_produtos'],
-            (int)$data['estoque_produtos'],
-            (int)$data['id_categoria'],
-            $data['imagem_produtos'] ?? 'default.jpg'
-        );
+        try {
+            $id = $this->produtosModel->inserirProduto(
+                $data['nome_produtos'],
+                $data['descricao_produtos'] ?? '',
+                (float) $data['preco_produtos'],
+                (int) $data['estoque_produtos'],
+                (int) $data['id_categoria'],
+                $data['imagem_produtos'] ?? 'default.jpg'
+            );
 
-        if ($id) {
-            http_response_code(201);
-            echo json_encode(['status' => 'success', 'message' => 'Produto sincronizado com sucesso', 'id_produto' => $id]);
-        } else {
+            if ($id) {
+                http_response_code(201);
+                echo json_encode(['status' => 'success', 'message' => 'Produto sincronizado com sucesso', 'id_produto' => $id]);
+            } else {
+                http_response_code(500);
+                echo json_encode(['status' => 'error', 'message' => 'Erro ao sincronizar produto']);
+            }
+        } catch (\Exception $e) {
             http_response_code(500);
-            echo json_encode(['status' => 'error', 'message' => 'Erro ao sincronizar produto']);
+            echo json_encode(['status' => 'error', 'message' => 'Erro ao sincronizar produto: ' . $e->getMessage()]);
         }
         exit;
     }
 
-    public function getProdutosVitrine() {
+    public function getProdutosVitrine()
+    {
         header('Content-Type: application/json; charset=utf-8');
-        
+
         try {
             // 1. Buscar todas as categorias ativas
             $sqlCat = "SELECT id_categorias, nome_categorias FROM tbl_categorias WHERE excluido_em IS NULL";
@@ -151,9 +162,9 @@ class PublicApiController {
 
                     // 5. Formatar item
                     $itemCategoria['itens'][] = [
-                        'id' => (int)$prod['id_produto'],
+                        'id' => (int) $prod['id_produto'],
                         'nome' => $prod['nome_produtos'],
-                        'preco' => (float)$prod['preco_produtos'],
+                        'preco' => (float) $prod['preco_produtos'],
                         'img' => $this->converterParaBase64('backend/upload/' . $prod['imagem_produtos']),
                         'tamanhos' => $tamanhos,
                         'cores' => $cores,
@@ -176,18 +187,19 @@ class PublicApiController {
     }
 
     // ==================== PEDIDOS ====================
-    public function getPedidos() {
-        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    public function getPedidos()
+    {
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
         $registros_por_pagina = 10;
         $offset = ($page - 1) * $registros_por_pagina;
-        
+
         // Total de registros
         $sqlCount = "SELECT COUNT(*) as total FROM tbl_pedidos WHERE excluido_em IS NULL";
         $stmtCount = $this->db->prepare($sqlCount);
         $stmtCount->execute();
         $total = $stmtCount->fetch(\PDO::FETCH_ASSOC)['total'];
         $total_paginas = ceil($total / $registros_por_pagina);
-        
+
         // Dados paginados com JOIN para pegar o id_usuario
         $sql = "SELECT p.id_pedido, p.id_perfil, p.data_pedido, p.total_pedido, p.status_pedido, p.criado_em, p.atualizado_em, pf.id_usuarios 
                 FROM tbl_pedidos p 
@@ -197,7 +209,7 @@ class PublicApiController {
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $pedidos = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         http_response_code(200);
         echo json_encode([
@@ -213,10 +225,11 @@ class PublicApiController {
         exit;
     }
 
-    public function getPedidoById($id) {
-        $id = (int)$id;
+    public function getPedidoById($id)
+    {
+        $id = (int) $id;
         $pedido = $this->pedidosModel->buscarPedidoPorId($id);
-        
+
         header('Content-Type: application/json');
         if ($pedido) {
             http_response_code(200);
@@ -228,10 +241,11 @@ class PublicApiController {
         exit;
     }
 
-    public function salvarPedido() {
+    public function salvarPedido()
+    {
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
-        
+
         if (empty($data)) {
             http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'Dados inválidos']);
@@ -251,23 +265,23 @@ class PublicApiController {
         }
 
         $id_pedido = $this->pedidosModel->inserirPedido($id_perfil, $data_pedido, $total_pedido, $status_pedido);
-        
+
         if ($id_pedido) {
             if (!empty($itens) && is_array($itens)) {
                 $itensModel = new ItensPedidos($this->db);
                 foreach ($itens as $item) {
                     $itensModel->inserirItemPedido(
-                        $id_pedido, 
-                        $item['id_produto'], 
-                        $item['quantidade'], 
+                        $id_pedido,
+                        $item['id_produto'],
+                        $item['quantidade'],
                         $item['preco_unitario']
                     );
                 }
             }
             http_response_code(201);
             echo json_encode([
-                'status' => 'success', 
-                'message' => 'Pedido sincronizado com sucesso', 
+                'status' => 'success',
+                'message' => 'Pedido sincronizado com sucesso',
                 'id_pedido' => $id_pedido
             ]);
         } else {
@@ -277,29 +291,31 @@ class PublicApiController {
         exit;
     }
 
-    public function createPedido() {
+    public function createPedido()
+    {
         return $this->salvarPedido();
     }
 
     // ==================== USUARIOS ====================
-    public function getUsuarios() {
-        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    public function getUsuarios()
+    {
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
         $registros_por_pagina = 10;
         $offset = ($page - 1) * $registros_por_pagina;
-        
+
         // Total de registros
         $sqlCount = "SELECT COUNT(*) as total FROM tbl_usuarios WHERE excluido_em IS NULL";
         $stmtCount = $this->db->prepare($sqlCount);
         $stmtCount->execute();
         $total = $stmtCount->fetch(\PDO::FETCH_ASSOC)['total'];
         $total_paginas = ceil($total / $registros_por_pagina);
-        
+
         // Dados paginados
         $sql = "SELECT id_usuarios, nome_usuarios, email_usuarios, senha_usuarios, nivel_acesso, foto_usuarios FROM tbl_usuarios WHERE excluido_em IS NULL LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $usuarios = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         http_response_code(200);
         echo json_encode([
@@ -315,13 +331,14 @@ class PublicApiController {
         exit;
     }
 
-    public function getUsuarioById($id) {
-        $id = (int)$id;
+    public function getUsuarioById($id)
+    {
+        $id = (int) $id;
         $sql = "SELECT id_usuarios, nome_usuarios, email_usuarios, senha_usuarios, nivel_acesso, foto_usuarios FROM tbl_usuarios WHERE id_usuarios = ? AND excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         $usuario = $stmt->fetch(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         if ($usuario) {
             http_response_code(200);
@@ -333,7 +350,8 @@ class PublicApiController {
         exit;
     }
 
-    public function createUsuario() {
+    public function createUsuario()
+    {
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data)) {
@@ -342,44 +360,50 @@ class PublicApiController {
             exit;
         }
 
-        $usuarioModel = new Usuario($this->db);
-        $id = $usuarioModel->inserirUsuario(
-            $data['nome_usuarios'],
-            $data['email_usuarios'],
-            $data['senha_usuarios'],
-            $data['nivel_acesso'] ?? 'cliente',
-            $data['foto_usuarios'] ?? null
-        );
+        try {
+            $usuarioModel = new Usuario($this->db);
+            $id = $usuarioModel->inserirUsuario(
+                $data['nome_usuarios'],
+                $data['email_usuarios'],
+                $data['senha_usuarios'],
+                $data['nivel_acesso'] ?? 'cliente',
+                $data['foto_usuarios'] ?? null
+            );
 
-        if ($id) {
-            http_response_code(201);
-            echo json_encode(['status' => 'success', 'message' => 'Usuário/Cliente sincronizado com sucesso', 'id_usuarios' => $id]);
-        } else {
+            if ($id) {
+                http_response_code(201);
+                echo json_encode(['status' => 'success', 'message' => 'Usuário/Cliente sincronizado com sucesso', 'id_usuarios' => $id]);
+            } else {
+                http_response_code(500);
+                echo json_encode(['status' => 'error', 'message' => 'Erro ao sincronizar usuário']);
+            }
+        } catch (\Exception $e) {
             http_response_code(500);
-            echo json_encode(['status' => 'error', 'message' => 'Erro ao sincronizar usuário']);
+            echo json_encode(['status' => 'error', 'message' => 'Erro ao sincronizar usuário: ' . $e->getMessage()]);
         }
         exit;
     }
 
     // ==================== CATEGORIAS ====================
-    public function getCategorias() {
-        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    public function getCategorias()
+    {
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
         $registros_por_pagina = 10;
         $offset = ($page - 1) * $registros_por_pagina;
-        
+
         // Total de registros
         $sqlCount = "SELECT COUNT(*) as total FROM tbl_categorias WHERE excluido_em IS NULL";
         $stmtCount = $this->db->prepare($sqlCount);
         $stmtCount->execute();
         $total = $stmtCount->fetch(\PDO::FETCH_ASSOC)['total'];
         $total_paginas = ceil($total / $registros_por_pagina);
-        
+
         // Dados paginados
         $sql = "SELECT id_categorias, nome_categorias FROM tbl_categorias WHERE excluido_em IS NULL LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $categorias = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         http_response_code(200);
         echo json_encode([
@@ -395,13 +419,14 @@ class PublicApiController {
         exit;
     }
 
-    public function getCategoriaById($id) {
-        $id = (int)$id;
+    public function getCategoriaById($id)
+    {
+        $id = (int) $id;
         $sql = "SELECT id_categorias, nome_categorias FROM tbl_categorias WHERE id_categorias = ? AND excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         $categoria = $stmt->fetch(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         if ($categoria) {
             http_response_code(200);
@@ -413,7 +438,8 @@ class PublicApiController {
         exit;
     }
 
-    public function createCategoria() {
+    public function createCategoria()
+    {
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data)) {
@@ -427,24 +453,25 @@ class PublicApiController {
     }
 
     // ==================== CORES ====================
-    public function getCores() {
-        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    public function getCores()
+    {
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
         $registros_por_pagina = 10;
         $offset = ($page - 1) * $registros_por_pagina;
-        
+
         // Total de registros
         $sqlCount = "SELECT COUNT(*) as total FROM tbl_cores WHERE excluido_em IS NULL";
         $stmtCount = $this->db->prepare($sqlCount);
         $stmtCount->execute();
         $total = $stmtCount->fetch(\PDO::FETCH_ASSOC)['total'];
         $total_paginas = ceil($total / $registros_por_pagina);
-        
+
         // Dados paginados
         $sql = "SELECT id_cores, cor_cores FROM tbl_cores WHERE excluido_em IS NULL LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $cores = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         http_response_code(200);
         echo json_encode([
@@ -460,13 +487,14 @@ class PublicApiController {
         exit;
     }
 
-    public function getCorById($id) {
-        $id = (int)$id;
+    public function getCorById($id)
+    {
+        $id = (int) $id;
         $sql = "SELECT id_cores, cor_cores FROM tbl_cores WHERE id_cores = ? AND excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         $cor = $stmt->fetch(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         if ($cor) {
             http_response_code(200);
@@ -478,7 +506,8 @@ class PublicApiController {
         exit;
     }
 
-    public function createCor() {
+    public function createCor()
+    {
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data)) {
@@ -492,24 +521,25 @@ class PublicApiController {
     }
 
     // ==================== PERFIS ====================
-    public function getPerfis() {
-        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    public function getPerfis()
+    {
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
         $registros_por_pagina = 10;
         $offset = ($page - 1) * $registros_por_pagina;
-        
+
         // Total de registros
         $sqlCount = "SELECT COUNT(*) as total FROM tbl_perfil WHERE excluido_em IS NULL";
         $stmtCount = $this->db->prepare($sqlCount);
         $stmtCount->execute();
         $total = $stmtCount->fetch(\PDO::FETCH_ASSOC)['total'];
         $total_paginas = ceil($total / $registros_por_pagina);
-        
+
         // Dados paginados
         $sql = "SELECT id_perfil, endereco_perfil, id_usuarios FROM tbl_perfil WHERE excluido_em IS NULL LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $perfis = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         http_response_code(200);
         echo json_encode([
@@ -525,13 +555,14 @@ class PublicApiController {
         exit;
     }
 
-    public function getPerfilById($id) {
-        $id = (int)$id;
+    public function getPerfilById($id)
+    {
+        $id = (int) $id;
         $sql = "SELECT id_perfil, endereco_perfil, id_usuarios FROM tbl_perfil WHERE id_perfil = ? AND excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         $perfil = $stmt->fetch(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         if ($perfil) {
             http_response_code(200);
@@ -543,7 +574,8 @@ class PublicApiController {
         exit;
     }
 
-    public function createPerfil() {
+    public function createPerfil()
+    {
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data)) {
@@ -557,24 +589,25 @@ class PublicApiController {
     }
 
     // ==================== TAMANHOS ====================
-    public function getTamanhos() {
-        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    public function getTamanhos()
+    {
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
         $registros_por_pagina = 10;
         $offset = ($page - 1) * $registros_por_pagina;
-        
+
         // Total de registros
         $sqlCount = "SELECT COUNT(*) as total FROM tbl_tamanhos WHERE excluido_em IS NULL";
         $stmtCount = $this->db->prepare($sqlCount);
         $stmtCount->execute();
         $total = $stmtCount->fetch(\PDO::FETCH_ASSOC)['total'];
         $total_paginas = ceil($total / $registros_por_pagina);
-        
+
         // Dados paginados
         $sql = "SELECT id_tamanhos, tamanho_tamanhos FROM tbl_tamanhos WHERE excluido_em IS NULL LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $tamanhos = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         http_response_code(200);
         echo json_encode([
@@ -590,13 +623,14 @@ class PublicApiController {
         exit;
     }
 
-    public function getTamanhoById($id) {
-        $id = (int)$id;
+    public function getTamanhoById($id)
+    {
+        $id = (int) $id;
         $sql = "SELECT id_tamanhos, tamanho_tamanhos FROM tbl_tamanhos WHERE id_tamanhos = ? AND excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         $tamanho = $stmt->fetch(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         if ($tamanho) {
             http_response_code(200);
@@ -608,7 +642,8 @@ class PublicApiController {
         exit;
     }
 
-    public function createTamanho() {
+    public function createTamanho()
+    {
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data)) {
@@ -622,24 +657,25 @@ class PublicApiController {
     }
 
     // ==================== ITENS PEDIDOS ====================
-    public function getItenspedidos() {
-        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    public function getItenspedidos()
+    {
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
         $registros_por_pagina = 10;
         $offset = ($page - 1) * $registros_por_pagina;
-        
+
         // Total de registros
         $sqlCount = "SELECT COUNT(*) as total FROM tbl_itens_pedidos WHERE excluido_em IS NULL";
         $stmtCount = $this->db->prepare($sqlCount);
         $stmtCount->execute();
         $total = $stmtCount->fetch(\PDO::FETCH_ASSOC)['total'];
         $total_paginas = ceil($total / $registros_por_pagina);
-        
+
         // Dados paginados
         $sql = "SELECT id_itens_pedidos, id_pedido, id_produto, quantidade, preco_unitario FROM tbl_itens_pedidos WHERE excluido_em IS NULL LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $itens = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         http_response_code(200);
         echo json_encode([
@@ -655,13 +691,14 @@ class PublicApiController {
         exit;
     }
 
-    public function getItemPedidoById($id) {
-        $id = (int)$id;
+    public function getItemPedidoById($id)
+    {
+        $id = (int) $id;
         $sql = "SELECT id_itens_pedidos, id_pedido, id_produto, quantidade, preco_unitario FROM tbl_itens_pedidos WHERE id_itens_pedidos = ? AND excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         $item = $stmt->fetch(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         if ($item) {
             http_response_code(200);
@@ -673,7 +710,8 @@ class PublicApiController {
         exit;
     }
 
-    public function createItemPedido() {
+    public function createItemPedido()
+    {
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data)) {
@@ -687,46 +725,51 @@ class PublicApiController {
     }
 
     // ==================== AVALIAÇÕES ====================
-    public function getAvaliacoes() {
+    public function getAvaliacoes()
+    {
         $avaliacaoModel = new \App\Koketsu\Models\Avaliacao(Database::getInstance());
         $avaliacoes = $avaliacaoModel->buscarAvaliacoes();
-        
+
         header('Content-Type: application/json');
         echo json_encode(['status' => 'success', 'data' => $avaliacoes]);
         exit;
     }
 
-    public function getRatingStatsByProduto($id_produto) {
+    public function getRatingStatsByProduto($id_produto)
+    {
         $avaliacaoModel = new \App\Koketsu\Models\Avaliacao(Database::getInstance());
         $stats = $avaliacaoModel->getStatsPorProduto($id_produto);
-        
+
         header('Content-Type: application/json');
         echo json_encode(['status' => 'success', 'data' => $stats]);
         exit;
     }
 
-    public function getAvaliacoesByProduto($id_produto) {
+    public function getAvaliacoesByProduto($id_produto)
+    {
         $avaliacaoModel = new \App\Koketsu\Models\Avaliacao(Database::getInstance());
         $avaliacoes = $avaliacaoModel->buscarPorProduto($id_produto);
-        
+
         header('Content-Type: application/json');
         echo json_encode(['status' => 'success', 'data' => $avaliacoes]);
         exit;
     }
 
-    public function getLatestAvaliacoes() {
+    public function getLatestAvaliacoes()
+    {
         $avaliacaoModel = new \App\Koketsu\Models\Avaliacao(Database::getInstance());
         $avaliacoes = $avaliacaoModel->buscarUltimasAvaliacoes(6);
-        
+
         header('Content-Type: application/json');
         echo json_encode(['status' => 'success', 'data' => $avaliacoes]);
         exit;
     }
 
-    public function getAvaliacaoById($id) {
+    public function getAvaliacaoById($id)
+    {
         $avaliacaoModel = new \App\Koketsu\Models\Avaliacao(Database::getInstance());
         $avaliacao = $avaliacaoModel->buscarPorId($id);
-        
+
         header('Content-Type: application/json');
         if ($avaliacao) {
             echo json_encode(['status' => 'success', 'data' => $avaliacao]);
@@ -737,10 +780,11 @@ class PublicApiController {
         exit;
     }
 
-    public function createPublicAvaliacao() {
+    public function createPublicAvaliacao()
+    {
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
-        
+
         if (!$data || !isset($data['id_produto']) || !isset($data['id_usuarios']) || !isset($data['nota_avaliacoes'])) {
             http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'Dados incompletos']);
@@ -749,7 +793,7 @@ class PublicApiController {
 
         $db = Database::getInstance();
         $avaliacaoModel = new \App\Koketsu\Models\Avaliacao($db);
-        
+
         $stmt = $db->prepare("SELECT id_perfil FROM tbl_perfil WHERE id_usuarios = :id_usuario LIMIT 1");
         $stmt->bindParam(':id_usuario', $data['id_usuarios']);
         $stmt->execute();
@@ -777,35 +821,37 @@ class PublicApiController {
         exit;
     }
 
-    public function createAvaliacao() {
+    public function createAvaliacao()
+    {
         // Redireciona para o método público mais robusto
         return $this->createPublicAvaliacao();
     }
 
     // ==================== IMAGENS ====================
-    public function getImagens() {
-        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    public function getImagens()
+    {
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
         $registros_por_pagina = 10;
         $offset = ($page - 1) * $registros_por_pagina;
-        
+
         // Total de registros
         $sqlCount = "SELECT COUNT(*) as total FROM tbl_imagem WHERE excluido_em IS NULL";
         $stmtCount = $this->db->prepare($sqlCount);
         $stmtCount->execute();
         $total = $stmtCount->fetch(\PDO::FETCH_ASSOC)['total'];
         $total_paginas = ceil($total / $registros_por_pagina);
-        
+
         // Dados paginados
         $sql = "SELECT id_imagem, caminho_imagem, id_produto FROM tbl_imagem WHERE excluido_em IS NULL LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $imagens = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         foreach ($imagens as &$img) {
             $img['caminho_imagem'] = $this->converterParaBase64($img['caminho_imagem']);
         }
         unset($img);
-        
+
         header('Content-Type: application/json');
         http_response_code(200);
         echo json_encode([
@@ -821,13 +867,14 @@ class PublicApiController {
         exit;
     }
 
-    public function getImagemById($id) {
-        $id = (int)$id;
+    public function getImagemById($id)
+    {
+        $id = (int) $id;
         $sql = "SELECT id_imagem, caminho_imagem, id_produto FROM tbl_imagem WHERE id_imagem = ? AND excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         $imagem = $stmt->fetch(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         if ($imagem) {
             $imagem['caminho_imagem'] = $this->converterParaBase64($imagem['caminho_imagem']);
@@ -840,7 +887,8 @@ class PublicApiController {
         exit;
     }
 
-    public function createImagem() {
+    public function createImagem()
+    {
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data)) {
@@ -854,24 +902,25 @@ class PublicApiController {
     }
 
     // ==================== CARRINHO ====================
-    public function getCarrinho() {
-        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    public function getCarrinho()
+    {
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
         $registros_por_pagina = 10;
         $offset = ($page - 1) * $registros_por_pagina;
-        
+
         // Total de registros
         $sqlCount = "SELECT COUNT(*) as total FROM tbl_carrinho WHERE excluido_em IS NULL";
         $stmtCount = $this->db->prepare($sqlCount);
         $stmtCount->execute();
         $total = $stmtCount->fetch(\PDO::FETCH_ASSOC)['total'];
         $total_paginas = ceil($total / $registros_por_pagina);
-        
+
         // Dados paginados
         $sql = "SELECT id_carrinho, id_perfil, total_carrinho, status_carrinho FROM tbl_carrinho WHERE excluido_em IS NULL LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $carrinho = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         http_response_code(200);
         echo json_encode([
@@ -887,13 +936,14 @@ class PublicApiController {
         exit;
     }
 
-    public function getCarrinhoById($id) {
-        $id = (int)$id;
+    public function getCarrinhoById($id)
+    {
+        $id = (int) $id;
         $sql = "SELECT id_carrinho, id_perfil, total_carrinho, status_carrinho FROM tbl_carrinho WHERE id_carrinho = ? AND excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         $item = $stmt->fetch(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         if ($item) {
             http_response_code(200);
@@ -905,7 +955,8 @@ class PublicApiController {
         exit;
     }
 
-    public function createCarrinho() {
+    public function createCarrinho()
+    {
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data)) {
@@ -919,24 +970,25 @@ class PublicApiController {
     }
 
     // ==================== ESTOQUE ====================
-    public function getEstoque() {
-        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+    public function getEstoque()
+    {
+        $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
         $registros_por_pagina = 10;
         $offset = ($page - 1) * $registros_por_pagina;
-        
+
         // Total de registros
         $sqlCount = "SELECT COUNT(*) as total FROM tbl_estoque_movimentacao WHERE excluido_em IS NULL";
         $stmtCount = $this->db->prepare($sqlCount);
         $stmtCount->execute();
         $total = $stmtCount->fetch(\PDO::FETCH_ASSOC)['total'];
         $total_paginas = ceil($total / $registros_por_pagina);
-        
+
         // Dados paginados
         $sql = "SELECT id_estoque_movimentacao, id_produto, descricao_estoque_movimentacao, quantidade_estoque_movimentacao, data_estoque_movimentacao FROM tbl_estoque_movimentacao WHERE excluido_em IS NULL LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $estoque = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         http_response_code(200);
         echo json_encode([
@@ -952,13 +1004,14 @@ class PublicApiController {
         exit;
     }
 
-    public function getEstoqueById($id) {
-        $id = (int)$id;
+    public function getEstoqueById($id)
+    {
+        $id = (int) $id;
         $sql = "SELECT id_estoque_movimentacao, id_produto, descricao_estoque_movimentacao, quantidade_estoque_movimentacao, data_estoque_movimentacao FROM tbl_estoque_movimentacao WHERE id_estoque_movimentacao = ? AND excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         $item = $stmt->fetch(\PDO::FETCH_ASSOC);
-        
+
         header('Content-Type: application/json');
         if ($item) {
             http_response_code(200);
@@ -970,7 +1023,8 @@ class PublicApiController {
         exit;
     }
 
-    public function createEstoque() {
+    public function createEstoque()
+    {
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data)) {
@@ -979,27 +1033,34 @@ class PublicApiController {
             exit;
         }
 
-        $estoqueModel = new EstoqueMovimentacao($this->db);
-        $id = $estoqueModel->inserirMovimentacao(
-            $data['id_produto'],
-            $data['tipo_estoque_movimentacao'] ?? 'entrada',
-            $data['quantidade_estoque_movimentacao'],
-            $data['descricao_estoque_movimentacao'] ?? null
-        );
+        try {
+            $estoqueModel = new EstoqueMovimentacao($this->db);
+            $id = $estoqueModel->inserirMovimentacao(
+                $data['id_produto'],
+                $data['tipo_estoque_movimentacao'] ?? 'entrada',
+                $data['quantidade_estoque_movimentacao'],
+                $data['descricao_estoque_movimentacao'] ?? null
+            );
 
-        if ($id) {
-            http_response_code(201);
-            echo json_encode(['status' => 'success', 'message' => 'Movimentação de estoque sincronizada', 'id_estoque_movimentacao' => $id]);
-        } else {
+            if ($id) {
+                http_response_code(201);
+                echo json_encode(['status' => 'success', 'message' => 'Movimentação de estoque sincronizada', 'id_estoque_movimentacao' => $id]);
+            } else {
+                http_response_code(500);
+                echo json_encode(['status' => 'error', 'message' => 'Erro ao sincronizar estoque']);
+            }
+        } catch (\Exception $e) {
             http_response_code(500);
-            echo json_encode(['status' => 'error', 'message' => 'Erro ao sincronizar estoque']);
+            echo json_encode(['status' => 'error', 'message' => 'Erro ao sincronizar estoque: ' . $e->getMessage()]);
         }
         exit;
     }
 
 
-    private function converterParaBase64($caminhoRelativo) {
-        if (empty($caminhoRelativo)) return null;
+    private function converterParaBase64($caminhoRelativo)
+    {
+        if (empty($caminhoRelativo))
+            return null;
 
         // Se o caminho contiver http, assume que é uma URL externa
         if (strpos($caminhoRelativo, 'http') !== false) {
@@ -1012,22 +1073,23 @@ class PublicApiController {
 
         // Limpa o caminho se ele começar com /
         $caminhoLimpo = ltrim($caminhoRelativo, '/');
-        
+
         // __DIR__ é backend/Controles, precisamos subir 2 níveis para a raiz do projeto e entrar em frontend/
         $caminhoCompleto = __DIR__ . '/../../frontend/' . $caminhoLimpo;
-        
+
         if (file_exists($caminhoCompleto) && is_file($caminhoCompleto)) {
             $conteudo = file_get_contents($caminhoCompleto);
             $tipo = mime_content_type($caminhoCompleto);
             $base64 = base64_encode($conteudo);
             return "data:$tipo;base64,$base64";
         }
-        
+
         return null;
     }
 
     // ==================== BANNERS ====================
-    public function getBanners() {
+    public function getBanners()
+    {
         header('Content-Type: application/json');
         try {
             $sql = "SELECT * FROM tbl_imagem_carrossel WHERE excluido_em IS NULL ORDER BY ordem_imagem_carrossel ASC";
@@ -1036,14 +1098,14 @@ class PublicApiController {
             $banners = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             // Mapeia para formato compatível com o desktop
-            $dados = array_map(function($b) {
+            $dados = array_map(function ($b) {
                 return [
-                    'id'      => (int)$b['id_carrossel'],
-                    'titulo'  => $b['link_destino_imagem_carrossel'] ?? '',
-                    'imagem'  => $b['url_imagem_imagem_carrossel'],
-                    'link'    => $b['link_destino_imagem_carrossel'] ?? '',
-                    'ordem'   => (int)$b['ordem_imagem_carrossel'],
-                    'ativo'   => (bool)$b['ativo_imagem_carrossel'],
+                    'id' => (int) $b['id_carrossel'],
+                    'titulo' => $b['link_destino_imagem_carrossel'] ?? '',
+                    'imagem' => $b['url_imagem_imagem_carrossel'],
+                    'link' => $b['link_destino_imagem_carrossel'] ?? '',
+                    'ordem' => (int) $b['ordem_imagem_carrossel'],
+                    'ativo' => (bool) $b['ativo_imagem_carrossel'],
                 ];
             }, $banners);
 
@@ -1056,7 +1118,40 @@ class PublicApiController {
         exit;
     }
 
-    public function createBanner() {
+    public function getBannerById($id)
+    {
+        header('Content-Type: application/json');
+        $id = (int) $id;
+        try {
+            $sql = "SELECT * FROM tbl_imagem_carrossel WHERE id_carrossel = ? AND excluido_em IS NULL";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$id]);
+            $banner = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            if ($banner) {
+                $dados = [
+                    'id' => (int) $banner['id_carrossel'],
+                    'titulo' => $banner['link_destino_imagem_carrossel'] ?? '',
+                    'imagem' => $banner['url_imagem_imagem_carrossel'],
+                    'link' => $banner['link_destino_imagem_carrossel'] ?? '',
+                    'ordem' => (int) $banner['ordem_imagem_carrossel'],
+                    'ativo' => (bool) $banner['ativo_imagem_carrossel'],
+                ];
+                http_response_code(200);
+                echo json_encode(['status' => 'success', 'data' => $dados], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            } else {
+                http_response_code(404);
+                echo json_encode(['status' => 'error', 'message' => 'Banner não encontrado']);
+            }
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    public function createBanner()
+    {
         header('Content-Type: application/json');
         $data = json_decode(file_get_contents('php://input'), true);
         if (empty($data)) {
@@ -1065,17 +1160,21 @@ class PublicApiController {
             exit;
         }
         try {
-            $sql = "INSERT INTO tbl_imagem_carrossel (url_imagem_imagem_carrossel, link_destino_imagem_carrossel, ordem_imagem_carrossel, ativo_imagem_carrossel) VALUES (?, ?, ?, ?)";
+            // Gerar próximo ID manualmente (workaround para tabelas sem AUTO_INCREMENT)
+            $stmtMax = $this->db->query("SELECT COALESCE(MAX(id_carrossel), 0) + 1 AS next_id FROM tbl_imagem_carrossel");
+            $nextId = (int) $stmtMax->fetch(\PDO::FETCH_ASSOC)['next_id'];
+
+            $sql = "INSERT INTO tbl_imagem_carrossel (id_carrossel, url_imagem_imagem_carrossel, link_destino_imagem_carrossel, ordem_imagem_carrossel, ativo_imagem_carrossel) VALUES (?, ?, ?, ?, ?)";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
+                $nextId,
                 $data['imagem'] ?? '',
                 $data['link'] ?? '',
-                (int)($data['ordem'] ?? 0),
-                isset($data['ativo']) ? (int)(bool)$data['ativo'] : 1,
+                (int) ($data['ordem'] ?? 0),
+                isset($data['ativo']) ? (int) (bool) $data['ativo'] : 1,
             ]);
-            $id = $this->db->lastInsertId();
             http_response_code(201);
-            echo json_encode(['status' => 'success', 'id' => $id, 'message' => 'Banner criado']);
+            echo json_encode(['status' => 'success', 'id' => $nextId, 'message' => 'Banner criado']);
         } catch (\Exception $e) {
             http_response_code(500);
             echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
@@ -1083,17 +1182,18 @@ class PublicApiController {
         exit;
     }
 
-    public function updateBanner($id) {
+    public function updateBanner($id)
+    {
         header('Content-Type: application/json');
-        $id = (int)$id;
+        $id = (int) $id;
         $data = json_decode(file_get_contents('php://input'), true);
         try {
             $sql = "UPDATE tbl_imagem_carrossel SET url_imagem_imagem_carrossel=?, link_destino_imagem_carrossel=?, ordem_imagem_carrossel=?, ativo_imagem_carrossel=?, atualizado_em=NOW() WHERE id_carrossel=?";
             $this->db->prepare($sql)->execute([
                 $data['imagem'] ?? '',
                 $data['link'] ?? '',
-                (int)($data['ordem'] ?? 0),
-                isset($data['ativo']) ? (int)(bool)$data['ativo'] : 1,
+                (int) ($data['ordem'] ?? 0),
+                isset($data['ativo']) ? (int) (bool) $data['ativo'] : 1,
                 $id,
             ]);
             echo json_encode(['status' => 'success', 'message' => 'Banner atualizado']);
@@ -1104,9 +1204,10 @@ class PublicApiController {
         exit;
     }
 
-    public function deleteBanner($id) {
+    public function deleteBanner($id)
+    {
         header('Content-Type: application/json');
-        $id = (int)$id;
+        $id = (int) $id;
         try {
             $this->db->prepare("UPDATE tbl_imagem_carrossel SET excluido_em=NOW() WHERE id_carrossel=?")->execute([$id]);
             echo json_encode(['status' => 'success', 'message' => 'Banner removido']);
@@ -1118,7 +1219,8 @@ class PublicApiController {
     }
 
     // ==================== CLIENTES (listagem) ====================
-    public function getClientes() {
+    public function getClientes()
+    {
         header('Content-Type: application/json');
         try {
             $sql = "SELECT id_usuarios, nome_usuarios, email_usuarios, nivel_acesso, foto_usuarios, criado_em 
@@ -1137,9 +1239,10 @@ class PublicApiController {
         exit;
     }
 
-    public function getClienteById($id) {
+    public function getClienteById($id)
+    {
         header('Content-Type: application/json');
-        $id = (int)$id;
+        $id = (int) $id;
         try {
             $sql = "SELECT u.id_usuarios, u.nome_usuarios, u.email_usuarios, u.nivel_acesso, u.foto_usuarios,
                            p.telefone_perfil, p.endereco_perfil
@@ -1167,7 +1270,8 @@ class PublicApiController {
      * Endpoint exclusivo para o app Electron autenticar via JSON.
      * Não usa session PHP — retorna dados do usuário para o desktop gerenciar localmente.
      */
-    public function authDesktop() {
+    public function authDesktop()
+    {
         header('Content-Type: application/json');
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(405);
@@ -1211,18 +1315,20 @@ class PublicApiController {
     }
 
     // ==================== HEALTH CHECK ====================
-    public function healthCheck() {
+    public function healthCheck()
+    {
         header('Content-Type: application/json');
         echo json_encode([
-            'status'  => 'success',
+            'status' => 'success',
             'message' => 'API Koketsu operacional',
             'version' => '2.0',
-            'time'    => date('Y-m-d H:i:s')
+            'time' => date('Y-m-d H:i:s')
         ]);
         exit;
     }
 
-    public function viewManutencao() {
+    public function viewManutencao()
+    {
         include __DIR__ . '/../Views/Templates/manutencao.php';
         exit;
     }

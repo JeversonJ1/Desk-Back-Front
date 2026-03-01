@@ -118,7 +118,7 @@ const Database = {
     // PRODUTOS
     //
     produtos: {
-        _imgBase: 'http://localhost:4000/backend/upload/',
+        _imgBase: 'http://localhost:8000/backend/upload/',
         async listar() {
             const [rows] = await pool.query(
                 "SELECT * FROM tbl_produtos WHERE excluido_em IS NULL ORDER BY nome_produtos ASC"

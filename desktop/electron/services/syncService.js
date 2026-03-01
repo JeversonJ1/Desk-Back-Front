@@ -292,7 +292,7 @@ class SyncService {
                                 if (!imageUrl.startsWith('http')) {
                                     // Se for path relativo (ex: "produtos/698b1ca4e86730.38470274.png")
                                     // Tentar construir URL absoluta
-                                    const apiBase = ApiService.baseUrl || 'http://localhost:4000/backend/api';
+                                    const apiBase = ApiService.baseUrl || 'http://localhost:8000/backend/api';
 
                                     // Remover /api do final e adicionar /storage
                                     const baseUrl = apiBase.replace('/api', '');

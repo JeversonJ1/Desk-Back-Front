@@ -43,13 +43,13 @@ const Database = {
                     `UPDATE tbl_usuarios SET nome_usuarios=?, email_usuarios=?, nivel_acesso=?, foto_usuarios=?, sincronizado=1
                      WHERE id_usuarios=?`
                 ).run(usuario.nome_usuarios || usuario.nome, usuario.email_usuarios || usuario.email,
-                      usuario.nivel_acesso || 'vendedor', usuario.foto_usuarios || null, id);
+                    usuario.nivel_acesso || 'vendedor', usuario.foto_usuarios || null, id);
             } else {
                 db.prepare(
                     `INSERT INTO tbl_usuarios (id_usuarios, nome_usuarios, email_usuarios, senha_usuarios, nivel_acesso, foto_usuarios, sincronizado)
                      VALUES (?, ?, ?, ?, ?, ?, 1)`
                 ).run(id, usuario.nome_usuarios || usuario.nome, usuario.email_usuarios || usuario.email,
-                      usuario.senha_usuarios || '', usuario.nivel_acesso || 'vendedor', usuario.foto_usuarios || null);
+                    usuario.senha_usuarios || '', usuario.nivel_acesso || 'vendedor', usuario.foto_usuarios || null);
             }
             if (autoSave) saveDatabase();
         },
@@ -102,7 +102,7 @@ const Database = {
     // PRODUTOS
     // 
     produtos: {
-        _imgBase: 'http://localhost:4000/backend/upload/',
+        _imgBase: 'http://localhost:8000/backend/upload/',
         async listar() {
             const db = getDatabase();
             return db.prepare("SELECT * FROM tbl_produtos WHERE deletado = 0 ORDER BY nome ASC").all().map(mapProduto);
@@ -221,14 +221,14 @@ const Database = {
             const existing = db.prepare("SELECT id_pedido FROM tbl_pedidos WHERE id_pedido_api = ?").get(id);
             if (existing) {
                 db.prepare(`UPDATE tbl_pedidos SET status_pedido=?, total_pedido=?, atualizado_em=datetime('now') WHERE id_pedido_api=?`)
-                  .run(pedido.status_pedido || pedido.status, pedido.total_pedido || pedido.total, id);
+                    .run(pedido.status_pedido || pedido.status, pedido.total_pedido || pedido.total, id);
             } else {
                 db.prepare(
                     `INSERT INTO tbl_pedidos (id_pedido_api, id_usuarios, status_pedido, total_pedido, data_pedido, criado_em)
                      VALUES (?, ?, ?, ?, ?, datetime('now'))`
                 ).run(id, pedido.id_usuarios || pedido.id_perfil,
-                      pedido.status_pedido || pedido.status,
-                      pedido.total_pedido || pedido.total, pedido.data_pedido);
+                    pedido.status_pedido || pedido.status,
+                    pedido.total_pedido || pedido.total, pedido.data_pedido);
             }
             if (autoSave) saveDatabase();
         },
@@ -408,7 +408,7 @@ const Database = {
         async marcarSincronizado() { }
     },
     imagens: { async sincronizar() { } },
-    cores:   { async sincronizar() { } },
+    cores: { async sincronizar() { } },
 
     // 
     // BANNERS
@@ -443,7 +443,7 @@ const Database = {
         }
     },
 
-    salvar:  saveDatabase
+    salvar: saveDatabase
 };
 
 // 
