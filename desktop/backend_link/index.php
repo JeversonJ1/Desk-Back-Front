@@ -49,9 +49,12 @@ $serveImage = function ($filename) {
     if (file_exists($path)) {
         $ext = pathinfo($path, PATHINFO_EXTENSION);
         $mime = 'image/jpeg';
-        if ($ext === 'png') $mime = 'image/png';
-        if ($ext === 'gif') $mime = 'image/gif';
-        if ($ext === 'webp') $mime = 'image/webp';
+        if ($ext === 'png')
+            $mime = 'image/png';
+        if ($ext === 'gif')
+            $mime = 'image/gif';
+        if ($ext === 'webp')
+            $mime = 'image/webp';
 
         header("Content-Type: $mime");
         header("Content-Length: " . filesize($path));
@@ -150,8 +153,6 @@ $rotas = [
         "/produto/atualizar/{id}" => "ProdutosController@atualizarProdutos",
         "/produto/deletar/{id}" => "ProdutosController@viewExcluirProduto",
         '/api/produtos' => 'DatabaseController@salvarProduto',
-        // Post para cadastro
-        "/register" => "AuthController@cadastrarUsuario",
         //Contato
         '/contato/salvar' => 'ContatoController@salvarNovoContato',
     ]

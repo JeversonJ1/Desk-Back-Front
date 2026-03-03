@@ -1,7 +1,8 @@
 <?php
-namespace App\backend\models;
+namespace App\Koketsu\Models;
 use PDO;
-class Imagem {
+class Imagem
+{
     private $id_imagem;
     private $id_produto;
     private $id_cor;
@@ -10,12 +11,14 @@ class Imagem {
     private $descricao_imagem;
     private $db;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->db = $db;
     }
 
     // Buscar todas as imagens
-    public function buscarImagens() {
+    public function buscarImagens()
+    {
         $sql = "SELECT * FROM tbl_imagem";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
@@ -23,7 +26,8 @@ class Imagem {
     }
 
     // Buscar imagens por produto
-    public function buscarPorProduto($id_produto) {
+    public function buscarPorProduto($id_produto)
+    {
         $sql = "SELECT * FROM tbl_imagem WHERE id_produto = :id_produto";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_produto', $id_produto);
@@ -32,7 +36,8 @@ class Imagem {
     }
 
     // Buscar imagem por ID
-    public function buscarPorId($id_imagem) {
+    public function buscarPorId($id_imagem)
+    {
         $sql = "SELECT * FROM tbl_imagem WHERE id_imagem = :id_imagem";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_imagem', $id_imagem);
@@ -41,7 +46,8 @@ class Imagem {
     }
 
     // Inserir nova imagem
-    public function inserirImagem($id_produto, $id_cor, $id_tamanho, $caminho, $descricao) {
+    public function inserirImagem($id_produto, $id_cor, $id_tamanho, $caminho, $descricao)
+    {
         $sql = "INSERT INTO tbl_imagem 
                 (id_produto, id_cor, id_tamanho, caminho_imagem, descricao_imagem)
                 VALUES (:id_produto, :id_cor, :id_tamanho, :caminho, :descricao)";
@@ -59,7 +65,8 @@ class Imagem {
     }
 
     // Atualizar imagem existente
-    public function atualizarImagem($id_imagem, $id_produto, $id_cor, $id_tamanho, $caminho, $descricao) {
+    public function atualizarImagem($id_imagem, $id_produto, $id_cor, $id_tamanho, $caminho, $descricao)
+    {
         $sql = "UPDATE tbl_imagem 
                 SET id_produto = :id_produto,
                     id_cor = :id_cor,
@@ -79,7 +86,8 @@ class Imagem {
     }
 
     // Excluir imagem (remoção física do banco)
-    public function excluirImagem($id_imagem) {
+    public function excluirImagem($id_imagem)
+    {
         $sql = "DELETE FROM tbl_imagem WHERE id_imagem = :id_imagem";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_imagem', $id_imagem);

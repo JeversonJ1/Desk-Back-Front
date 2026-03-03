@@ -40,7 +40,7 @@ class Newsletter
      */
     public function listarTodos()
     {
-        $sql = "SELECT * FROM tbl_newsletter WHERE excluido_em IS NULL ORDER BY data_inscricao DESC";
+        $sql = "SELECT * FROM tbl_newsletter WHERE excluido_em IS NULL ORDER BY criado_em DESC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

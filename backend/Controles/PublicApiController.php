@@ -1059,31 +1059,62 @@ class PublicApiController
 
     private function converterParaBase64($caminhoRelativo)
     {
-        if (empty($caminhoRelativo))
+        if (empty($caminhoRelativo)) {
             return null;
+        }
 
-        // Se o caminho contiver http, assume que é uma URL externa
-        if (strpos($caminhoRelativo, 'http') !== false) {
-            // Extrai a URL real se estiver prefixada por backend/upload/
-            if (preg_match('/(https?:\/\/[^\s]+)/', $caminhoRelativo, $matches)) {
-                return $matches[1];
-            }
+        // 1. Se for URL externa
+        if (strpos($caminhoRelativo, 'http') === 0 && strpos($caminhoRelativo, 'localhost') === false) {
             return $caminhoRelativo;
         }
 
-        // Limpa o caminho se ele começar com /
-        $caminhoLimpo = ltrim($caminhoRelativo, '/');
+        // Decodifica %20 para espaço e caracteres especiais (%C3%81 para Á, etc.)
+        $caminhoRelativo = urldecode($caminhoRelativo);
 
-        // __DIR__ é backend/Controles, precisamos subir 2 níveis para a raiz do projeto e entrar em frontend/
-        $caminhoCompleto = __DIR__ . '/../../frontend/' . $caminhoLimpo;
+        // 2. Se for caminho absoluto local gerado pelo Desktop (ex: file://C:/Users/...)
+        $caminhoFisico = '';
+        if (strpos($caminhoRelativo, 'file://') === 0) {
+            $caminhoFisico = str_replace(['file:///', 'file://'], '', $caminhoRelativo);
+            // No Windows precisa resolver barras invertidas
+            $caminhoFisico = str_replace('/', DIRECTORY_SEPARATOR, $caminhoFisico);
+        } else {
+            // Remove possíveis duplicações
+            $caminhoLimpo = str_replace('backend/upload/backend/upload/', 'backend/upload/', $caminhoRelativo);
 
-        if (file_exists($caminhoCompleto) && is_file($caminhoCompleto)) {
-            $conteudo = file_get_contents($caminhoCompleto);
-            $tipo = mime_content_type($caminhoCompleto);
+            // Verifica se o caminho no banco já aponta diretamente pro desktop
+            if (strpos($caminhoLimpo, 'desktop/storage') !== false) {
+                // Remove o backend/upload do início caso ele tenha sido concatenado pelo array
+                $caminhoLimpo = preg_replace('/^backend\/upload\//', '', $caminhoLimpo);
+            }
+
+            $caminhoFisico = __DIR__ . '/../../' . ltrim($caminhoLimpo, '/');
+        }
+
+        // Tenta ler o arquivo de onde quer que ele esteja
+        if (file_exists($caminhoFisico) && is_file($caminhoFisico)) {
+            $conteudo = file_get_contents($caminhoFisico);
+            $ext = strtolower(pathinfo($caminhoFisico, PATHINFO_EXTENSION));
+            $tipo = match ($ext) {
+                'png' => 'image/png',
+                'jpg', 'jpeg' => 'image/jpeg',
+                'gif' => 'image/gif',
+                'webp' => 'image/webp',
+                'svg' => 'image/svg+xml',
+                default => 'image/jpeg'
+            };
             $base64 = base64_encode($conteudo);
             return "data:$tipo;base64,$base64";
         }
 
+        // 3. Fallback: se não existir no disco, retorna o Logo da loja para o site não quebrar
+        $fallback = __DIR__ . '/../../frontend/assets/img/logo.png';
+        if (file_exists($fallback)) {
+            $conteudo = file_get_contents($fallback);
+            $base64 = base64_encode($conteudo);
+            return "data:image/png;base64,$base64";
+        }
+
+        // Último caso
         return null;
     }
 

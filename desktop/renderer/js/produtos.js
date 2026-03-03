@@ -17,11 +17,7 @@ const INTERVALO_MINIMO_RECARREGAMENTO_MS = 2000;
 let renderToken = 0;
 const RENDER_CHUNK_SIZE = 24;
 
-const PLACEHOLDER_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">' +
-  '<rect width="200" height="200" fill="#f0f0f0"/>' +
-  '<text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#999" font-size="16">Sem imagem</text>' +
-  '</svg>';
-const PLACEHOLDER_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(PLACEHOLDER_SVG)}`;
+const PLACEHOLDER_IMAGE = '../assets/img/logo.jpg';
 
 /**
  * Processa o caminho da imagem para garantir que funcione no Electron
@@ -39,23 +35,30 @@ function processarCaminhoImagem(imagePath) {
     return imagePath;
   }
 
-  // Se já for file:// ou data:image, retornar como está
-  if (imagePath.startsWith('file://') || imagePath.startsWith('data:image')) {
+  // Se for data:image, retornar como está
+  if (imagePath.startsWith('data:image')) {
     return imagePath;
   }
 
+  // Se for file://, substituir pelo protocolo seguro app:// para o Electron permitir leitura
+  if (imagePath.startsWith('file://')) {
+    // Remove o possível triplo /// do windows
+    let safePath = imagePath.replace('file:///', '').replace('file://', '');
+    return `app://local/${safePath}`;
+  }
+
   // Se for caminho relativo de API (ex: "produtos/698b1ca4e86730.png")
-  // Construir URL completa apontando para o servidor PHP
+  // Construir URL completa apontando para o servidor PHP local
   if (imagePath.includes('produtos/') || imagePath.includes('upload/')) {
     const base = 'http://localhost:8000/backend/upload/';
     const cleanPath = imagePath.replace(/^upload\//, '');
     return base + cleanPath;
   }
 
-  // Se for path absoluto local (raro, mas possível)
+  // Se for path absoluto local sem file:// (raro, mas possível)
   if (imagePath.includes(':\\') || imagePath.startsWith('/')) {
     const normalizedPath = imagePath.replace(/\\/g, '/');
-    return `file://${normalizedPath}`;
+    return `app://local/${normalizedPath.replace(/^\//, '')}`;
   }
 
   // Fallback: retornar placeholder

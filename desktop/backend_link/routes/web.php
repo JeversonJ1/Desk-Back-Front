@@ -1,12 +1,12 @@
 <?php
 
-use App\Koketsu\Controles\Web\AuthController;
-use App\Koketsu\Controles\Web\DashboardController;
+use App\Koketsu\Controles\AuthController;
+use App\Koketsu\Controles\Admin\DashboardController;
 
-// Login site
+// Login site (cliente)
 $router->get('/login', [AuthController::class, 'login']);
 $router->post('/login', [AuthController::class, 'authenticar']);
 $router->get('/logout', [AuthController::class, 'logout']);
 
-// Dashboard admin (web, se existir)
+// Painel Admin
 $router->get('/admin/dashboard', [DashboardController::class, 'index']);

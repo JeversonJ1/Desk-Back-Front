@@ -10,7 +10,7 @@ class Database {
     private static $instance = null;
     private $conn;
     private $config;
-
+ 
     private function __construct() {
         $this->config = Config::get();
         $dbConfig = $this->config['database'];

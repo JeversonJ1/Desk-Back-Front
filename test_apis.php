@@ -51,7 +51,6 @@ function testEndpoint($method, $url, $data = null, $description = '')
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $error = curl_error($ch);
     $totalTime = round(curl_getinfo($ch, CURLINFO_TOTAL_TIME) * 1000);
-    curl_close($ch);
 
     return [
         'method' => $method,
