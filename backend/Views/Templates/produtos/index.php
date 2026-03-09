@@ -469,7 +469,7 @@
         new Chart(document.getElementById('vendasChart'), {
             type: 'bar',
             data: {
-                labels: dadosGrafico.map(item => item.produto),
+                labels: dadosGrafico.map(item => item.categoria),
                 datasets: [{
                     label: 'Estoque',
                     data: dadosGrafico.map(item => item.total),

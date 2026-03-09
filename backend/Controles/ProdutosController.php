@@ -39,7 +39,6 @@ public function index(){
 
  public function viewListarProduto($pagina = 1) {
     $produto = $this->produtos->categoriasProdu();
-    $total = $this->produtos->categoriasProdu();
     
     if (empty($pagina) || $pagina <= 0) $pagina = 1;
     
@@ -54,7 +53,6 @@ public function index(){
     View::render("produtos/index", [
         "produtos" => $dados['data'],
         "produto" => $produto,
-        "total" => $total,
         'paginacao' => $dados,
         'busca' => $nomeBusca
     ]);
