@@ -57,6 +57,14 @@ document.addEventListener('DOMContentLoaded', () => {
       carregarClientes(false);
     }
   });
+
+  // Sincronização visual automática silenciosa a cada 15 segundos
+  setInterval(() => {
+    // Só atualiza se a aba estiver ativa e não houver modais abertos
+    if (!document.hidden && (!modal || modal.style.display !== 'flex')) {
+      carregarClientes(false);
+    }
+  }, 15000);
 });
 
 function configurarEventListeners() {

@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relatórios - Koketsu Store</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <style>
         :root {
             --primary-gold: var(--accent);
@@ -23,7 +25,7 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-main) !important;
-            background-image: 
+            background-image:
                 radial-gradient(circle at 10% 20%, rgba(197, 160, 45, 0.05) 0%, transparent 40%),
                 radial-gradient(circle at 90% 80%, rgba(197, 160, 45, 0.05) 0%, transparent 40%);
             color: var(--text-main);
@@ -45,6 +47,7 @@
             font-weight: 800;
             background: linear-gradient(to right, var(--accent), var(--text-main));
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
@@ -200,44 +203,75 @@
         }
 
         @media (max-width: 1024px) {
-            .charts-grid { grid-template-columns: 1fr; }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
-            .header { padding: 30px 20px; }
-            .container { padding: 0 20px 40px 20px; }
+            .header {
+                padding: 30px 20px;
+            }
+
+            .container {
+                padding: 0 20px 40px 20px;
+            }
         }
 
         /* Animações */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .stat-card, .chart-container {
+        .stat-card,
+        .chart-container {
             animation: fadeIn 0.6s ease-out forwards;
         }
 
         @media (max-width: 1024px) {
-            .charts-grid { grid-template-columns: 1fr; }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 768px) {
-            .header { padding: 30px 20px; }
-            .container { padding: 0 20px 40px 20px; }
+            .header {
+                padding: 30px 20px;
+            }
+
+            .container {
+                padding: 0 20px 40px 20px;
+            }
         }
 
         /* Animações */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .stat-card, .chart-container {
+        .stat-card,
+        .chart-container {
             animation: fadeIn 0.6s ease-out forwards;
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <h1><i class="fas fa-chart-pie"></i> Relatórios Koketsu</h1>
@@ -302,10 +336,13 @@
         </div>
 
         <div class="actions-grid">
-            <a href="/backend/relatorios/detalhado" class="action-button"><i class="fas fa-list-check"></i> Relatório Detalhado</a>
+            <a href="/backend/relatorios/detalhado" class="action-button"><i class="fas fa-list-check"></i> Relatório
+                Detalhado</a>
             <a href="/backend/relatorios/financeiro" class="action-button"><i class="fas fa-wallet"></i> Financeiro</a>
-            <a href="/backend/relatorios/produtos" class="action-button"><i class="fas fa-box-open"></i> Análise de Produtos</a>
-            <a href="/backend/admin/dashboard" class="action-button"><i class="fas fa-arrow-left"></i> Voltar ao Dash</a>
+            <a href="/backend/relatorios/produtos" class="action-button"><i class="fas fa-box-open"></i> Análise de
+                Produtos</a>
+            <a href="/backend/admin/dashboard" class="action-button"><i class="fas fa-arrow-left"></i> Voltar ao
+                Dash</a>
         </div>
 
         <div class="footer-text">
@@ -463,4 +500,5 @@
         });
     </script>
 </body>
+
 </html>

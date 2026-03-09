@@ -11,9 +11,16 @@ use App\Koketsu\Controles\Admin\AuthenticatedController;
 
 class PedidosController extends AuthenticatedController
 {
+    /** @var \App\Koketsu\Database\Database */
     private $db;
+
+    /** @var \App\Koketsu\Models\Pedidos */
     private $pedidosModel;
+
+    /** @var \App\Koketsu\Models\Perfil */
     private $perfilModel;
+
+    /** @var \App\Koketsu\Models\ItensPedidos */
     private $itensModel;
 
     public function __construct()

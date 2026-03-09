@@ -14,6 +14,33 @@ class AuthHelper {
     return !!this.getSessionId();
   }
 
+  static getRole() {
+    return localStorage.getItem('role') || 'admin';
+  }
+
+  static applyRoleRestrictions() {
+    const role = this.getRole().toLowerCase();
+    
+    if (role === 'vendedor') {
+      // Ocultar menus não permitidos
+      const restrictedLinks = document.querySelectorAll('a[href="produtos.html"], a[href="configuracoes.html"]');
+      restrictedLinks.forEach(link => {
+        link.style.display = 'none';
+      });
+
+      // Bloquear acesso direto via URL
+      const path = window.location.pathname;
+      if (path.includes('produtos.html') || path.includes('configuracoes.html')) {
+        alert('Acesso negado. Restrito para Administradores.');
+        window.location.href = 'dashboard.html';
+      }
+      
+      // Ocultar cards no dashboard que sejam de estoque ou valor total
+      const cardsToHide = document.querySelectorAll('.metric-produtos, .metric-estoque, .metric-valor, .estoque-section');
+      cardsToHide.forEach(el => el.style.display = 'none');
+    }
+  }
+
   static async validateAndRedirect() {
     const sessionId = this.getSessionId();
 
@@ -85,6 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Erro na validação:', err);
       // Não força logout se der erro, pode ser problema de rede
     });
+    
+    AuthHelper.applyRoleRestrictions();
   }
 
   AuthHelper.showUserInfo();

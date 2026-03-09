@@ -18,12 +18,18 @@ function registerDashboardHandlers() {
       const pedidos = await Database.pedidos.listar();
       const clientes = await Database.clientes.listar();
 
+      // Calcula o valor total de TODAS as vendas (pedidos)
+      const valorVendas = (pedidos || []).reduce((sum, pedido) => {
+        return sum + (Number(pedido.total_pedido) || Number(pedido.total) || 0);
+      }, 0);
+
       const dashboard = {
         totalProdutos: produtos ? produtos.length : 0,
         estoqueTotal: produtos ? produtos.reduce((sum, p) => sum + (Number(p.estoque) || 0), 0) : 0,
         totalPedidos: pedidos ? pedidos.length : 0,
         totalClientes: clientes ? clientes.length : 0,
-        valorEstoque: calcularValorEstoque(produtos)
+        valorEstoque: calcularValorEstoque(produtos),
+        valorVendas: valorVendas
       };
 
       Logger.log('Dashboard carregado');

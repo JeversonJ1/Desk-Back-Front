@@ -13,6 +13,7 @@ class Rotas
             "/usuarios" => "UsuarioController@index",
             "/usuario/criar" => "UsuarioController@viewCriarUsuarios",
             "/usuario/listar" => "UsuarioController@viewListarUsuarios",
+            "/backend/usuario/listar" => "UsuarioController@viewListarUsuarios",
             "/usuario/editar/{id}" => "UsuarioController@viewEditarUsuarios",
             "/usuario/excluir/{id}" => "UsuarioController@viewExcluirUsuarios",
             "/usuario/ativar/{id}" => "UsuarioController@viewAtivarUsuarios",
@@ -38,8 +39,11 @@ class Rotas
             "/cliente/editar/{id}" => "ClientesController@viewEditarCliente",
             "/cliente/excluir/{id}" => "ClientesController@viewExcluirCliente",
             "/cliente/dashboard" => "Cliente\DashboardController@index",
+            "/backend/cliente/dashboard" => "Cliente\DashboardController@index",
             "/cliente/meu-perfil/{id}" => "Cliente\DashboardController@viewEditarCliente",
+            "/backend/cliente/meu-perfil/{id}" => "Cliente\DashboardController@viewEditarCliente",
             "/cliente/pedidos" => "Cliente\PedidosController@index",
+            "/backend/cliente/pedidos" => "Cliente\PedidosController@index",
             // --- API REST UNIVERSAL ---
             // Health Check
             '/api/health' => 'PublicApiController@healthCheck',
@@ -85,6 +89,7 @@ class Rotas
             '/api/banners/{id}' => 'PublicApiController@getBannerById',
             "/cliente/pedidos/detalhes/{id}" => "Cliente\PedidosController@detalhes",
             "/cliente/avaliacoes" => "Cliente\AvaliacoesController@index",
+            "/backend/cliente/avaliacoes" => "Cliente\AvaliacoesController@index",
             // Perfil
             "/perfis" => "PerfilController@index",
             "/perfil/criar" => "PerfilController@viewCriarPerfil",
@@ -102,6 +107,7 @@ class Rotas
             "/itenspedidos" => "ItensPedidosController@index",
             "/itenspedidos/criar" => "ItensPedidosController@viewCriarItemPedido",
             "/itenspedidos/listar" => "ItensPedidosController@viewListarItemPedido",
+            "/backend/itenspedidos/listar" => "ItensPedidosController@viewListarItemPedido",
             "/itenspedidos/listar/{id}" => "ItensPedidosController@viewItemPedidoUnico",
             "/itenspedidos/editar/{id}" => "ItensPedidosController@viewEditarItemPedido",
             "/itenspedidos/excluir/{id}" => "ItensPedidosController@viewExcluirItemPedido",
@@ -111,6 +117,7 @@ class Rotas
             "/pedido" => "PedidosController@index",
             "/pedido/criar" => "PedidosController@viewCriarPedidos",
             "/pedido/listar" => "PedidosController@viewListarPedido",
+            "/backend/pedido/listar" => "PedidosController@viewListarPedido",
             "/pedido/listar/{id}" => "PedidosController@viewPedidoUnico",
             "/pedido/detalhes/{id}" => "PedidosController@viewPedidoUnico",
             "/pedido/editar/{id}" => "PedidosController@viewEditarPedido",
@@ -120,6 +127,7 @@ class Rotas
             '/api/pedidos' => 'PublicApiController@getPedidos',
             //Produtos
             "/produtos/listar" => "ProdutosController@viewListarProduto",
+            "/backend/produtos/listar" => "ProdutosController@viewListarProduto",
             "/produtos/criar" => "ProdutosController@viewCriarProduto",
             "/produtos/listar/{pagina}" => "ProdutosController@viewlistarProduto",
             "/produtos/editar/{id}" => "ProdutosController@viewEditarProdutos",
@@ -130,6 +138,7 @@ class Rotas
             "/avaliacao" => "AvaliacaoController@index",
             "/avaliacao/criar" => "AvaliacaoController@viewCriarAvaliacoes",
             "/avaliacao/listar" => "AvaliacaoController@viewListarAvaliacoes",
+            "/backend/avaliacao/listar" => "AvaliacaoController@viewListarAvaliacoes",
             "/avaliacao/editar/{id}" => "AvaliacaoController@viewEditarAvaliacoes",
             "/avaliacao/excluir/{id}" => "AvaliacaoController@viewExcluirAvaliacoes",
             //Relatórios
@@ -167,12 +176,16 @@ class Rotas
             // Aliases legados (URLs antigas — redirecionam para as rotas corretas)
             '/backend/login' => 'AuthController@login',
             '/backend/admin' => 'AuthController@loginadmin',
+            '/backend/logout' => 'AuthController@logout',
             '/admin/dashboard' => 'Admin\DashboardController@index',
+            '/backend/admin/dashboard' => 'Admin\DashboardController@index',
             '/configuracoes' => 'ConfiguracoesController@index',
+            '/backend/configuracoes' => 'ConfiguracoesController@index',
             '/configuracoes/exportar' => 'ConfiguracoesController@exportarDados',
             '/configuracoes/excluir' => 'ConfiguracoesController@excluirConta',
             '/manutencao' => 'PublicApiController@viewManutencao',
             '/admin/newsletter' => 'NewsletterController@listar',
+            '/backend/admin/newsletter' => 'NewsletterController@listar',
             '/admin/newsletter/excluir/{id}' => 'NewsletterController@excluir',
             '/admin/newsletter/exportar' => 'NewsletterController@exportar',
          ],
@@ -191,6 +204,7 @@ class Rotas
             "/configuracoes/salvar" => 'ConfiguracoesController@salvar',
             // Clientes
             "/cliente/perfil-atualizar/{id}" => "Cliente\DashboardController@atualizarCliente",
+            "/backend/cliente/perfil-atualizar/{id}" => "Cliente\DashboardController@atualizarCliente",
             // Usuarios 
             "/usuario/salvar" => "UsuarioController@salvarUsuario",
             "/usuario/atualizar" => "UsuarioController@atualizarUsuario",

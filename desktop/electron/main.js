@@ -96,8 +96,9 @@ app.whenReady().then(() => {
   });
 
   registerHandlers();
-  // Inicia o serviço de sincronização automática
-  SyncService.startAutoSync();
+  
+  // O SyncService foi desativado porque o Desktop passou a usar acesso direto (MySQL) 
+  // e gravar os dados na mesma base do backend Web.
 
   createWindow();
 

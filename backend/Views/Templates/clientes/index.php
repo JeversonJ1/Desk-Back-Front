@@ -47,8 +47,8 @@
         box-shadow: var(--shadow-sm);
     }
 
-    .stat-card:hover { 
-        border-color: var(--accent); 
+    .stat-card:hover {
+        border-color: var(--accent);
         transform: translateY(-5px);
         box-shadow: var(--shadow-md);
     }
@@ -65,8 +65,21 @@
         border-radius: 12px;
     }
 
-    .stat-info h3 { margin: 0; font-size: 28px; color: var(--text-main); font-weight: 800; }
-    .stat-info p { margin: 0; color: var(--text-muted); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; font-weight: 700; }
+    .stat-info h3 {
+        margin: 0;
+        font-size: 28px;
+        color: var(--text-main);
+        font-weight: 800;
+    }
+
+    .stat-info p {
+        margin: 0;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 1px;
+        font-weight: 700;
+    }
 
     /* --- ÁREA DE AÇÕES (BOTÃO + PESQUISA) --- */
     .actions-bar {
@@ -135,32 +148,127 @@
         border: 1px solid var(--border-color);
     }
 
-    .client-table tbody tr:hover { 
+    .client-table tbody tr:hover {
         transform: scale(1.005);
         box-shadow: var(--shadow-md);
         border-color: var(--accent);
     }
 
-    .client-table td { padding: 18px 15px !important; border: none; vertical-align: middle; }
-    .client-table td:first-child { border-radius: 12px 0 0 12px; border-left: 1px solid var(--border-color); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
-    .client-table td:last-child { border-radius: 0 12px 12px 0; border-right: 1px solid var(--border-color); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+    .client-table td {
+        padding: 18px 15px !important;
+        border: none;
+        vertical-align: middle;
+    }
 
-    .id-column { font-family: monospace; color: var(--text-muted) !important; font-weight: bold; }
-    .email-column { color: var(--text-muted) !important; }
+    .client-table td:first-child {
+        border-radius: 12px 0 0 12px;
+        border-left: 1px solid var(--border-color);
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+    }
 
-    .badge-status { padding: 6px 14px; border-radius: 20px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; }
-    .badge-active { background: rgba(40, 167, 69, 0.1); color: #28a745; border: 1px solid rgba(40, 167, 69, 0.3); }
-    .badge-inactive { background: rgba(220, 53, 69, 0.1); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.3); }
+    .client-table td:last-child {
+        border-radius: 0 12px 12px 0;
+        border-right: 1px solid var(--border-color);
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+    }
 
-    .btn-action-small { padding: 8px 14px; border-radius: 8px; font-size: 11px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: 0.3s; margin: 0 2px; }
-    .btn-view { background: var(--bg-main); color: #4dabf7; border: 1px solid #4dabf7; }
-    .btn-view:hover { background: #4dabf7; color: #000; }
-    .btn-edit { background: var(--bg-main); color: var(--accent); border: 1px solid var(--accent); }
-    .btn-edit:hover { background: var(--accent); color: #000; }
-    .btn-toggle { background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); color: #dc3545; }
-    .btn-toggle:hover { background: #dc3545; color: #fff; transform: scale(1.05); box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2); }
-    .btn-activate { background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.3); color: #28a745; }
-    .btn-activate:hover { background: #28a745 !important; color: #fff !important; transform: scale(1.05); box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2); }
+    .id-column {
+        font-family: monospace;
+        color: var(--text-muted) !important;
+        font-weight: bold;
+    }
+
+    .email-column {
+        color: var(--text-muted) !important;
+    }
+
+    .badge-status {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-active {
+        background: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+        border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+
+    .badge-inactive {
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+        border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+
+    .btn-action-small {
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: 0.3s;
+        margin: 0 2px;
+    }
+
+    .btn-view {
+        background: var(--bg-main);
+        color: #4dabf7;
+        border: 1px solid #4dabf7;
+    }
+
+    .btn-view:hover {
+        background: #4dabf7;
+        color: #000;
+        box-shadow: 0 4px 12px rgba(77, 171, 247, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .btn-edit {
+        background: var(--bg-main);
+        color: var(--accent);
+        border: 1px solid var(--accent);
+    }
+
+    .btn-edit:hover {
+        background: var(--accent);
+        color: #000;
+        box-shadow: 0 4px 12px rgba(197, 160, 45, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .btn-toggle {
+        background: rgba(220, 53, 69, 0.1);
+        border: 1px solid rgba(220, 53, 69, 0.3);
+        color: #dc3545;
+    }
+
+    .btn-toggle:hover {
+        background: #dc3545;
+        color: #fff;
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
+    }
+
+    .btn-activate {
+        background: rgba(40, 167, 69, 0.1);
+        border: 1px solid rgba(40, 167, 69, 0.3);
+        color: #28a745;
+    }
+
+    .btn-activate:hover {
+        background: #28a745 !important;
+        color: #fff !important;
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+    }
 
     .client-avatar {
         width: 45px;
@@ -171,8 +279,13 @@
         box-shadow: var(--shadow-sm);
     }
 
-    .tr-inativo td { background: rgba(220, 53, 69, 0.08) !important; }
-    .tr-inativo td:first-child { border-left: 4px solid #dc3545 !important; }
+    .tr-inativo td {
+        background: rgba(220, 53, 69, 0.08) !important;
+    }
+
+    .tr-inativo td:first-child {
+        border-left: 4px solid #dc3545 !important;
+    }
 </style>
 </style>
 
@@ -191,12 +304,14 @@
             </div>
             <div class="stat-icon"><i class="fas fa-users"></i></div>
         </div>
-        
+
         <div class="stat-card" style="border-left: 4px solid #4caf50;">
             <div class="stat-info">
                 <?php
                 $ativos = 0;
-                foreach($clientes as $c) if(empty($c['excluido_em'])) $ativos++;
+                foreach ($clientes as $c)
+                    if (empty($c['excluido_em']))
+                        $ativos++;
                 ?>
                 <h3><?php echo $ativos; ?></h3>
                 <p>Ativos na Página</p>
@@ -208,7 +323,9 @@
             <div class="stat-info">
                 <?php
                 $inativos = 0;
-                foreach($clientes as $c) if(!empty($c['excluido_em'])) $inativos++;
+                foreach ($clientes as $c)
+                    if (!empty($c['excluido_em']))
+                        $inativos++;
                 ?>
                 <h3><?php echo $inativos; ?></h3>
                 <p>Inativos na Página</p>
@@ -220,7 +337,8 @@
     <div class="actions-bar">
         <div class="search-container">
             <i class="fas fa-search"></i>
-            <input type="text" id="clientInput" onkeyup="filterClients()" placeholder="Buscar cliente por nome ou email..." class="search-input">
+            <input type="text" id="clientInput" onkeyup="filterClients()"
+                placeholder="Buscar cliente por nome ou email..." class="search-input">
         </div>
     </div>
 
@@ -241,27 +359,29 @@
             <tbody>
                 <?php if (count($clientes) > 0): ?>
                     <?php foreach ($clientes as $cliente): ?>
-                    <?php $is_inativo = !empty($cliente['excluido_em']);?>
-                    
-                    <tr class="<?= $is_inativo ? 'tr-inativo' : '' ?>"> 
-                        <td class="id-column">#<?= $cliente['id_usuarios'] ?></td>
-                        <td>
-                            <?php
-                            $foto = !empty($cliente['foto_usuarios']) ? $cliente['foto_usuarios'] : '/img/logoperf.jpg';
-                            if (!filter_var($foto, FILTER_VALIDATE_URL) && strpos($foto, '/img/') === false) {
-                                $foto = '/backend/upload/' . $foto;
-                            }
-                            ?>
-                            <img src="<?= htmlspecialchars($foto) ?>" class="client-avatar" onerror="this.src='/img/logoperf.jpg'">
-                        </td>
-                        <td class="client-name" style="font-weight: 700; color: var(--text-main); font-size: 1.05em;">
-                            <?= htmlspecialchars($cliente['nome_usuarios']) ?>
-                        </td>
-                        <td class="client-email"><?= htmlspecialchars($cliente['email_usuarios']) ?></td>
-                        <td class="client-phone">
-                            <?php if (!empty($cliente['telefone_perfil'])): ?>
-                                <a href="https://wa.me/<?= preg_replace('/\D/', '', $cliente['telefone_perfil']) ?>" target="_blank" style="color: #25d366; text-decoration: none;">
-                                    <?php 
+                        <?php $is_inativo = !empty($cliente['excluido_em']); ?>
+
+                        <tr class="<?= $is_inativo ? 'tr-inativo' : '' ?>">
+                            <td class="id-column">#<?= $cliente['id_usuarios'] ?></td>
+                            <td>
+                                <?php
+                                $foto = !empty($cliente['foto_usuarios']) ? $cliente['foto_usuarios'] : '/img/logoperf.jpg';
+                                if (!filter_var($foto, FILTER_VALIDATE_URL) && strpos($foto, '/img/') === false) {
+                                    $foto = '/backend/upload/' . $foto;
+                                }
+                                ?>
+                                <img src="<?= htmlspecialchars($foto) ?>" class="client-avatar"
+                                    onerror="this.onerror=null; this.src='/img/logoperf.jpg'">
+                            </td>
+                            <td class="client-name" style="font-weight: 700; color: var(--text-main); font-size: 1.05em;">
+                                <?= htmlspecialchars($cliente['nome_usuarios']) ?>
+                            </td>
+                            <td class="client-email"><?= htmlspecialchars($cliente['email_usuarios']) ?></td>
+                            <td class="client-phone">
+                                <?php if (!empty($cliente['telefone_perfil'])): ?>
+                                    <a href="https://wa.me/<?= preg_replace('/\D/', '', $cliente['telefone_perfil']) ?>"
+                                        target="_blank" style="color: #25d366; text-decoration: none;">
+                                        <?php
                                         $tel = preg_replace('/\D/', '', $cliente['telefone_perfil']);
                                         if (strlen($tel) == 11) {
                                             $formatted = '(' . substr($tel, 0, 2) . ') ' . substr($tel, 2, 1) . ' ' . substr($tel, 3, 4) . '-' . substr($tel, 7);
@@ -270,41 +390,44 @@
                                         } else {
                                             $formatted = $cliente['telefone_perfil'];
                                         }
-                                    ?>
-                                    <i class="fab fa-whatsapp"></i> <?= htmlspecialchars($formatted) ?>
+                                        ?>
+                                        <i class="fab fa-whatsapp"></i> <?= htmlspecialchars($formatted) ?>
+                                    </a>
+                                <?php else: ?>
+                                    <span style="color: var(--text-muted);">Não inf.</span>
+                                <?php endif; ?>
+                            </td>
+                            <td style="color: var(--text-muted); font-size: 13px;">
+                                <?= date('d/m/Y', strtotime($cliente['criado_em'])) ?>
+                            </td>
+
+                            <td style="text-align: center;">
+                                <?php if ($is_inativo): ?>
+                                    <span class="badge-status badge-inactive">Inativo</span>
+                                <?php else: ?>
+                                    <span class="badge-status badge-active">Ativo</span>
+                                <?php endif; ?>
+                            </td>
+
+                            <td style="text-align: center;">
+                                <a href="/backend/usuario/editar/<?= $cliente['id_usuarios'] ?>"
+                                    class="btn-action-small btn-edit">
+                                    <i class="fas fa-pencil-alt"></i> Editar
                                 </a>
-                            <?php else: ?>
-                                <span style="color: var(--text-muted);">Não inf.</span>
-                            <?php endif; ?>
-                        </td>
-                        <td style="color: var(--text-muted); font-size: 13px;">
-                            <?= date('d/m/Y', strtotime($cliente['criado_em'])) ?>
-                        </td>
-                        
-                        <td style="text-align: center;">
-                            <?php if ($is_inativo): ?>
-                                <span class="badge-status badge-inactive">Inativo</span>
-                            <?php else: ?>
-                                <span class="badge-status badge-active">Ativo</span>
-                            <?php endif; ?>
-                        </td>
-                        
-                        <td style="text-align: center;">
-                            <a href="/backend/usuario/editar/<?= $cliente['id_usuarios'] ?>" class="btn-action-small btn-edit">
-                                <i class="fas fa-pencil-alt"></i> Editar
-                            </a>
-                            
-                            <?php if ($is_inativo): ?>
-                                <a href="/backend/usuario/ativar/<?= $cliente['id_usuarios'] ?>" class="btn-action-small btn-activate">
-                                    <i class="fas fa-check"></i> Ativar
-                                </a>
-                            <?php else: ?>
-                                <a href="/backend/usuario/excluir/<?= $cliente['id_usuarios'] ?>" class="btn-action-small btn-toggle">
-                                    <i class="fas fa-power-off"></i> Inativar
-                                </a>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
+
+                                <?php if ($is_inativo): ?>
+                                    <a href="/backend/usuario/ativar/<?= $cliente['id_usuarios'] ?>"
+                                        class="btn-action-small btn-activate">
+                                        <i class="fas fa-check"></i> Ativar
+                                    </a>
+                                <?php else: ?>
+                                    <a href="/backend/usuario/excluir/<?= $cliente['id_usuarios'] ?>"
+                                        class="btn-action-small btn-toggle">
+                                        <i class="fas fa-power-off"></i> Inativar
+                                    </a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
@@ -322,31 +445,31 @@
 <div style="height: 60px;"></div>
 
 <script>
-function filterClients() {
-    var input, filter, table, tr, td_name, td_email, td_phone, i, nameValue, emailValue, phoneValue;
-    input = document.getElementById("clientInput");
-    filter = input.value.toUpperCase();
-    table = document.getElementById("clientTable");
-    tr = table.getElementsByTagName("tr");
+    function filterClients() {
+        var input, filter, table, tr, td_name, td_email, td_phone, i, nameValue, emailValue, phoneValue;
+        input = document.getElementById("clientInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("clientTable");
+        tr = table.getElementsByTagName("tr");
 
-    for (i = 1; i < tr.length; i++) {
-        td_name = tr[i].getElementsByClassName("client-name")[0];
-        td_email = tr[i].getElementsByClassName("client-email")[0];
-        td_phone = tr[i].getElementsByClassName("client-phone")[0];
-        
-        if (td_name || td_email || td_phone) {
-            nameValue = td_name ? (td_name.textContent || td_name.innerText) : "";
-            emailValue = td_email ? (td_email.textContent || td_email.innerText) : "";
-            phoneValue = td_phone ? (td_phone.textContent || td_phone.innerText) : "";
-            
-            if (nameValue.toUpperCase().indexOf(filter) > -1 || 
-                emailValue.toUpperCase().indexOf(filter) > -1 ||
-                phoneValue.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
+        for (i = 1; i < tr.length; i++) {
+            td_name = tr[i].getElementsByClassName("client-name")[0];
+            td_email = tr[i].getElementsByClassName("client-email")[0];
+            td_phone = tr[i].getElementsByClassName("client-phone")[0];
+
+            if (td_name || td_email || td_phone) {
+                nameValue = td_name ? (td_name.textContent || td_name.innerText) : "";
+                emailValue = td_email ? (td_email.textContent || td_email.innerText) : "";
+                phoneValue = td_phone ? (td_phone.textContent || td_phone.innerText) : "";
+
+                if (nameValue.toUpperCase().indexOf(filter) > -1 ||
+                    emailValue.toUpperCase().indexOf(filter) > -1 ||
+                    phoneValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
             }
         }
     }
-}
 </script>

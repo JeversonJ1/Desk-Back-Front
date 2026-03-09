@@ -25,32 +25,10 @@ async function mapProdutosComCategorias(produtos) {
 function registerProductHandlers() {
   ipcMain.handle('produtos:listar', requireAuth(async () => {
     try {
-      // 1. Retornar imediatamente do MySQL (fonte de verdade)
+      // Retornar do MySQL (agora como fonte de verdade primária e única do Desktop)
       const produtos = await Database.produtos.listar();
       const produtosComCategorias = await mapProdutosComCategorias(produtos);
-      Logger.log(`Produtos carregados do SQLite: ${produtos.length}`);
-
-      // 2. Sincronização com API em background (best-effort, não bloqueia)
-      setImmediate(async () => {
-        try {
-          const ApiService = require('../services/apiService');
-          const jsonCat = await ApiService.getCategorias();
-          if (jsonCat?.status === 'success' && Array.isArray(jsonCat.data)) {
-            for (const cat of jsonCat.data) await Database.categorias.sincronizar(cat, false);
-          }
-        } catch (e) { /* Ignore: API offline */ }
-
-        try {
-          const ApiService = require('../services/apiService');
-          const jsonProd = await ApiService.getProdutos();
-          if (jsonProd?.status === 'success' && Array.isArray(jsonProd.data)) {
-            Logger.log(`Sync background: ${jsonProd.data.length} produtos da API.`);
-            for (const item of jsonProd.data) {
-              await Database.produtos.sincronizar(item, false);
-            }
-          }
-        } catch (e) { Logger.warn('Sync background falhou: ' + e.message); }
-      });
+      Logger.log(`Produtos carregados do MySQL: ${produtos.length}`);
 
       return produtosComCategorias;
     } catch (error) {
@@ -93,7 +71,8 @@ function registerProductHandlers() {
 
   ipcMain.handle('produtos:atualizar', requireAuth(async (e, produto) => {
     try {
-      if (!Validator._validate('id', produto.id)) {
+      produto.id = parseInt(produto.id, 10);
+      if (isNaN(produto.id) || produto.id <= 0) {
         throw new Error('ID do produto inválido');
       }
 
@@ -129,12 +108,13 @@ function registerProductHandlers() {
 
   ipcMain.handle('produtos:excluir', requireAuth(async (e, id) => {
     try {
-      if (!Validator._validate('id', id)) {
+      const parsedId = parseInt(id, 10);
+      if (isNaN(parsedId) || parsedId <= 0) {
         throw new Error('ID inválido');
       }
 
-      await Database.produtos.excluir(id);
-      Logger.log(`Produto excluído. ID: ${id}`);
+      await Database.produtos.excluir(parsedId);
+      Logger.log(`Produto excluído. ID: ${parsedId}`);
       return { sucesso: true };
     } catch (error) {
       Logger.error('Erro ao excluir produto', error.message);

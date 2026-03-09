@@ -39,14 +39,19 @@ function registerSizeHandlers() {
 
   ipcMain.handle('tamanhos:criar', requireAuth(async (e, tamanho) => {
     try {
+      const produtoId = parseInt(tamanho.produto_id);
+      if (!produtoId || produtoId <= 0) {
+        throw new Error(`produto_id inválido: "${tamanho.produto_id}"`);
+      }
+
       const novoTamanho = await Database.tamanhos.criar({
-        id_produto: tamanho.produto_id,
+        id_produto: produtoId,
         tamanho: tamanho.tamanho,
         quantidade: parseInt(tamanho.quantidade) || 0
       });
 
       const tamanhoResposta = mapTamanho(novoTamanho);
-      Logger.log(`Tamanho criado. ID: ${tamanhoResposta.id}, Produto: ${tamanho.produto_id}`);
+      Logger.log(`Tamanho criado. ID: ${tamanhoResposta.id}, Produto: ${produtoId}`);
       return { sucesso: true, id: tamanhoResposta.id, tamanho: tamanhoResposta };
     } catch (error) {
       Logger.error('Erro ao criar tamanho', error.message);

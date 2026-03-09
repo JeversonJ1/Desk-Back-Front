@@ -8,7 +8,7 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
             <a href="/backend/cliente/dashboard" class="back-btn"><i class="fa fa-arrow-left"></i> Voltar ao Perfil</a>
             <h1><i class="fa fa-star"></i> Suas Avaliações</h1>
         </div>
-        
+
         <?php if (!empty($produtos)): ?>
             <button class="btn-nova-avaliacao" onclick="abrirModal()"><i class="fa fa-plus"></i> Nova Avaliação</button>
         <?php endif; ?>
@@ -25,7 +25,7 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
             <div class="empty-state">
                 <div class="empty-icon"><i class="fa fa-star-o"></i></div>
                 <h2>Nenhuma avaliação encontrada</h2>
-                
+
                 <?php if (!empty($produtos)): ?>
                     <p>Você tem produtos que podem ser avaliados!</p>
                     <button class="btn-primeira-avaliacao" onclick="abrirModal()">Fazer minha primeira avaliação</button>
@@ -40,23 +40,27 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
                     <div class="avaliacao-card-body">
                         <div class="avaliacao-produto-img">
                             <?php
-                                // Buscar imagem do produto
-                                $imgSrc = '/img/logoperf.jpg';
-                                if (!empty($avaliacao['imagem_produtos'])) {
-                                    $imgSrc = '/backend/upload/' . $avaliacao['imagem_produtos'];
-                                }
+                            // Buscar imagem do produto
+                            $imgSrc = '/img/logoperf.jpg';
+                            if (!empty($avaliacao['imagem_produtos'])) {
+                                $imgSrc = '/backend/upload/' . $avaliacao['imagem_produtos'];
+                            }
                             ?>
-                            <img src="<?= htmlspecialchars($imgSrc) ?>" alt="Produto" onerror="this.src='/img/logoperf.jpg';">
+                            <img src="<?= htmlspecialchars($imgSrc) ?>" alt="Produto"
+                                onerror="this.onerror=null; this.src='/img/logoperf.jpg';">
                         </div>
                         <div class="avaliacao-info">
-                            <h3 class="avaliacao-produto-nome"><?= htmlspecialchars($avaliacao['nome_produto'] ?? 'Produto') ?></h3>
+                            <h3 class="avaliacao-produto-nome"><?= htmlspecialchars($avaliacao['nome_produto'] ?? 'Produto') ?>
+                            </h3>
                             <p class="avaliacao-data">
-                                <i class="fa fa-calendar"></i> 
-                                Avaliado em <?= date('d/m/Y', strtotime($avaliacao['data_avaliacao_avaliacoes'] ?? $avaliacao['criado_em'])) ?>
+                                <i class="fa fa-calendar"></i>
+                                Avaliado em
+                                <?= date('d/m/Y', strtotime($avaliacao['data_avaliacao_avaliacoes'] ?? $avaliacao['criado_em'])) ?>
                             </p>
                             <div class="avaliacao-estrelas">
                                 <?php for ($i = 1; $i <= 5; $i++): ?>
-                                    <i class="fa fa-star <?= $i <= $avaliacao['nota_avaliacoes'] ? 'star-filled' : 'star-empty' ?>"></i>
+                                    <i
+                                        class="fa fa-star <?= $i <= $avaliacao['nota_avaliacoes'] ? 'star-filled' : 'star-empty' ?>"></i>
                                 <?php endfor; ?>
                                 <span class="nota-texto"><?= $avaliacao['nota_avaliacoes'] ?>/5</span>
                             </div>
@@ -68,10 +72,13 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
                         </div>
                     </div>
                     <div class="avaliacao-card-footer">
-                        <button class="btn-editar" onclick="abrirModalEditar(<?= $avaliacao['id_avaliacoes'] ?>, <?= $avaliacao['id_produto'] ?>, <?= $avaliacao['nota_avaliacoes'] ?>, '<?= addslashes(htmlspecialchars($avaliacao['comentario_avaliacoes'] ?? '')) ?>')">
+                        <button class="btn-editar"
+                            onclick="abrirModalEditar(<?= $avaliacao['id_avaliacoes'] ?>, <?= $avaliacao['id_produto'] ?>, <?= $avaliacao['nota_avaliacoes'] ?>, '<?= addslashes(htmlspecialchars($avaliacao['comentario_avaliacoes'] ?? '')) ?>')">
                             <i class="fa fa-pencil"></i> Editar Avaliação
                         </button>
-                        <form action="/backend/cliente/avaliacao/excluir/<?= $avaliacao['id_avaliacoes'] ?>" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir esta avaliação?');">
+                        <form action="/backend/cliente/avaliacao/excluir/<?= $avaliacao['id_avaliacoes'] ?>" method="POST"
+                            style="display:inline;"
+                            onsubmit="return confirm('Tem certeza que deseja excluir esta avaliação?');">
                             <button type="submit" class="btn-excluir">
                                 <i class="fa fa-trash"></i> Excluir Avaliação
                             </button>
@@ -104,7 +111,8 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
                     <option value="">Selecione um produto...</option>
                     <?php if (!empty($produtos)): ?>
                         <?php foreach ($produtos as $produto): ?>
-                            <option value="<?= $produto['id_produto'] ?>"><?= htmlspecialchars($produto['nome_produtos']) ?></option>
+                            <option value="<?= $produto['id_produto'] ?>"><?= htmlspecialchars($produto['nome_produtos']) ?>
+                            </option>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </select>
@@ -124,7 +132,8 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
 
             <div class="form-group">
                 <label>Comentário (opcional)</label>
-                <textarea name="comentario" id="inputComentario" placeholder="Conte sua experiência com este produto..." maxlength="500" rows="4"></textarea>
+                <textarea name="comentario" id="inputComentario" placeholder="Conte sua experiência com este produto..."
+                    maxlength="500" rows="4"></textarea>
                 <span class="char-count"><span id="charCount">0</span>/500 caracteres</span>
             </div>
 
@@ -191,7 +200,11 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
         transition: 0.3s;
         font-size: 0.85rem;
     }
-    .back-btn:hover { background: var(--k-gold); color: #000; }
+
+    .back-btn:hover {
+        background: var(--k-gold);
+        color: #000;
+    }
 
     .avaliacoes-header h1 {
         margin: 0;
@@ -200,7 +213,10 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
         font-size: 1.5rem;
         letter-spacing: 1px;
     }
-    .avaliacoes-header h1 i { color: var(--k-gold); }
+
+    .avaliacoes-header h1 i {
+        color: var(--k-gold);
+    }
 
     .btn-nova-avaliacao {
         padding: 10px 20px;
@@ -216,7 +232,11 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
         align-items: center;
         gap: 8px;
     }
-    .btn-nova-avaliacao:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(242, 204, 125, 0.4); }
+
+    .btn-nova-avaliacao:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(242, 204, 125, 0.4);
+    }
 
     .avaliacoes-descricao {
         color: var(--muted-custom);
@@ -236,7 +256,10 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
     }
 
     /* Cards */
-    .avaliacoes-lista { display: grid; gap: 20px; }
+    .avaliacoes-lista {
+        display: grid;
+        gap: 20px;
+    }
 
     .avaliacao-card {
         background: var(--bg-card-custom);
@@ -246,6 +269,7 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
         box-shadow: var(--shadow-sm);
         transition: 0.3s;
     }
+
     .avaliacao-card:hover {
         transform: translateY(-3px);
         box-shadow: var(--shadow-md);
@@ -266,13 +290,16 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
         overflow: hidden;
         border: 2px solid var(--border-custom);
     }
+
     .avaliacao-produto-img img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
 
-    .avaliacao-info { flex: 1; }
+    .avaliacao-info {
+        flex: 1;
+    }
 
     .avaliacao-produto-nome {
         margin: 0 0 5px 0;
@@ -286,12 +313,30 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
         font-size: 0.8rem;
         margin: 0 0 10px 0;
     }
-    .avaliacao-data i { margin-right: 5px; }
 
-    .avaliacao-estrelas { margin-bottom: 10px; }
-    .avaliacao-estrelas .star-filled { color: #f39c12; font-size: 1rem; }
-    .avaliacao-estrelas .star-empty { color: #555; font-size: 1rem; }
-    .nota-texto { color: var(--muted-custom); font-size: 0.85rem; margin-left: 8px; }
+    .avaliacao-data i {
+        margin-right: 5px;
+    }
+
+    .avaliacao-estrelas {
+        margin-bottom: 10px;
+    }
+
+    .avaliacao-estrelas .star-filled {
+        color: #f39c12;
+        font-size: 1rem;
+    }
+
+    .avaliacao-estrelas .star-empty {
+        color: #555;
+        font-size: 1rem;
+    }
+
+    .nota-texto {
+        color: var(--muted-custom);
+        font-size: 0.85rem;
+        margin-left: 8px;
+    }
 
     .avaliacao-comentario {
         padding: 12px 18px;
@@ -324,7 +369,11 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
         cursor: pointer;
         transition: 0.3s;
     }
-    .btn-editar:hover { background: var(--k-gold); color: #000; }
+
+    .btn-editar:hover {
+        background: var(--k-gold);
+        color: #000;
+    }
 
     .btn-excluir {
         padding: 8px 18px;
@@ -337,16 +386,35 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
         cursor: pointer;
         transition: 0.3s;
     }
-    .btn-excluir:hover { background: #e74c3c; color: #fff; }
+
+    .btn-excluir:hover {
+        background: #e74c3c;
+        color: #fff;
+    }
 
     /* Empty State */
     .empty-state {
         text-align: center;
         padding: 60px 20px;
     }
-    .empty-icon { font-size: 3rem; color: var(--k-gold); margin-bottom: 15px; opacity: 0.6; }
-    .empty-state h2 { color: var(--text-color-custom); font-family: 'Oswald', sans-serif; margin-bottom: 10px; }
-    .empty-state p { color: var(--muted-custom); }
+
+    .empty-icon {
+        font-size: 3rem;
+        color: var(--k-gold);
+        margin-bottom: 15px;
+        opacity: 0.6;
+    }
+
+    .empty-state h2 {
+        color: var(--text-color-custom);
+        font-family: 'Oswald', sans-serif;
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        color: var(--muted-custom);
+    }
+
     .btn-primeira-avaliacao {
         display: inline-block;
         background: linear-gradient(135deg, var(--k-gold), var(--k-gold-dark));
@@ -360,7 +428,11 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
         transition: 0.3s;
         text-decoration: none;
     }
-    .btn-primeira-avaliacao:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(242, 204, 125, 0.4); }
+
+    .btn-primeira-avaliacao:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(242, 204, 125, 0.4);
+    }
 
     /* Modal */
     .modal-overlay {
@@ -390,8 +462,15 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
     }
 
     @keyframes modalIn {
-        from { opacity: 0; transform: translateY(-20px) scale(0.95); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
+        from {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
     }
 
     .modal-close {
@@ -405,7 +484,10 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
         cursor: pointer;
         transition: 0.3s;
     }
-    .modal-close:hover { color: #e74c3c; }
+
+    .modal-close:hover {
+        color: #e74c3c;
+    }
 
     .modal-header-info {
         display: flex;
@@ -426,10 +508,22 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
         font-size: 1.2rem;
     }
 
-    .modal-header-info h3 { margin: 0; font-family: 'Oswald', sans-serif; color: var(--text-color-custom); }
-    .modal-header-info p { margin: 0; font-size: 0.8rem; color: var(--muted-custom); }
+    .modal-header-info h3 {
+        margin: 0;
+        font-family: 'Oswald', sans-serif;
+        color: var(--text-color-custom);
+    }
 
-    .form-group { margin-bottom: 20px; }
+    .modal-header-info p {
+        margin: 0;
+        font-size: 0.8rem;
+        color: var(--muted-custom);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
     .form-group label {
         display: block;
         font-weight: 600;
@@ -451,14 +545,25 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
         transition: border-color 0.3s;
         box-sizing: border-box;
     }
+
     .form-group select:focus,
     .form-group textarea:focus {
         outline: none;
         border-color: var(--k-gold) !important;
     }
 
-    .form-group textarea { resize: vertical; min-height: 100px; }
-    .char-count { font-size: 0.75rem; color: var(--muted-custom); text-align: right; display: block; margin-top: 5px; }
+    .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .char-count {
+        font-size: 0.75rem;
+        color: var(--muted-custom);
+        text-align: right;
+        display: block;
+        margin-top: 5px;
+    }
 
     /* Star Rating Input */
     .star-rating {
@@ -466,13 +571,18 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
         gap: 8px;
         font-size: 1.8rem;
     }
+
     .star-input {
         color: #444;
         cursor: pointer;
         transition: 0.2s;
     }
+
     .star-input:hover,
-    .star-input.active { color: #f39c12; transform: scale(1.2); }
+    .star-input.active {
+        color: #f39c12;
+        transform: scale(1.2);
+    }
 
     .modal-actions {
         display: flex;
@@ -491,7 +601,10 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
         cursor: pointer;
         transition: 0.3s;
     }
-    .btn-cancelar:hover { background: rgba(125, 125, 125, 0.1); }
+
+    .btn-cancelar:hover {
+        background: rgba(125, 125, 125, 0.1);
+    }
 
     .btn-enviar {
         padding: 10px 25px;
@@ -503,107 +616,130 @@ $nomeUsuario = $_SESSION['usuario_nome'] ?? 'Cliente';
         cursor: pointer;
         transition: 0.3s;
     }
-    .btn-enviar:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(242, 204, 125, 0.4); }
+
+    .btn-enviar:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(242, 204, 125, 0.4);
+    }
 
     /* Responsive */
     @media (max-width: 768px) {
-        .avaliacoes-header { flex-direction: column; align-items: flex-start; gap: 15px; }
-        .avaliacao-card-body { flex-direction: column; }
-        .avaliacao-produto-img { width: 80px; height: 100px; }
-        .avaliacao-card-footer { flex-direction: column; }
-        .btn-editar, .btn-excluir { width: 100%; text-align: center; }
+        .avaliacoes-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .avaliacao-card-body {
+            flex-direction: column;
+        }
+
+        .avaliacao-produto-img {
+            width: 80px;
+            height: 100px;
+        }
+
+        .avaliacao-card-footer {
+            flex-direction: column;
+        }
+
+        .btn-editar,
+        .btn-excluir {
+            width: 100%;
+            text-align: center;
+        }
     }
 </style>
 
 <script>
-let notaAtual = 0;
-let modoEditar = false;
+    let notaAtual = 0;
+    let modoEditar = false;
 
-function setRating(valor) {
-    notaAtual = valor;
-    document.getElementById('inputNota').value = valor;
-    const stars = document.querySelectorAll('.star-input');
-    stars.forEach((star, i) => {
-        if (i < valor) {
-            star.classList.add('active');
-        } else {
-            star.classList.remove('active');
-        }
-    });
-}
-
-function abrirModal() {
-    modoEditar = false;
-    document.getElementById('modalTitulo').textContent = 'Nova Avaliação';
-    document.getElementById('formAvaliacao').action = '/backend/cliente/avaliacao/salvar';
-    document.getElementById('selectProduto').value = '';
-    document.getElementById('inputComentario').value = '';
-    document.getElementById('charCount').textContent = '0';
-    document.getElementById('grupoProduto').style.display = 'block';
-    setRating(0);
-    document.getElementById('modalAvaliacao').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-
-function abrirModalEditar(id, idProduto, nota, comentario) {
-    modoEditar = true;
-    document.getElementById('modalTitulo').textContent = 'Editar Avaliação';
-    document.getElementById('formAvaliacao').action = '/backend/cliente/avaliacao/atualizar/' + id;
-    document.getElementById('inputIdAvaliacao').value = id;
-    document.getElementById('inputComentario').value = comentario;
-    document.getElementById('charCount').textContent = comentario.length;
-    
-    // Configurar produto (mesmo que escondido, deve ter valor para não falhar o required se houver)
-    const selectProduto = document.getElementById('selectProduto');
-    selectProduto.value = idProduto;
-    selectProduto.required = false; // Desativa required no modo edição pois o campo some
-    
-    document.getElementById('grupoProduto').style.display = 'none';
-    setRating(nota);
-    document.getElementById('modalAvaliacao').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-
-function validarESubmeter() {
-    const nota = document.getElementById('inputNota').value;
-    if (nota == 0) {
-        alert('Por favor, selecione uma nota de 1 a 5 estrelas.');
-        return;
-    }
-    
-    if (!modoEditar) {
-        const produto = document.getElementById('selectProduto').value;
-        if (!produto) {
-            alert('Por favor, selecione um produto.');
-            return;
-        }
-    }
-    
-    document.getElementById('formAvaliacao').submit();
-}
-
-function fecharModal() {
-    document.getElementById('modalAvaliacao').style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
-
-// Fechar ao clicar fora
-document.addEventListener('click', function(e) {
-    if (e.target.id === 'modalAvaliacao') fecharModal();
-});
-
-// Contador de caracteres
-document.addEventListener('DOMContentLoaded', function() {
-    const textarea = document.getElementById('inputComentario');
-    if (textarea) {
-        textarea.addEventListener('input', function() {
-            document.getElementById('charCount').textContent = this.value.length;
+    function setRating(valor) {
+        notaAtual = valor;
+        document.getElementById('inputNota').value = valor;
+        const stars = document.querySelectorAll('.star-input');
+        stars.forEach((star, i) => {
+            if (i < valor) {
+                star.classList.add('active');
+            } else {
+                star.classList.remove('active');
+            }
         });
     }
-});
 
-// Fechar com ESC
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') fecharModal();
-});
+    function abrirModal() {
+        modoEditar = false;
+        document.getElementById('modalTitulo').textContent = 'Nova Avaliação';
+        document.getElementById('formAvaliacao').action = '/backend/cliente/avaliacao/salvar';
+        document.getElementById('selectProduto').value = '';
+        document.getElementById('inputComentario').value = '';
+        document.getElementById('charCount').textContent = '0';
+        document.getElementById('grupoProduto').style.display = 'block';
+        setRating(0);
+        document.getElementById('modalAvaliacao').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function abrirModalEditar(id, idProduto, nota, comentario) {
+        modoEditar = true;
+        document.getElementById('modalTitulo').textContent = 'Editar Avaliação';
+        document.getElementById('formAvaliacao').action = '/backend/cliente/avaliacao/atualizar/' + id;
+        document.getElementById('inputIdAvaliacao').value = id;
+        document.getElementById('inputComentario').value = comentario;
+        document.getElementById('charCount').textContent = comentario.length;
+
+        // Configurar produto (mesmo que escondido, deve ter valor para não falhar o required se houver)
+        const selectProduto = document.getElementById('selectProduto');
+        selectProduto.value = idProduto;
+        selectProduto.required = false; // Desativa required no modo edição pois o campo some
+
+        document.getElementById('grupoProduto').style.display = 'none';
+        setRating(nota);
+        document.getElementById('modalAvaliacao').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function validarESubmeter() {
+        const nota = document.getElementById('inputNota').value;
+        if (nota == 0) {
+            alert('Por favor, selecione uma nota de 1 a 5 estrelas.');
+            return;
+        }
+
+        if (!modoEditar) {
+            const produto = document.getElementById('selectProduto').value;
+            if (!produto) {
+                alert('Por favor, selecione um produto.');
+                return;
+            }
+        }
+
+        document.getElementById('formAvaliacao').submit();
+    }
+
+    function fecharModal() {
+        document.getElementById('modalAvaliacao').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    // Fechar ao clicar fora
+    document.addEventListener('click', function (e) {
+        if (e.target.id === 'modalAvaliacao') fecharModal();
+    });
+
+    // Contador de caracteres
+    document.addEventListener('DOMContentLoaded', function () {
+        const textarea = document.getElementById('inputComentario');
+        if (textarea) {
+            textarea.addEventListener('input', function () {
+                document.getElementById('charCount').textContent = this.value.length;
+            });
+        }
+    });
+
+    // Fechar com ESC
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') fecharModal();
+    });
 </script>

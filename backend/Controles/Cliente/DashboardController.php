@@ -10,14 +10,16 @@ use App\Koketsu\Models\Perfil;
 use App\Koketsu\Models\Pedidos;
 use App\Koketsu\Controles\Admin\AuthenticatedController;
 
-class DashboardController extends AuthenticatedController{
+class DashboardController extends AuthenticatedController
+{
     public $usuario;
     public $perfil;
     public $pedidos;
     public $db;
     public $gerenciarImagem;
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         parent::__construct();
         $this->db = Database::getInstance();
         $this->usuario = new Usuario($this->db);
@@ -25,20 +27,21 @@ class DashboardController extends AuthenticatedController{
         $this->pedidos = new Pedidos($this->db);
         $this->gerenciarImagem = new FileManager(__DIR__ . '/../../../backend/upload');
     }
-    
-    public function index(): void{
+
+    public function index(): void
+    {
         $usuario_id = $this->session->get('usuario_id');
         $perfil = $this->perfil->buscarPerfilPorUsuario($usuario_id);
-        
+
         $pedidosRecentes = $this->pedidos->buscarPedidosPorUsuario($usuario_id);
         $totalPedidos = count($pedidosRecentes);
 
         // Contar avaliações do cliente (todos os perfis)
         $avaliacaoModel = new \App\Koketsu\Models\Avaliacao($this->db);
         $totalAvaliacoes = count($avaliacaoModel->buscarPorUsuario($usuario_id));
-        
+
         // Ordenar e limitar
-        usort($pedidosRecentes, function($a, $b) {
+        usort($pedidosRecentes, function ($a, $b) {
             return strtotime($b['data_pedido']) - strtotime($a['data_pedido']);
         });
         $pedidosRecentes = array_slice($pedidosRecentes, 0, 5);
@@ -54,21 +57,23 @@ class DashboardController extends AuthenticatedController{
         ]);
     }
 
-    public function viewEditarCliente(int $id){
+    public function viewEditarCliente(int $id)
+    {
         $usuario = $this->usuario->buscarPorID($id);
         if (!$usuario) {
             Redirect::redirecionarComMensagem("/cliente/dashboard", "error", "Cliente não encontrado.");
         }
-        
+
         $perfil = $this->perfil->buscarPerfilPorUsuario($id);
-        
+
         View::render("cliente/editar", [
             "usuario" => $usuario,
             "perfil" => $perfil
         ]);
     }
 
-    public function atualizarCliente(int $id) {
+    public function atualizarCliente(int $id)
+    {
         $usuario = $this->usuario->buscarPorID($id);
         if (!$usuario) {
             Redirect::redirecionarComMensagem("/cliente/dashboard", "error", "Cliente não encontrado.");
@@ -83,15 +88,15 @@ class DashboardController extends AuthenticatedController{
         if (empty($nome)) {
             Redirect::redirecionarComMensagem("/backend/cliente/meu-perfil/$id", "error", "Nome é obrigatório.");
         }
-    
+
         if (empty($email)) {
             Redirect::redirecionarComMensagem("/backend/cliente/meu-perfil/$id", "error", "Email é obrigatório.");
         }
-    
+
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             Redirect::redirecionarComMensagem("/backend/cliente/meu-perfil/$id", "error", "Email inválido.");
         }
-    
+
         // Se uma nova senha foi fornecida
         if (!empty($senha)) {
             if (strlen($senha) < 6) {

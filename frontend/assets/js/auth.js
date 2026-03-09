@@ -66,8 +66,32 @@
 
         // Dropdown nome e link perfil
         if (els.ddName) els.ddName.textContent = user.nome || 'Cliente';
-        if (els.ddProfileLink) {
-            els.ddProfileLink.href = '/backend/cliente/meu-perfil/' + (user.id || '0');
+
+        const ddBadge = document.querySelector('.dd-badge');
+        const userDropdownLinks = document.querySelector('.user-dropdown-links');
+
+        if (user.tipo === 'admin') {
+            if (ddBadge) ddBadge.textContent = 'Administrador';
+            if (userDropdownLinks) {
+                userDropdownLinks.innerHTML = `
+                    <a href="/backend/admin/dashboard"><i class="bi bi-speedometer2"></i> Painel Admin</a>
+                    <div class="user-dropdown-divider"></div>
+                    <a class="logout-link" href="/backend/logout"><i class="bi bi-box-arrow-right"></i> Sair</a>
+                `;
+            }
+        } else {
+            if (ddBadge) ddBadge.textContent = 'Membro Koketsu';
+            if (userDropdownLinks) {
+                userDropdownLinks.innerHTML = `
+                    <a id="ddProfileLink" href="/backend/cliente/meu-perfil/${user.id || '0'}"><i class="bi bi-person"></i> Meu Perfil</a>
+                    <a href="/backend/cliente/pedidos"><i class="bi bi-bag-check"></i> Meus Pedidos</a>
+                    <a href="/backend/configuracoes"><i class="bi bi-gear"></i> Preferências</a>
+                    <div class="user-dropdown-divider"></div>
+                    <a href="#" id="ddLogoutBtn" class="logout-link"><i class="bi bi-box-arrow-right"></i> Sair</a>
+                `;
+                const newLogoutBtn = document.getElementById('ddLogoutBtn');
+                if (newLogoutBtn) newLogoutBtn.addEventListener('click', handleLogout);
+            }
         }
     }
 
@@ -149,13 +173,13 @@
     async function handleLogout(e) {
         e.preventDefault();
         try {
-            await fetch(LOGOUT_URL, { credentials: 'same-origin' });
+            await fetch(LOGOUT_URL, { credentials: 'same-origin', redirect: 'follow' });
         } catch (err) {
             // fallback: vai funcionar mesmo assim pois a sessão é destruída
         }
         showLoggedOut();
-        // Recarregar para limpar qualquer estado
-        window.location.reload();
+        // Redireciona para home, saindo de áreas protegidas (admin ou painel cliente)
+        window.location.href = '/';
     }
 
     // === Modal Controls ===
@@ -262,11 +286,15 @@
             }
         });
 
-        // Logout
-        const logoutBtn = document.getElementById('ddLogoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', handleLogout);
-        }
+        // Logout e Perfil via Delegação de Eventos (pois o HTML é recriado dinamicamente)
+        document.addEventListener('click', function (e) {
+            // Logout
+            let logoutBtn = e.target.closest('#ddLogoutBtn');
+            if (logoutBtn) {
+                e.preventDefault();
+                handleLogout(e);
+            }
+        });
     }
 
     // === Inicializar ===

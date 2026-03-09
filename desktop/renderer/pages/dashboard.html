@@ -82,8 +82,8 @@
           <div class="card metric-card metric-valor" onclick="window.location.href='produtos.html'"
             style="cursor: pointer;">
             <div class="card-body">
-              <h6 class="card-title">Valor Total</h6>
-              <h3 id="valorEstoque">R$ 0</h3>
+              <h6 class="card-title">Receita Total</h6>
+              <h3 id="valorVendas">R$ 0,00</h3>
               <small id="tendenciaValor" class="text-muted"></small>
             </div>
           </div>
@@ -94,7 +94,14 @@
       <div class="row mb-4">
         <div class="col-lg-8">
           <div class="card">
-            <h3>Vendas por Mês</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;">Vendas</h3>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-warning btn-sm btn-filtro-vendas" id="btn-filtro-dia" onclick="mudarFiltroVendas('dia')">Dia</button>
+                    <button type="button" class="btn btn-outline-warning btn-sm btn-filtro-vendas active" id="btn-filtro-mes" onclick="mudarFiltroVendas('mes')">Mês</button>
+                    <button type="button" class="btn btn-outline-warning btn-sm btn-filtro-vendas" id="btn-filtro-ano" onclick="mudarFiltroVendas('ano')">Ano</button>
+                </div>
+            </div>
             <div class="chart-container vendas">
               <canvas id="vendasChart"></canvas>
             </div>

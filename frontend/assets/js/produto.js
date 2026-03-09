@@ -82,6 +82,12 @@ const ProductDetailManager = (() => {
         const prodCat = document.getElementById('product-category');
         if (prodCat) prodCat.textContent = product.categoriaOrigem;
 
+        const prodDesc = document.getElementById('product-long-desc');
+        if (prodDesc) prodDesc.textContent = product.descricao || 'Nenhuma descrição disponível para este produto.';
+
+        const prodShortDesc = document.getElementById('product-short-desc');
+        if (prodShortDesc) prodShortDesc.textContent = product.descricao || 'Nenhuma descrição disponível para este produto.';
+
         // Imagem
         const mainImg = document.getElementById('main-product-img');
         if (mainImg) {

@@ -20,6 +20,12 @@ public $db;
 
 public function __construct() {
     parent::__construct();
+    
+    // Bloquear vendedor de gerenciar produtos
+    if ($this->session->get('usuario_tipo') === 'vendedor') {
+        Redirect::redirecionarComMensagem("/backend/admin/dashboard", "error", "Acesso restrito apenas a administradores.");
+    }
+
     $this->db = Database::getInstance();
     $this->produtos = new Produtos($this->db);
     $this->corModel = new Cor($this->db);
@@ -60,12 +66,12 @@ public function viewProdutoUnico(int $id_produto) {
         
         if ($produto) {
            
-            \App\Koketsu\Core\View::render('produtos/detalhes', [
+            View::render('produtos/detalhes', [
                 'produto' => $produto
             ]);
         } else {
           
-            \App\Koketsu\Core\Redirect::redirecionarComMensagem("/produto/listar", "error", "Produto não encontrado.");
+            Redirect::redirecionarComMensagem("/produto/listar", "error", "Produto não encontrado.");
         }
     }
     

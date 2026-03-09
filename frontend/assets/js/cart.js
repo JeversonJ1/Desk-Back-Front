@@ -76,7 +76,6 @@ const CartManager = (() => {
     }
 
     saveCart(cart);
-    showToast(`${product.nome} (${size}${color ? ` - ${color}` : ''}) adicionado!`);
     return cart;
   };
 

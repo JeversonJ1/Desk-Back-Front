@@ -97,8 +97,8 @@ public function authenticaradmin(): void {
     $usuario = $this->usuarioModel->checarCredenciais($email, $senha);
 
     if ($usuario) {
-        if ($usuario['nivel_acesso'] !== 'admin') {
-            Redirect::redirecionarComMensagem('/admin', 'error', 'Este login é restrito para administradores.');
+        if (!in_array($usuario['nivel_acesso'], ['admin', 'vendedor'])) {
+            Redirect::redirecionarComMensagem('/admin', 'error', 'Este login é restrito para administradores e vendedores.');
             return;
         }
 

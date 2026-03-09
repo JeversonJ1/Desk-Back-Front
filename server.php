@@ -47,21 +47,14 @@ if (file_exists($frontendFile) && is_file($frontendFile)) {
 }
 
 // ── 4. Arquivos estáticos do backend (uploads, assets do painel) ─────────────
-$backendFile = __DIR__ . '/backend' . $uri;
+// Corrigir erro onde o desktop tenta carregar `/backend/upload/...` e duplica o backend.
+$backendFile = str_starts_with($uri, '/backend') ? __DIR__ . $uri : __DIR__ . '/backend' . $uri;
 if (file_exists($backendFile) && is_file($backendFile)) {
     return false;
 }
 
-// ── 4.5. Fallback para imagens ausentes no diretório de uploads ─────────────
-// Se a imagem não for encontrada no disco, retornar a logo em vez de um erro 404.
-if (strpos($uri, '/backend/upload/') === 0) {
-    $fallback = __DIR__ . '/frontend/assets/img/logo.png';
-    if (file_exists($fallback)) {
-        header('Content-Type: image/png');
-        readfile($fallback);
-        return true;
-    }
-}
+// ── 4.5. Imagens ausentes no upload retornam 404 padrão ──────────────────────
+// (fallback de logo removido — o frontend trata a ausência de imagem adequadamente)
 
 // ── 5. Todas as rotas do backend (admin, api, auth, painel, cliente) ──────────
 $backendPrefixes = '/^\/(
@@ -96,7 +89,13 @@ $backendPrefixes = '/^\/(
     newsletter
 )(\/|$)/xi';
 
-if (preg_match($backendPrefixes, $uri) || $uri === '/') {
+// ── 5a. Rota raiz: serve o frontend ──────────────────────────────────────────
+if ($uri === '/') {
+    require_once __DIR__ . '/frontend/index.html';
+    return true;
+}
+
+if (preg_match($backendPrefixes, $uri)) {
     require_once __DIR__ . '/backend/index.php';
     return true;
 }

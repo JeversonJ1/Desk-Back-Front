@@ -76,10 +76,10 @@ const ReviewManager = (() => {
                 <div class="review-header d-flex justify-content-between align-items-start mb-3">
                     <div class="reviewer-info d-flex align-items-center">
                         <div class="reviewer-avatar-mini me-3">
-                            <img src="${review.foto_usuarios ? '/backend/upload/' + review.foto_usuarios : '/assets/img/manutencao.png'}" 
+                            <img src="${review.foto_usuarios ? '/backend/upload/' + review.foto_usuarios : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}" 
                                  class="rounded-circle" 
                                  style="width: 40px; height: 40px; object-fit: cover; border: 1px solid var(--gold-primary);"
-                                 onerror="this.onerror=null; this.src='/assets/img/manutencao.png'">
+                                 onerror="this.onerror=null; this.src='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'">
                         </div>
                         <div>
                             <span class="reviewer-name fw-bold text-white d-block mb-1">${review.nome_cliente}</span>
@@ -249,10 +249,10 @@ const ReviewManager = (() => {
                                 <div class="row g-0 align-items-center">
                                     <div class="col-md-4 d-none d-md-block">
                                         <div class="review-img-wrapper" style="height: 350px; overflow: hidden; border-radius: 20px 0 0 20px;">
-                                            <img src="${review.foto_produto ? '/backend/upload/' + review.foto_produto : '/assets/img/manutencao.png'}" 
+                                            <img src="${review.foto_produto ? '/backend/upload/' + review.foto_produto : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}" 
                                                  class="img-fluid h-100 w-100 object-fit-cover" 
                                                  alt="${review.nome_cliente}"
-                                                 onerror="this.onerror=null; this.src='/assets/img/manutencao.png'">
+                                                 onerror="this.onerror=null; this.src='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'">
                                         </div>
                                     </div>
                                     <div class="col-md-8 p-4 p-lg-5">
@@ -262,10 +262,10 @@ const ReviewManager = (() => {
                                         <h4 class="review-quote text-white mb-3">"${review.comentario_avaliacoes || 'Produto sensacional, recomendo muito!'}"</h4>
                                         <div class="reviewer-meta d-flex align-items-center mt-4">
                                             <div class="reviewer-avatar-wrapper position-relative me-3">
-                                                <img src="${review.foto_usuarios ? '/backend/upload/' + review.foto_usuarios : '/assets/img/manutencao.png'}" 
+                                                <img src="${review.foto_usuarios ? '/backend/upload/' + review.foto_usuarios : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}" 
                                                      class="reviewer-avatar" 
                                                      style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold-primary);" 
-                                                     onerror="this.onerror=null; this.src='/assets/img/manutencao.png'">
+                                                     onerror="this.onerror=null; this.src='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'">
                                                 <div class="verified-badge position-absolute bottom-0 end-0 bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px; border: 2px solid #000;">
                                                     <i class="bi bi-check-lg text-black" style="font-size: 10px;"></i>
                                                 </div>

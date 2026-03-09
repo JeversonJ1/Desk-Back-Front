@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use App\Koketsu\Database\Database;
 use App\Koketsu\Models\Usuario;
@@ -61,7 +61,7 @@ try {
             'message' => 'Login realizado com sucesso!',
             'redirect_url' => $redirectUrl,
             'user' => [
-                'id'   => $usuario['id_usuarios'],
+                'id' => $usuario['id_usuarios'],
                 'nome' => $usuario['nome_usuarios'],
                 'tipo' => $usuario['nivel_acesso'],
                 'foto' => $foto

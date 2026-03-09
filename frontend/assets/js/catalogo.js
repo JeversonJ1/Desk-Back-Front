@@ -44,7 +44,20 @@ const CatalogManager = (() => {
         // Flatten a estrutura de categorias para uma lista única de produtos
         flatProducts = flattenProducts(allProducts);
 
-
+        // Calcula preço máximo real para o slider
+        if (flatProducts.length > 0) {
+            const maxPriceInCatalog = Math.ceil(Math.max(...flatProducts.map(p => p.preco)));
+            activeFilters.maxPrice = maxPriceInCatalog;
+            
+            // Atualiza o DOM do slider se existir
+            const priceRange = document.getElementById('rangePreco');
+            if (priceRange) {
+                priceRange.max = maxPriceInCatalog;
+                priceRange.value = maxPriceInCatalog;
+                const maxLabel = document.getElementById('maxPriceLabel');
+                if (maxLabel) maxLabel.textContent = `R$ ${maxPriceInCatalog}`;
+            }
+        }
 
         // Setup de filtros (conecta os listeners antes de aplicar para evitar conflitos)
         setupFilters();
@@ -67,7 +80,15 @@ const CatalogManager = (() => {
      * Trata a categoria vinda da URL
      */
     const handleURLCategory = (catName) => {
-        const catCheckboxes = document.querySelectorAll('#collapseCat .form-check-input');
+        // Se ainda não existirem inputs, forçamos a renderização base
+        const catContainer = document.getElementById('category-filter-container');
+        if (catContainer && catContainer.querySelector('.small') && flatProducts.length > 0) {
+            renderCategoryFilters();
+            renderSizeFilters();
+            renderColorFilters();
+        }
+
+        const catCheckboxes = document.querySelectorAll('.cat-filter-input');
         let found = false;
 
         catCheckboxes.forEach(cb => {
@@ -78,18 +99,20 @@ const CatalogManager = (() => {
             if (normalizedLabel === normalizedCat ||
                 normalizedLabel.includes(normalizedCat) ||
                 normalizedCat.includes(normalizedLabel)) {
+                
                 cb.checked = true;
-                if (!activeFilters.categories.includes(label)) {
-                    activeFilters.categories.push(label);
+                
+                // activeFilters.categories armazena o raw value, entao comparamos tbm normalizado
+                const alreadyExists = activeFilters.categories.some(c => normalizeText(c) === normalizeText(cb.value));
+                if (!alreadyExists) {
+                    activeFilters.categories.push(cb.value);
                 }
                 found = true;
             } else {
-                cb.checked = false; // Desmarca outros se vier da URL
+                cb.checked = false; 
             }
         });
 
-        // Se encontrou, aplica os filtros (que agora incluem a categoria)
-        // Se não encontrou, renderiza tudo normalmente
         applyFilters();
     };
 
@@ -189,13 +212,17 @@ const CatalogManager = (() => {
 
         nav.innerHTML = '';
 
+        // Se não houver itens, não renderiza nada (garante que sumiu do DOM visualmente)
+        if (!totalItems || totalItems === 0) {
+            return;
+        }
+
+        if (totalItems === 0) return;
+
         const minPages = 3;
         const calculatedPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
         // Garante pelo menos 3 páginas na visualização (pedido do usuário)
-        // Mas se tiver mais, usa o calculado.
-        // Se calculatedPages for 0 (sem produtos), ainda mostra 3?
-        // Sim, o usuário pediu "mesmo que nao tenha produto suficiente".
-        const totalPages = Math.max(minPages, calculatedPages || 1);
+        const totalPages = Math.max(minPages, calculatedPages);
 
         // Prev Button
         const prevLi = document.createElement('li');
@@ -295,39 +322,11 @@ const CatalogManager = (() => {
     };
 
     const setupFilters = () => {
-        // Categoria Checkboxes
-        const catCheckboxes = document.querySelectorAll('#collapseCat .form-check-input');
-        catCheckboxes.forEach(cb => {
-            cb.addEventListener('change', () => {
-                const label = document.querySelector(`label[for="${cb.id}"]`).textContent.trim();
-                if (cb.checked) {
-                    if (!activeFilters.categories.includes(label)) {
-                        activeFilters.categories.push(label);
-                    }
-                } else {
-                    activeFilters.categories = activeFilters.categories.filter(c => c !== label);
-                }
-                applyFilters();
-            });
-        });
+        // As lógicas de listeners individuais (Categorias, Tamanhos, Cores) 
+        // agora são gerenciadas logo após sua respectiva inserção DOM
+        // nos métodos renderCategoryFilters(), renderSizeFilters() e renderColorFilters()
 
-        // Tamanho Checkboxes (Ajustado para IDs corretos e comportamento de array)
-        const sizeInputs = document.querySelectorAll('.size-input');
-        sizeInputs.forEach(input => {
-            input.addEventListener('change', () => {
-                const label = document.querySelector(`label[for="${input.id}"]`).textContent.trim().toUpperCase();
-                if (input.checked) {
-                    if (!activeFilters.sizes.includes(label)) {
-                        activeFilters.sizes.push(label);
-                    }
-                } else {
-                    activeFilters.sizes = activeFilters.sizes.filter(s => s !== label);
-                }
-                applyFilters();
-            });
-        });
-
-
+        // Contudo, nós podemos escutar globalmente delegando eventos ou escutar o Preço
 
         // Preço Range
         const priceRange = document.getElementById('rangePreco');
@@ -371,8 +370,10 @@ const CatalogManager = (() => {
                     sort: 'Lançamentos'
                 };
 
-                catCheckboxes.forEach(cb => cb.checked = false);
-                sizeInputs.forEach(input => input.checked = false);
+                // Desmarcar tudo via query selector genérico
+                document.querySelectorAll('.cat-filter-input, .size-input, .color-filter-input').forEach(input => {
+                    input.checked = false;
+                });
 
                 if (priceRange) {
                     priceRange.value = 1000;
@@ -395,6 +396,107 @@ const CatalogManager = (() => {
                 applyFilters();
             });
         }
+    };
+
+    /**
+     * Renderiza filtros de categorias baseados nos produtos carregados
+     */
+    const renderCategoryFilters = () => {
+        const catContainer = document.getElementById('category-filter-container');
+        if (!catContainer) return;
+
+        // Extrair todas as categorias originais únicas
+        const allCategories = new Set();
+        flatProducts.forEach(p => {
+            if (p.categoriaOrigem) {
+                allCategories.add(p.categoriaOrigem);
+            }
+        });
+
+        if (allCategories.size === 0) {
+            catContainer.innerHTML = '<p class="small text-secondary m-0">Nenhuma categoria encontrada</p>';
+            return;
+        }
+
+        catContainer.innerHTML = Array.from(allCategories).sort().map((cat, index) => {
+            const id = `cat-${index}`;
+            return `
+                <div class="form-check custom-check">
+                    <input class="form-check-input cat-filter-input" type="checkbox" id="${id}" value="${cat}">
+                    <label class="form-check-label" for="${id}">${cat}</label>
+                </div>
+            `;
+        }).join('');
+
+        // Adicionar listeners para as categorias
+        const catCheckboxes = document.querySelectorAll('.cat-filter-input');
+        catCheckboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                const label = document.querySelector(`label[for="${cb.id}"]`).textContent.trim();
+                const normalizedValue = normalizeText(cb.value);
+                
+                if (cb.checked) {
+                    if (!activeFilters.categories.some(c => normalizeText(c) === normalizedValue)) {
+                        activeFilters.categories.push(cb.value);
+                    }
+                } else {
+                    activeFilters.categories = activeFilters.categories.filter(c => normalizeText(c) !== normalizedValue);
+                }
+                applyFilters();
+            });
+        });
+    };
+
+    /**
+     * Renderiza a grade de filtros de tamanhos
+     */
+    const renderSizeFilters = () => {
+        const sizeContainer = document.getElementById('size-filter-container');
+        if (!sizeContainer) return;
+
+        // Extrair todos os tamanhos
+        const allSizes = new Set();
+        flatProducts.forEach(p => {
+            if (p.tamanhos && Array.isArray(p.tamanhos)) {
+                p.tamanhos.forEach(t => allSizes.add(t));
+            }
+        });
+
+        if (allSizes.size === 0) {
+            sizeContainer.innerHTML = '<p class="small text-secondary m-0">Nenhum tamanho disponível</p>';
+            return;
+        }
+
+        const sortedSizes = Array.from(allSizes).sort((a, b) => {
+            const order = { 'PP': 1, 'P': 2, 'M': 3, 'G': 4, 'GG': 5, 'XG': 6 };
+            return (order[a.toUpperCase()] || 99) - (order[b.toUpperCase()] || 99);
+        });
+
+        sizeContainer.innerHTML = sortedSizes.map(size => {
+            const id = `s-${size.toLowerCase()}`;
+            return `
+                <div class="form-check custom-check-btn">
+                    <input type="checkbox" name="size" id="${id}" class="size-input" value="${size}">
+                    <label for="${id}" class="size-label">${size}</label>
+                </div>
+            `;
+        }).join('');
+
+        // Adicionar listeners
+        const sizeInputs = document.querySelectorAll('.size-input');
+        sizeInputs.forEach(input => {
+            input.addEventListener('change', () => {
+                const val = input.value.toUpperCase();
+                if (input.checked) {
+                    if (!activeFilters.sizes.includes(val)) {
+                        activeFilters.sizes.push(val);
+                    }
+                } else {
+                    activeFilters.sizes = activeFilters.sizes.filter(s => s !== val);
+                }
+                applyFilters();
+            });
+        });
     };
 
     /**
@@ -446,9 +548,11 @@ const CatalogManager = (() => {
             currentPage = 1;
         }
 
-        // Na primeira execução REAL (após fetch), renderiza cores
+        // Na primeira execução REAL (após fetch), renderiza cores, categorias e tamanhos
         const colorContainer = document.getElementById('color-filter-container');
         if (colorContainer && colorContainer.querySelector('.small') && flatProducts.length > 0) {
+            renderCategoryFilters();
+            renderSizeFilters();
             renderColorFilters();
         }
 
@@ -458,10 +562,11 @@ const CatalogManager = (() => {
         if (activeFilters.categories.length > 0) {
             filtered = filtered.filter(p => {
                 if (!p.categoriaOrigem) return false;
-                return activeFilters.categories.some(catLabel =>
-                    p.categoriaOrigem.toLowerCase().includes(catLabel.replace('Camisetas ', '').toLowerCase()) ||
-                    catLabel.toLowerCase().includes(p.categoriaOrigem.toLowerCase())
-                );
+                const pCatNormalized = normalizeText(p.categoriaOrigem);
+                return activeFilters.categories.some(catLabel => {
+                    const labelNormalized = normalizeText(catLabel);
+                    return pCatNormalized === labelNormalized;
+                });
             });
         }
 

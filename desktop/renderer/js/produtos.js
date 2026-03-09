@@ -17,7 +17,8 @@ const INTERVALO_MINIMO_RECARREGAMENTO_MS = 2000;
 let renderToken = 0;
 const RENDER_CHUNK_SIZE = 24;
 
-const PLACEHOLDER_IMAGE = '../assets/img/logo.jpg';
+const PLACEHOLDER_SVG_PRODUTO = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="#1a1a1a"/><rect x="60" y="55" width="80" height="65" rx="4" fill="none" stroke="#444" stroke-width="2"/><circle cx="82" cy="78" r="8" fill="#444"/><polyline points="60,120 85,95 105,112 125,88 140,120" fill="none" stroke="#444" stroke-width="2"/><text x="100" y="155" text-anchor="middle" fill="#555" font-size="11" font-family="sans-serif">Sem imagem</text></svg>`;
+const PLACEHOLDER_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(PLACEHOLDER_SVG_PRODUTO)}`;
 
 /**
  * Processa o caminho da imagem para garantir que funcione no Electron
@@ -119,6 +120,14 @@ document.addEventListener('DOMContentLoaded', () => {
       carregarProdutos();
     }
   });
+
+  // Sincronização visual automática a cada 15 segundos
+  setInterval(() => {
+    // Só atualiza se a aba estiver ativa e não houver modais abertos que impeçam a atualização silenciosa
+    if (!document.hidden && (!modal || modal.style.display !== 'flex')) {
+      carregarProdutos();
+    }
+  }, 15000);
 });
 
 function configurarEventListeners() {
@@ -352,8 +361,9 @@ function renderizarProdutos(lista) {
       const imagemSrc = processarCaminhoImagem(p.imagem);
 
       return `
-      <div class="card-estoque-produto">
+      <div class="card-estoque-produto" style="${p.ativo === false ? 'opacity: 0.6; filter: grayscale(80%);' : ''}">
         <div class="imagem-container">
+          ${p.ativo === false ? '<div style="position: absolute; top: 10px; right: 10px; background: #dc3545; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; z-index: 10;">INATIVO</div>' : ''}
           <img src="${imagemSrc}" 
                alt="${p.nome}"
                loading="lazy"
@@ -434,7 +444,7 @@ function atualizarPreviewImagem(src) {
   const btnRemover = document.getElementById('btnRemoverImagem');
 
   if (src) {
-    preview.src = src;
+    preview.src = processarCaminhoImagem(src);
     preview.style.display = 'block';
     if (placeholder) placeholder.style.display = 'none';
     if (btnRemover) btnRemover.style.display = 'inline-flex';

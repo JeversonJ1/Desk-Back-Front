@@ -29,19 +29,19 @@ async function atualizarDashboard() {
     const sessionId = getSessionId();
     const dados = await window.api.obterDashboard(sessionId);
     const produtos = await window.api.listarProdutos(sessionId);
+    const pedidos = await window.api.listarPedidos(sessionId);
 
     // Atualizar cards principais
     const elemProdutos = document.getElementById('totalProdutos');
     const elemEstoque = document.getElementById('totalEstoque');
     const elemPedidos = document.getElementById('totalPedidos');
-    const elemValor = document.getElementById('valorEstoque');
+    const elemValor = document.getElementById('valorVendas');
 
     if (elemProdutos) elemProdutos.textContent = dados.totalProdutos || 0;
     if (elemEstoque) elemEstoque.textContent = dados.estoqueTotal || 0;
     if (elemPedidos) elemPedidos.textContent = dados.totalPedidos || 0;
     if (elemValor) {
-      const valorTotal = produtos.reduce((sum, p) => sum + (p.preco * p.estoque), 0);
-      elemValor.textContent = 'R$ ' + valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+      elemValor.textContent = 'R$ ' + (dados.valorVendas || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
     }
 
     // Atualizar alertas de estoque baixo
@@ -51,7 +51,7 @@ async function atualizarDashboard() {
     atualizarTopProdutos(produtos);
 
     // Atualizar gráficos
-    atualizarGraficos(produtos);
+    atualizarGraficos(produtos, pedidos);
 
     // Atualizar timestamp
     atualizarTimestamp();
@@ -144,27 +144,103 @@ function atualizarTopProdutos(produtos) {
 // ================================
 // ATUALIZAR GRÁFICOS
 // ================================
-function atualizarGraficos(produtos) {
-  atualizarGraficoVendas();
+function atualizarGraficos(produtos, pedidos) {
+  atualizarGraficoVendas(pedidos);
   atualizarGraficoEstoque(produtos);
 }
 
 // ================================
+// FILTRO DE VENDAS
+// ================================
+let filtroVendasAtual = 'mes'; // Opções: 'dia', 'mes', 'ano'
+let pedidosCache = [];
+
+window.mudarFiltroVendas = function(filtro) {
+  filtroVendasAtual = filtro;
+  
+  // Atualizar botões visuais
+  document.querySelectorAll('.btn-filtro-vendas').forEach(btn => btn.classList.remove('active'));
+  const activeBtn = document.getElementById('btn-filtro-' + filtro);
+  if (activeBtn) activeBtn.classList.add('active');
+  
+  if (pedidosCache.length > 0) {
+    atualizarGraficoVendas(pedidosCache);
+  }
+};
+
+// ================================
 // GRÁFICO DE VENDAS
 // ================================
-function atualizarGraficoVendas() {
+function atualizarGraficoVendas(pedidos) {
+  if (pedidos) pedidosCache = pedidos;
   const canvas = document.getElementById('vendasChart');
-  if (!canvas) return;
+  if (!canvas || !pedidosCache) return;
 
-  // Dados fictícios para últimos 7 dias
-  const labels = [];
-  const valores = [];
+  const validPedidos = pedidosCache.filter(p => p.status !== 'cancelado');
+  
+  let labels = [];
+  let valores = [];
+  
+  const hoje = new Date();
 
-  for (let i = 6; i >= 0; i--) {
-    const data = new Date();
-    data.setDate(data.getDate() - i);
-    labels.push(data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }));
-    valores.push(Math.floor(Math.random() * 5000) + 1000);
+  if (filtroVendasAtual === 'dia') {
+    // Últimos 7 dias
+    const dadosPorDia = {};
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(hoje);
+      d.setDate(d.getDate() - i);
+      const dataStr = d.toISOString().split('T')[0]; // YYYY-MM-DD
+      const label = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+      labels.push(label);
+      dadosPorDia[dataStr] = 0;
+    }
+
+    validPedidos.forEach(p => {
+      const pDate = new Date(p.data_pedido || p.criado_em || p.data);
+      const dStr = pDate.toISOString().split('T')[0];
+      if (dadosPorDia[dStr] !== undefined) {
+        dadosPorDia[dStr] += Number(p.total_pedido || p.total) || 0;
+      }
+    });
+    valores = Object.values(dadosPorDia);
+
+  } else if (filtroVendasAtual === 'mes') {
+    // Últimos 6 meses
+    const dadosPorMes = {};
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+      const chave = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}`;
+      const label = d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }).replace('.', '');
+      labels.push(label);
+      dadosPorMes[chave] = 0;
+    }
+
+    validPedidos.forEach(p => {
+      const pDate = new Date(p.data_pedido || p.criado_em || p.data);
+      const chave = `${pDate.getFullYear()}-${String(pDate.getMonth()+1).padStart(2, '0')}`;
+      if (dadosPorMes[chave] !== undefined) {
+        dadosPorMes[chave] += Number(p.total_pedido || p.total) || 0;
+      }
+    });
+    valores = Object.values(dadosPorMes);
+
+  } else if (filtroVendasAtual === 'ano') {
+    // Últimos 5 anos
+    const dadosPorAno = {};
+    for (let i = 4; i >= 0; i--) {
+      const ano = hoje.getFullYear() - i;
+      labels.push(ano.toString());
+      dadosPorAno[ano] = 0;
+    }
+
+    validPedidos.forEach(p => {
+      const pDate = new Date(p.data_pedido || p.criado_em || p.data);
+      const ano = pDate.getFullYear();
+      if (dadosPorAno[ano] !== undefined) {
+        dadosPorAno[ano] += Number(p.total_pedido || p.total) || 0;
+      }
+    });
+    valores = Object.values(dadosPorAno);
   }
 
   if (vendasChart) {
@@ -198,13 +274,32 @@ function atualizarGraficoVendas() {
         legend: {
           display: true,
           labels: { color: '#fff' }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              let label = context.dataset.label || '';
+              if (label) {
+                label += ': ';
+              }
+              if (context.parsed.y !== null) {
+                label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
+              }
+              return label;
+            }
+          }
         }
       },
       scales: {
         y: {
           beginAtZero: true,
           grid: { color: '#444' },
-          ticks: { color: '#fff' }
+          ticks: { 
+            color: '#fff',
+            callback: function(value) {
+                return 'R$ ' + value;
+            }
+          }
         },
         x: {
           grid: { color: '#444' },
@@ -308,12 +403,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Atualizar ao carregar
   atualizarDashboard();
 
-  // Recarregar a cada 30 segundos
+  // Recarregar a cada 15 segundos (sincronização automática visível rápida)
   setInterval(() => {
     if (!document.hidden) {
       atualizarDashboard();
     }
-  }, 30000);
+  }, 15000);
 });
 
 

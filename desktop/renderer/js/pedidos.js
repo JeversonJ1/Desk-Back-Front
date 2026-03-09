@@ -25,6 +25,36 @@ const PLACEHOLDER_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="300" hei
   '</svg>';
 const PLACEHOLDER_IMAGE = `data:image/svg+xml;utf8,${encodeURIComponent(PLACEHOLDER_SVG)}`;
 
+/**
+ * Processa o caminho da imagem para garantir que funcione no Electron
+ * @param {string} imagePath - Caminho original da imagem
+ * @returns {string} - Caminho processado ou placeholder
+ */
+function processarCaminhoImagem(imagePath) {
+  if (!imagePath || typeof imagePath !== 'string') return PLACEHOLDER_IMAGE;
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) return imagePath;
+  if (imagePath.startsWith('data:image')) return imagePath;
+
+  if (imagePath.startsWith('file://')) {
+    let safePath = imagePath.replace('file:///', '').replace('file://', '');
+    return `app://local/${safePath}`;
+  }
+
+  if (imagePath.includes('produtos/') || imagePath.includes('upload/')) {
+    const base = 'http://localhost:8000/backend/upload/';
+    const cleanPath = imagePath.replace(/^upload\//, '');
+    return base + cleanPath;
+  }
+
+  if (imagePath.includes(':\\') || imagePath.startsWith('/')) {
+    const normalizedPath = imagePath.replace(/\\/g, '/');
+    return `app://local/${normalizedPath.replace(/^\//, '')}`;
+  }
+
+  console.warn(`⚠️ Formato de imagem não reconhecido: ${imagePath}`);
+  return PLACEHOLDER_IMAGE;
+}
+
 function withTimeout(promise, ms, label) {
   return Promise.race([
     promise,
@@ -143,7 +173,8 @@ async function carregarProdutos(filtro = '', categoria = '', estoque = 'todos', 
     // Usar cache se disponível
     if (produtos.length === 0 || forcarReload) {
       const sessionId = getSessionId();
-      produtos = await withTimeout(window.api.listarProdutos(sessionId), 8000, 'Carregar produtos');
+      let allProducts = await withTimeout(window.api.listarProdutos(sessionId), 8000, 'Carregar produtos');
+      produtos = allProducts.filter(p => p.ativo !== false);
       console.log('✓ Produtos carregados:', produtos.length);
 
       // Extrair categorias únicas
@@ -234,11 +265,12 @@ function renderizarProximoChunk(token) {
     const emEstoque = p.estoque > 0;
     const corEstoque = p.estoque > 10 ? '#51cf66' : p.estoque > 0 ? '#ffa94d' : '#ff6b6b';
     const simboloEstoque = p.estoque > 10 ? '✓' : p.estoque > 0 ? '!' : '×';
+    const imagemSrc = processarCaminhoImagem(p.imagem);
 
     return `
     <div class="produto-card" style="opacity: ${emEstoque ? '1' : '0.5'}; position: relative;">
       ${p.estoque <= 10 && p.estoque > 0 ? '<div style="position: absolute; top: 8px; right: 8px; background: #ffa94d; color: #000; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;">BAIXO</div>' : ''}
-       <img src="${p.imagem || PLACEHOLDER_IMAGE}" 
+       <img src="${imagemSrc}" 
            class="produto-imagem" 
            loading="lazy"
            decoding="async"
@@ -263,6 +295,7 @@ function renderizarProximoChunk(token) {
     </div>
   `;
   }).join('');
+
 
   renderContainer.insertAdjacentHTML('beforeend', html);
   renderIndex += RENDER_CHUNK_SIZE;
@@ -688,6 +721,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   console.log('✓ Inicialização completa');
   console.log('Atalhos: F2=Busca | F3=Cliente | F9=Finalizar | Esc=Cancelar');
+
+  // Sincronização visual automática silenciosa a cada 15 segundos
+  setInterval(() => {
+    if (!document.hidden) {
+      // Atualiza produtos (estoque) silenciosamente
+      carregarProdutos('', document.getElementById('filterCategoria')?.value || '', document.getElementById('filterEstoque')?.value || 'todos');
+      // Atualiza histórico de pedidos silenciosamente
+      carregarHistorico();
+    }
+  }, 15000);
 });
 
 // ================================

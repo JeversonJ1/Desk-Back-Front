@@ -25,7 +25,7 @@ class TamanhoController extends AdminController
         $dados = $this->tamanho->paginacao($pagina);
         $total = $this->tamanho->totalDeUsuarios();
         $total_inativos = $this->tamanho->buscarTamanhosInativos($pagina);
-        $total_ativos = $this->tamanho->buscartamanhosAtivos($pagina);
+        $total_ativos = $this->tamanho->buscarTamanhosAtivos();
         view::render(
             'tamanho/index',
             [
@@ -60,8 +60,7 @@ class TamanhoController extends AdminController
             $this->tamanho->inserirTamanho(
                 $_POST["id_produto"],
                 $_POST["tamanho_tamanhos"],
-                $_POST["quantidade_tamanho"],
-                "Ativo"
+                $_POST["quantidade_tamanho"]
             )
         ) {
             Redirect::redirecionarComMensagem("/tamanho/listar", "success", "Tamanho criado com sucesso!");

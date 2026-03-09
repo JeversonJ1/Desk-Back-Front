@@ -45,10 +45,10 @@ class AvaliacoesController extends AuthenticatedController
             return;
         }
 
-        
+
         // Buscar todas as avaliações feitas por este usuário (independente do perfil)
         $avaliacoes = $this->avaliacaoModel->buscarPorUsuario($usuarioId);
-        
+
         // Buscar apenas produtos comprados (de qualquer perfil do usuário) e não avaliados
         $produtos = $this->pedidosModel->buscarProdutosCompradosPorUsuario($usuarioId);
 

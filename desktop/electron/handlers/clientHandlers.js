@@ -7,28 +7,7 @@ const { requireAuth } = require('./authHandlers');
 function registerClientHandlers() {
   ipcMain.handle('clientes:listar', requireAuth(async () => {
     try {
-      const ApiService = require('../services/apiService');
-
-      // 1. Sincronizar Clientes da API (se houver endpoint e table)
-      try {
-        const json = await ApiService.getClientes();
-        // A API DatabaseController retorna { status: 'sucesso', dados: [...] }
-        if (json.dados && Array.isArray(json.dados)) {
-          Logger.log(`Encontrados ${json.dados.length} clientes na API. Sincronizando...`);
-          for (const item of json.dados) {
-            // O objeto deve ter id_cliente e outros campos.
-            // Se vier como id, mapear para id_cliente se necessario?
-            // DatabaseController faz "SELECT * FROM tbl_clientes", entao deve vir com nomes de colunas do DB remoto.
-            // Assumindo que sao iguais ao local.
-            await Database.clientes.sincronizar(item, false);
-          }
-          Database.salvar();
-        }
-      } catch (apiError) {
-        Logger.warn('Falha ao sincronizar clientes com API (GET)', apiError.message);
-      }
-
-      // 2. Listar do Banco Local
+      // Listar do Banco Local (MySQL direto)
       const clientes = await Database.clientes.listar();
       return clientes.map(c => ({
         ...c,
@@ -92,9 +71,12 @@ function registerClientHandlers() {
 
   ipcMain.handle('clientes:excluir', requireAuth(async (e, id) => {
     try {
-      if (!id) throw new Error('ID inválido');
-      await Database.clientes.excluir(id);
-      Logger.log(`Cliente ID ${id} excluído com sucesso.`);
+      const parsedId = parseInt(id, 10);
+      if (isNaN(parsedId) || parsedId <= 0) {
+        throw new Error('ID inválido');
+      }
+      await Database.clientes.excluir(parsedId);
+      Logger.log(`Cliente ID ${parsedId} excluído com sucesso.`);
       return { sucesso: true };
     } catch (error) {
       Logger.error('Erro ao excluir cliente', error.message);

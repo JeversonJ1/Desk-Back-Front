@@ -40,6 +40,7 @@ class LoginManager {
         // Salvar sessionId no localStorage
         localStorage.setItem('sessionId', result.sessionId);
         localStorage.setItem('username', result.username);
+        if (result.role) localStorage.setItem('role', result.role);
 
         // Redirecionar para dashboard
         window.location.href = 'dashboard.html';

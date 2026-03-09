@@ -90,8 +90,11 @@ const ProductManager = (() => {
     section.className = 'category-section py-5';
 
     const titleHtml = `
-      <h2 class="h2-titulo">${catName}</h2>
-      <p class="category-tag">${category.tag || 'KOKETSU GRIFE - PREMIUM'}</p>
+      <div class="text-center mb-5">
+        <span class="catalog-badge mb-2 d-inline-block">${category.tag || 'KOKETSU GRIFE - PREMIUM'}</span>
+        <h2 class="h2-titulo m-0">${catName}</h2>
+        <div class="gold-divider mx-auto mt-3"></div>
+      </div>
       <div id="carousel-${catName.replace(/\s+/g, '-')}" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner"></div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carousel-${catName.replace(/\s+/g, '-')}" data-bs-slide="prev">
@@ -139,37 +142,72 @@ const ProductManager = (() => {
   /**
    * Renderiza todos os produtos na vitrine
    */
+  /**
+   * Renderiza todos os produtos na vitrine dividindo por seções da Home
+   */
   const renderProducts = (productsData) => {
     const container = document.getElementById('vitrine');
     if (!container) return;
 
     container.innerHTML = '';
 
+    // Listas locais de agrupamento
+    let allItems = [];
+    let camisetasList = [];
+    let moletonsList = [];
+    let calcasList = [];
+    
     productsData.forEach(category => {
-      // Pula categoria de lançamentos se estiver vazia ou se explicitamente solicitado
       const catLower = category.categoria.toLowerCase();
-      // Pula categorias específicas solicitadas pelo usuário para a HOME
-      if (catLower.includes('lançamentos') ||
-        catLower.includes('lancamentos') ||
-        catLower.includes('vestidos') ||
-        catLower.includes('saias') ||
-        catLower.includes('shorts') ||
-        catLower.includes('polos') ||
-        catLower.includes('acessórios') ||
-        catLower.includes('acessorios') ||
-        catLower.includes('bonés') ||
-        catLower.includes('bones')) {
-        return;
-      }
+      // Ignorar categorias inúteis na home
+      if (catLower.includes('lançamentos') || catLower.includes('vestidos') || catLower.includes('saias')) return;
 
-      const carouselSection = createCarouselSection(category);
-      container.appendChild(carouselSection);
+      // Concatenar tudo para os Mais Vendidos
+      if (category.itens && Array.isArray(category.itens)) {
+        allItems.push(...category.itens);
+
+        // Agrupar Camisetas
+        if (catLower.includes('camiseta') || catLower.includes('camisa')) {
+          camisetasList.push(...category.itens);
+        }
+        
+        // Agrupar Moletons
+        if (catLower.includes('moletom')) {
+          moletonsList.push(...category.itens);
+        }
+        
+        // Agrupar Calças
+        if (catLower.includes('calça') || catLower.includes('calca')) {
+          calcasList.push(...category.itens);
+        }
+      }
     });
 
+    // 1. Mais Vendidos (Seleciona aleatoriamente ou pega os 8 primeiros + ofertas)
+    const bestSellers = allItems.sort((a, b) => b.oferta ? 1 : -1).slice(0, 8);
+    if (bestSellers.length > 0) {
+      container.appendChild(createCarouselSection({ categoria: 'MAIS VENDIDOS', tag: 'PREMIUM CO.', itens: bestSellers }));
+    }
+
+    // 2. Camisetas
+    if (camisetasList.length > 0) {
+      container.appendChild(createCarouselSection({ categoria: 'CAMISETAS', tag: 'ESSENTIALS', itens: camisetasList }));
+    }
+
+    // 3. Moletons
+    if (moletonsList.length > 0) {
+      container.appendChild(createCarouselSection({ categoria: 'MOLETONS', tag: 'WINTER', itens: moletonsList }));
+    }
+
+    // 4. Calças
+    if (calcasList.length > 0) {
+      container.appendChild(createCarouselSection({ categoria: 'CALÇAS', tag: 'STREETSTYLE', itens: calcasList }));
+    }
+    
     // Inicializar carrosséis do Bootstrap
     initializeCarousels();
 
-    // Re-inicializa observadores de animação para novos elementos
+    // Re-inicializa observadores de animação (lazy-load das novas colunas)
     if (window.AnimationManager) {
       window.AnimationManager.init();
     }

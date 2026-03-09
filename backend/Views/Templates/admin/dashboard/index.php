@@ -15,12 +15,14 @@
         <p class="subtitle">Esta é a sua área segura.</p>
 
         <div class="action-buttons">
+            <?php if ($Tipo == 'admin'): ?>
             <a href="/backend/relatorios" class="action-btn relatorios">
-                <i class="fa fa-bar-chart"></i> 
+                <i class="fa fa-bar-chart"></i>
                 <span>Visualizar Relatórios</span>
             </a>
+            <?php endif; ?>
             <a href="/backend/logout" class="action-btn logout">
-                <i class="fa fa-sign-out"></i> 
+                <i class="fa fa-sign-out"></i>
                 <span>Sair do Sistema</span>
             </a>
         </div>
@@ -32,7 +34,8 @@
     .dashboard-container {
         display: flex;
         justify-content: center;
-        align-items: flex-start; /* Alinha o card no topo como na imagem */
+        align-items: flex-start;
+        /* Alinha o card no topo como na imagem */
         padding: 60px 20px;
         background-color: var(--bg-main) !important;
         min-height: 100vh;
@@ -41,17 +44,20 @@
     /* Card com largura reduzida (max-width: 650px) para efeito compacto */
     .dashboard-card {
         background: var(--bg-card);
+        /* bg-card já é um gradiente no header.php modificado */
         padding: 40px;
         border-radius: 20px;
         width: 100%;
-        max-width: 800px; /* Largura ideal para o estilo da imagem 2 */
+        max-width: 800px;
+        /* Largura ideal para o estilo da imagem 2 */
         box-shadow: var(--shadow-md);
         border: 1px solid var(--border-color);
         transition: transform 0.3s ease;
     }
 
     .dashboard-card .title {
-        font-size: 20px; /* Tamanho harmonizado */
+        font-size: 20px;
+        /* Tamanho harmonizado */
         margin-bottom: 25px;
         color: var(--accent);
         font-weight: 800;
@@ -61,7 +67,8 @@
     }
 
     .dashboard-card .welcome {
-        font-size: 28px; /* Reduzido para não quebrar em muitas linhas */
+        font-size: 28px;
+        /* Reduzido para não quebrar em muitas linhas */
         font-weight: bold;
         color: var(--text-main);
         margin: 5px 0;
@@ -75,7 +82,7 @@
     }
 
     .dashboard-card .user-type span {
-        color: #28a745; 
+        color: #28a745;
         font-weight: 800;
         text-transform: uppercase;
     }
@@ -107,9 +114,9 @@
     }
 
     .action-btn.relatorios {
-        background: var(--accent);
+        background: linear-gradient(135deg, #ffd84d 0%, #f5c400 100%);
         color: #000;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(255, 216, 77, 0.3);
     }
 
     .action-btn.relatorios:hover {
@@ -119,14 +126,16 @@
     }
 
     .action-btn.logout {
-        background: rgba(230, 57, 70, 0.1);
-        color: #e63946;
-        border: 1px solid rgba(230, 57, 70, 0.2);
+        background: linear-gradient(135deg, #1f1f1f 0%, #0f0f0f 100%);
+        color: #ff4d4d;
+        border: 1px solid #ff4d4d;
     }
 
     .action-btn.logout:hover {
-        background: #e63946;
-        color: #fff;
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff3b3b 100%);
+        color: #000;
+        border-color: #ff3b3b;
+        box-shadow: 0 4px 10px rgba(255, 59, 59, 0.25);
         transform: translateY(-3px);
     }
 

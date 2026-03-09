@@ -31,39 +31,7 @@ async function mapPedidoParaUI(pedido) {
 function registerOrderHandlers() {
   ipcMain.handle('pedidos:listar', requireAuth(async () => {
     try {
-      const ApiService = require('../services/apiService');
-
-      // 1. Buscar da API Externa (Pedidos)
-      try {
-        const json = await ApiService.getPedidos();
-        // ✅ CORRIGIDO: API retorna json.dados (não json.data)
-        const pedidosData = json.dados || json.data || [];
-        if (Array.isArray(pedidosData) && pedidosData.length > 0) {
-          Logger.log(`Encontrados ${pedidosData.length} pedidos na API. Sincronizando...`);
-          for (const item of pedidosData) {
-            await Database.pedidos.sincronizar(item, false);
-          }
-          Database.salvar();
-          Logger.log('Sincronização de pedidos concluída.');
-        }
-      } catch (apiError) {
-        Logger.error('Falha ao sincronizar pedidos com API', apiError.message);
-      }
-
-      // 1.1 Buscar da API Externa (Itens Pedidos)
-      try {
-        const jsonItens = await ApiService.getItensPedidos();
-        if (jsonItens.status === 'success' && Array.isArray(jsonItens.data)) {
-          for (const item of jsonItens.data) {
-            await Database.itensPedido.sincronizar(item, false);
-          }
-          Database.salvar();
-        }
-      } catch (itensError) {
-        /* Ignore */
-      }
-
-      // 2. Listar do Banco Local
+      // Listar do Banco Local (agora único banco real MySQL)
       const pedidos = await Database.pedidos.listar();
       const pedidosComItens = await Promise.all((pedidos || []).map(mapPedidoParaUI));
       Logger.log('Pedidos listados (Banco Local)');

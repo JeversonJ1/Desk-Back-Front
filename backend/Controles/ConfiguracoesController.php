@@ -18,6 +18,12 @@ class ConfiguracoesController extends AuthenticatedController {
 
     public function __construct() {
         parent::__construct();
+        
+        // Bloquear vendedor de acessar configuracoes
+        if ($this->session->get('usuario_tipo') === 'vendedor') {
+            \App\Koketsu\Core\Redirect::redirecionarComMensagem("/backend/admin/dashboard", "error", "Acesso restrito apenas a administradores.");
+        }
+
         $this->configFile = __DIR__ . '/../Config/settings.json';
         $db = Database::getInstance();
         $this->preferenciasModel = new Preferencias($db);
