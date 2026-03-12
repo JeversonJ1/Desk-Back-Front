@@ -115,6 +115,7 @@ if (empty($itempedido)): ?>
     .gold-gradient-text {
         background: linear-gradient(135deg, #f2cc7d 0%, #b8860b 100%);
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
         font-size: 26px;
         font-weight: 900;
