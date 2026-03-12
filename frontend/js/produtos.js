@@ -30,7 +30,7 @@ function renderizarProdutos(produtos) {
 function inicializar() {
     carregarCarrinhoLocalStorage();
     renderizarCarrinho();
-    fetch('/backend/api/produtos')
+    fetch('/api/produtos')
         .then(response =>
             response.ok ? response.json() : Promise.reject('Erro ao carregar produtos')
         )

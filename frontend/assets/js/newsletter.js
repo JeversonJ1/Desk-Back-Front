@@ -5,7 +5,7 @@
 (function () {
     'use strict';
 
-    const NEWSLETTER_API = '/backend/api/newsletter/inscrever';
+    const NEWSLETTER_API = '/api/newsletter/inscrever';
 
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('formNewsletter');
