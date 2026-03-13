@@ -503,7 +503,7 @@ const CartManager = (() => {
     }
   };
 
-  document.addEventListener('DOMContentLoaded', () => {
+  const init = () => {
     injectMiniCartHTML();
     initAddToCartButtons();
     updateCartBadge();
@@ -517,9 +517,11 @@ const CartManager = (() => {
     });
 
     window.addEventListener('cartUpdated', updateCartBadge);
-  });
+  };
 
-  const instance = { getCart, addToCart, removeFromCart, updateQuantity, getItemCount, handleCheckout };
+  document.addEventListener('DOMContentLoaded', init);
+
+  const instance = { getCart, addToCart, removeFromCart, updateQuantity, getItemCount, handleCheckout, init };
   window.CartManager = instance;
   return instance;
 })();

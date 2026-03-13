@@ -7,50 +7,60 @@
 
     const NEWSLETTER_API = '/api/newsletter/inscrever';
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('formNewsletter');
-        const emailInput = document.getElementById('newsletterEmail');
-        const submitBtn = document.getElementById('btnNewsletter');
+    window.NewsletterManager = {
+        init: function() {
+            const form = document.getElementById('formNewsletter');
+            const emailInput = document.getElementById('newsletterEmail');
+            const submitBtn = document.getElementById('btnNewsletter');
 
-        if (!form) return;
+            if (!form) return;
 
-        form.addEventListener('submit', async function (e) {
-            e.preventDefault();
+            // Remove antigos listeners se existirem (para evitar duplicate binds caso rodado 2 vezes)
+            const newForm = form.cloneNode(true);
+            form.parentNode.replaceChild(newForm, form);
+            const newEmailInput = document.getElementById('newsletterEmail');
+            const newSubmitBtn = document.getElementById('btnNewsletter');
 
-            const email = emailInput.value.trim();
-            if (!email) return;
+            newForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
 
-            // Bloqueia o botão e mostra loading (se houver estilo para isso)
-            submitBtn.disabled = true;
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = '...';
+                const email = newEmailInput.value.trim();
+                if (!email) return;
 
-            try {
-                const response = await fetch(NEWSLETTER_API, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email_newsletter: email })
-                });
+                // Bloqueia o botão e mostra loading (se houver estilo para isso)
+                newSubmitBtn.disabled = true;
+                const originalText = newSubmitBtn.textContent;
+                newSubmitBtn.textContent = '...';
 
-                const data = await response.json();
+                try {
+                    const response = await fetch(NEWSLETTER_API, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email_newsletter: email })
+                    });
 
-                if (data.success) {
-                    showToast('success', 'Sucesso', data.message);
-                    form.reset();
-                } else {
-                    showToast('error', 'Erro', data.message || 'Falha ao se inscrever.');
+                    const data = await response.json();
+
+                    if (data.success) {
+                        showToast('success', 'Sucesso', data.message);
+                        newForm.reset();
+                    } else {
+                        showToast('error', 'Erro', data.message || 'Falha ao se inscrever.');
+                    }
+                } catch (error) {
+                    console.error('[Newsletter] Erro:', error);
+                    showToast('error', 'Erro de Conexão', 'Não foi possível completar a inscrição. Tente novamente mais tarde.');
+                } finally {
+                    newSubmitBtn.disabled = false;
+                    newSubmitBtn.textContent = originalText;
                 }
-            } catch (error) {
-                console.error('[Newsletter] Erro:', error);
-                showToast('error', 'Erro de Conexão', 'Não foi possível completar a inscrição. Tente novamente mais tarde.');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalText;
-            }
-        });
-    });
+            });
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', window.NewsletterManager.init);
 
     /**
      * Função auxiliar para exibir o Toast (reutilizando a lógica do sistema)

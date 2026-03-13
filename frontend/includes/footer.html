@@ -1,0 +1,84 @@
+  <footer id="global-footer">
+    <div class="container">
+      <div class="coluna-footer newsletter">
+        <h3 class="titulo">Faça parte da nossa família e receba acessos exclusivos e novidades.</h3>
+        <p>Inscreva-se para ter acesso a exclusivo á venda antecipada, novidades promoções.</p>
+        <form class="form-email" id="formNewsletter">
+          <div class="input-group">
+            <input type="email" id="newsletterEmail" name="email_newsletter" placeholder="Seu e-mail" required />
+            <button type="submit" id="btnNewsletter">OK</button>
+          </div>
+        </form>
+        <div class="redes-sociais-icones mt-4">
+          <a href="#"><i class="bi bi-instagram me-3"></i></a>
+          <a href="#"><i class="bi bi-facebook me-3"></i></a>
+          <a href="#"><i class="bi bi-tiktok"></i></a>
+        </div>
+      </div>
+
+      <div class="coluna-footer">
+        <h3 class="titulo">INSTITUCIONAL</h3>
+        <a href="/frontend/pages/sobre.html">Sobre a Koketsu</a>
+        <a href="/frontend/pages/politica.html">Política de Privacidade</a>
+        <a href="/frontend/pages/fidelidade.html">Programa de Fidelidade</a>
+      </div>
+
+      <div class="coluna-footer">
+        <h3 class="titulo">AJUDA</h3>
+        <a href="/frontend/pages/duvidas.html">Dúvidas Frequentes</a>
+        <a href="/frontend/pages/Trocas.html">Trocas e Devoluções</a>
+        <a href="/frontend/pages/frete.html">Frete e Entrega</a>
+      </div>
+
+      <div class="coluna-footer">
+        <h3 class="titulo">FALE CONOSCO</h3>
+        <p class="small">Seg a Sáb (exceto feriados)<br>09h às 19h</p>
+        <p class="email-sac">sac@koketsu.com.br</p>
+        <a href="https://WhatsApp.com" target="_blank" class="btn-whatsapp-footer">
+          WHATSAPP <i class="bi bi-whatsapp"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="copyright-container">
+      <div class="container text-center">
+        <p>© 2026 KOKETSU GRIFE. TODOS OS DIREITOS RESERVADOS.</p>
+        <div class="pagamentos">
+          <i class="bi bi-credit-card-2-back mx-1"></i>
+          <i class="bi bi-qr-code mx-1"></i>
+          <i class="bi bi-bank mx-1"></i>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal de Login -->
+  <div id="loginModalOverlay" class="login-modal-overlay">
+    <div class="login-modal-card">
+      <button id="loginModalClose" class="login-modal-close" aria-label="Fechar">&times;</button>
+      <img src="/frontend/assets/img/logo2026.png" alt="Koketsu" class="login-modal-logo">
+      <h2 class="login-modal-title">BEM-VINDO</h2>
+      <p class="login-modal-subtitle">Acesse sua área exclusiva</p>
+
+      <div id="loginModalError" class="login-modal-error"></div>
+
+      <form id="loginModalForm" class="login-modal-form">
+        <div class="form-group-auth">
+          <input type="email" id="loginModalEmail" placeholder="E-mail de acesso" required autocomplete="email">
+          <i class="bi bi-envelope"></i>
+        </div>
+        <div class="form-group-auth">
+          <input type="password" id="loginModalSenha" placeholder="Sua senha secreta" required
+            autocomplete="current-password">
+          <i class="bi bi-lock"></i>
+        </div>
+        <button type="submit" id="loginModalSubmit" class="login-modal-btn">
+          <span class="spinner"></span> Entrar
+        </button>
+      </form>
+
+      <div class="login-modal-links">
+        Não faz parte da elite? <a href="/backend/register">Cadastre-se</a>
+      </div>
+    </div>
+  </div>

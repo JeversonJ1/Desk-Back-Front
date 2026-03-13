@@ -298,9 +298,15 @@
     }
 
     // === Inicializar ===
+    window.AuthManager = {
+        init: function() {
+            initEvents();
+            checkAuth();
+        }
+    };
+
     document.addEventListener('DOMContentLoaded', function () {
-        initEvents();
-        checkAuth();
+        window.AuthManager.init();
     });
 
 })();

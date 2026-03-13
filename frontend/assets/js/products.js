@@ -114,6 +114,7 @@ const ProductManager = (() => {
 
     const inner = carouselContainer.querySelector('.carousel-inner');
 
+    // MODO B: Bootstrap Original (Usado em páginas não-Home)
     // Criar slides
     for (let i = 0; i < category.itens.length; i += PRODUCTS_PER_SLIDE) {
       const carouselItem = document.createElement('div');
@@ -140,13 +141,75 @@ const ProductManager = (() => {
   };
 
   /**
+   * Tailwind: Cria seção de produtos para a Nova Home
+   */
+  const createTailwindSection = (category) => {
+    if (!category || !category.itens || category.itens.length === 0) return document.createElement('div');
+    const catName = category.categoria || 'Coleção';
+    const tag = category.tag || 'Lançamento';
+    const section = document.createElement('section');
+    section.className = 'py-24 bg-[var(--brand-dark)] border-t border-white/5 relative z-10';
+    section.setAttribute('data-purpose', 'product-section');
+
+    const titleHtml = `
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-20 relative">
+          <h2 class="font-heading text-7xl md:text-9xl font-bold uppercase tracking-tighter opacity-10 absolute left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-full">${catName}</h2>
+          <div class="relative z-10">
+            <span class="text-[var(--brand-yellow)] font-bold tracking-[0.5em] text-[10px] uppercase mb-4 block">${tag}</span>
+            <h3 class="font-heading text-4xl md:text-6xl font-bold uppercase tracking-tight text-white">${catName}</h3>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8" id="grid-${catName.replace(/\s+/g, '-')}"></div>
+      </div>
+    `;
+    
+    section.innerHTML = titleHtml;
+    const grid = section.querySelector(`#grid-${catName.replace(/\s+/g, '-')}`);
+
+    category.itens.slice(0, 4).forEach(product => {
+      const precoFormatado = formatPrice(product.preco);
+      
+      const col = document.createElement('div');
+      col.className = 'group product-card-hover bg-[var(--brand-grey)] border border-white/5 flex flex-col h-full';
+      col.innerHTML = `
+        <div class="aspect-[3/4] overflow-hidden relative">
+          ${product.oferta || product.desconto ? `<span class="absolute top-2 left-2 gold-badge px-2 py-0.5 text-[7px] z-10">${product.oferta || product.desconto}</span>` : ''}
+          <img alt="${product.alt || product.nome}" class="w-full h-full object-cover" src="${product.img}" loading="lazy"/>
+        </div>
+        <div class="p-6 flex flex-col flex-1">
+          <div class="flex justify-between items-start mb-auto">
+            <div class="pe-3">
+              <h4 class="font-heading text-lg font-bold uppercase tracking-wide text-white m-0 leading-tight">${product.nome}</h4>
+            </div>
+            <span class="text-[var(--brand-yellow)] font-bold text-sm whitespace-nowrap">R$ ${precoFormatado}</span>
+          </div>
+          <div class="mt-4 pt-4 border-t border-white/10 flex gap-2">
+            <a href="pages/produto.html?id=${product.id}" class="flex-1 text-center border border-white/10 text-[10px] text-white font-bold uppercase tracking-[0.2em] py-3 hover:bg-white hover:text-black transition duration-500">
+              Ver
+            </a>
+            <button class="flex-1 btn-quick-buy bg-white text-black text-[10px] font-bold uppercase tracking-[0.2em] py-3 hover:bg-[var(--brand-yellow)] transition duration-500" data-product-id="${product.id}">
+              Comprar
+            </button>
+          </div>
+        </div>
+      `;
+      grid.appendChild(col);
+    });
+
+    return section;
+  };
+
+  /**
    * Renderiza todos os produtos na vitrine
    */
   /**
    * Renderiza todos os produtos na vitrine dividindo por seções da Home
    */
   const renderProducts = (productsData) => {
-    const container = document.getElementById('vitrine');
+    const isTailwind = !!document.getElementById('vitrineTailwind');
+    const container = document.getElementById(isTailwind ? 'vitrineTailwind' : 'vitrine');
+    
     if (!container) return;
 
     container.innerHTML = '';
@@ -183,29 +246,32 @@ const ProductManager = (() => {
       }
     });
 
+    // Função auxiliar baseada no modo visual
+    const renderFunc = isTailwind ? createTailwindSection : createCarouselSection;
+
     // 1. Mais Vendidos (Seleciona aleatoriamente ou pega os 8 primeiros + ofertas)
     const bestSellers = allItems.sort((a, b) => b.oferta ? 1 : -1).slice(0, 8);
     if (bestSellers.length > 0) {
-      container.appendChild(createCarouselSection({ categoria: 'MAIS VENDIDOS', tag: 'PREMIUM CO.', itens: bestSellers }));
+      container.appendChild(renderFunc({ categoria: 'MAIS VENDIDOS', tag: 'PREMIUM CO.', itens: bestSellers }));
     }
 
     // 2. Camisetas
     if (camisetasList.length > 0) {
-      container.appendChild(createCarouselSection({ categoria: 'CAMISETAS', tag: 'ESSENTIALS', itens: camisetasList }));
+      container.appendChild(renderFunc({ categoria: 'CAMISETAS', tag: 'ESSENTIALS', itens: camisetasList }));
     }
 
-    // 3. Moletons
+    // 3. Moletons e Calças
     if (moletonsList.length > 0) {
-      container.appendChild(createCarouselSection({ categoria: 'MOLETONS', tag: 'WINTER', itens: moletonsList }));
+      container.appendChild(renderFunc({ categoria: 'MOLETONS', tag: 'WINTER', itens: moletonsList }));
     }
-
-    // 4. Calças
     if (calcasList.length > 0) {
-      container.appendChild(createCarouselSection({ categoria: 'CALÇAS', tag: 'STREETSTYLE', itens: calcasList }));
+      container.appendChild(renderFunc({ categoria: 'CALÇAS', tag: 'STREETSTYLE', itens: calcasList }));
     }
     
-    // Inicializar carrosséis do Bootstrap
-    initializeCarousels();
+    // Inicializar carrosséis do Bootstrap apenas no modo Clássico
+    if (!isTailwind) {
+        initializeCarousels();
+    }
 
     // Re-inicializa observadores de animação (lazy-load das novas colunas)
     if (window.AnimationManager) {

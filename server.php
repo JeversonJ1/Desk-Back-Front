@@ -22,7 +22,7 @@ if (preg_match('/^\/api\/(.+\.php)$/', $uri, $m)) {
 // ── 2. Arquivos estáticos do frontend (CSS, JS, imagens, HTML) ───────────────
 //       Verificado ANTES do backend. Como o frontend/ não é o docroot,
 //       precisamos servir com readfile() + Content-Type correto.
-$frontendFile = __DIR__ . '/frontend' . $uri;
+$frontendFile = str_starts_with($uri, '/frontend') ? __DIR__ . $uri : __DIR__ . '/frontend' . $uri;
 if (file_exists($frontendFile) && is_file($frontendFile)) {
     $ext = strtolower(pathinfo($frontendFile, PATHINFO_EXTENSION));
     $mime = match ($ext) {

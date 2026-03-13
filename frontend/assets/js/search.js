@@ -80,4 +80,5 @@ const SearchManager = (() => {
     return { init };
 })();
 
+window.SearchManager = SearchManager;
 document.addEventListener('DOMContentLoaded', SearchManager.init);

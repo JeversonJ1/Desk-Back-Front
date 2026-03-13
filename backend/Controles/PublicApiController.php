@@ -730,6 +730,15 @@ class PublicApiController
         $avaliacaoModel = new \App\Koketsu\Models\Avaliacao(Database::getInstance());
         $avaliacoes = $avaliacaoModel->buscarAvaliacoes();
 
+        if ($avaliacoes) {
+            foreach ($avaliacoes as &$avaliacao) {
+                if (isset($avaliacao['comentario_avaliacoes'])) {
+                    $avaliacao['comentario_avaliacoes'] = htmlspecialchars($avaliacao['comentario_avaliacoes'] ?? '', ENT_QUOTES, 'UTF-8');
+                }
+            }
+            unset($avaliacao);
+        }
+
         header('Content-Type: application/json');
         echo json_encode(['status' => 'success', 'data' => $avaliacoes]);
         exit;
@@ -750,6 +759,15 @@ class PublicApiController
         $avaliacaoModel = new \App\Koketsu\Models\Avaliacao(Database::getInstance());
         $avaliacoes = $avaliacaoModel->buscarPorProduto($id_produto);
 
+        if ($avaliacoes) {
+            foreach ($avaliacoes as &$avaliacao) {
+                if (isset($avaliacao['comentario_avaliacoes'])) {
+                    $avaliacao['comentario_avaliacoes'] = htmlspecialchars($avaliacao['comentario_avaliacoes'] ?? '', ENT_QUOTES, 'UTF-8');
+                }
+            }
+            unset($avaliacao);
+        }
+
         header('Content-Type: application/json');
         echo json_encode(['status' => 'success', 'data' => $avaliacoes]);
         exit;
@@ -759,6 +777,15 @@ class PublicApiController
     {
         $avaliacaoModel = new \App\Koketsu\Models\Avaliacao(Database::getInstance());
         $avaliacoes = $avaliacaoModel->buscarUltimasAvaliacoes(6);
+
+        if ($avaliacoes) {
+            foreach ($avaliacoes as &$avaliacao) {
+                if (isset($avaliacao['comentario_avaliacoes'])) {
+                    $avaliacao['comentario_avaliacoes'] = htmlspecialchars($avaliacao['comentario_avaliacoes'] ?? '', ENT_QUOTES, 'UTF-8');
+                }
+            }
+            unset($avaliacao);
+        }
 
         header('Content-Type: application/json');
         echo json_encode(['status' => 'success', 'data' => $avaliacoes]);
@@ -772,6 +799,9 @@ class PublicApiController
 
         header('Content-Type: application/json');
         if ($avaliacao) {
+            if (isset($avaliacao['comentario_avaliacoes'])) {
+                $avaliacao['comentario_avaliacoes'] = htmlspecialchars($avaliacao['comentario_avaliacoes'] ?? '', ENT_QUOTES, 'UTF-8');
+            }
             echo json_encode(['status' => 'success', 'data' => $avaliacao]);
         } else {
             http_response_code(404);

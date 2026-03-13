@@ -27,9 +27,9 @@
   --color-info: #3498db;
 
   /* Tipografia */
-  --font-primary: 'Inter', sans-serif;
-  --font-secondary: 'Inter', sans-serif;
-  --font-heading: 'Outfit', sans-serif;
+  --font-primary: 'Montserrat', sans-serif;
+  --font-secondary: 'Montserrat', sans-serif;
+  --font-heading: 'Oswald', sans-serif;
 
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
