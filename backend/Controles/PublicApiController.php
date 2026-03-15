@@ -125,56 +125,60 @@ class PublicApiController
         header('Content-Type: application/json; charset=utf-8');
 
         try {
-            // 1. Buscar todas as categorias ativas
-            $sqlCat = "SELECT id_categorias, nome_categorias FROM tbl_categorias WHERE excluido_em IS NULL";
-            $stmtCat = $this->db->prepare($sqlCat);
-            $stmtCat->execute();
-            $categorias = $stmtCat->fetchAll(\PDO::FETCH_ASSOC);
-
             $resultado = [];
 
-            foreach ($categorias as $cat) {
-                $itemCategoria = [
-                    'categoria' => $cat['nome_categorias'],
-                    'itens' => []
-                ];
+            // 1. MAIS VENDIDOS (Top 8 baseado em quantidade vendida)
+            $sqlBest = "SELECT p.id_produto, p.nome_produtos, p.preco_produtos, p.imagem_produtos, SUM(ip.quantidade) as total_vendas
+                        FROM tbl_produtos p
+                        JOIN tbl_itens_pedidos ip ON p.id_produto = ip.id_produto
+                        WHERE p.excluido_em IS NULL
+                        GROUP BY p.id_produto
+                        ORDER BY total_vendas DESC
+                        LIMIT 8";
+            $stmtBest = $this->db->prepare($sqlBest);
+            $stmtBest->execute();
+            $bestSellers = $stmtBest->fetchAll(\PDO::FETCH_ASSOC);
 
-                // 2. Buscar produtos da categoria
-                $sqlProd = "SELECT id_produto, nome_produtos, preco_produtos, imagem_produtos, estoque_produtos 
-                           FROM tbl_produtos 
-                           WHERE id_categoria = ? AND excluido_em IS NULL AND estoque_produtos > 0";
-                $stmtProd = $this->db->prepare($sqlProd);
-                $stmtProd->execute([$cat['id_categorias']]);
-                $produtos = $stmtProd->fetchAll(\PDO::FETCH_ASSOC);
-
-                foreach ($produtos as $prod) {
-                    // 3. Buscar Tamanhos
-                    $sqlTamanhos = "SELECT tamanho_tamanhos FROM tbl_tamanhos WHERE id_produto = ? AND excluido_em IS NULL";
-                    $stmtT = $this->db->prepare($sqlTamanhos);
-                    $stmtT->execute([$prod['id_produto']]);
-                    $tamanhos = $stmtT->fetchAll(\PDO::FETCH_COLUMN);
-
-                    // 4. Buscar Cores
-                    $sqlCores = "SELECT cor_cores FROM tbl_cores WHERE id_produto = ? AND excluido_em IS NULL";
-                    $stmtC = $this->db->prepare($sqlCores);
-                    $stmtC->execute([$prod['id_produto']]);
-                    $cores = $stmtC->fetchAll(\PDO::FETCH_COLUMN);
-
-                    // 5. Formatar item
-                    $itemCategoria['itens'][] = [
-                        'id' => (int) $prod['id_produto'],
-                        'nome' => $prod['nome_produtos'],
-                        'preco' => (float) $prod['preco_produtos'],
-                        'img' => $this->converterParaBase64('backend/upload/' . $prod['imagem_produtos']),
-                        'tamanhos' => $tamanhos,
-                        'cores' => $cores,
-                        'oferta' => null, // Opcional, se tiver lógica futura
-                        'desconto' => null
-                    ];
+            if (!empty($bestSellers)) {
+                $sectionBest = ['categoria' => 'MAIS VENDIDOS', 'tag' => 'O FAVORITO DO ACERVO', 'itens' => []];
+                foreach ($bestSellers as $prod) {
+                    $sectionBest['itens'][] = $this->formatarProdutoVitrine($prod);
                 }
+                $resultado[] = $sectionBest;
+            }
 
-                if (!empty($itemCategoria['itens'])) {
-                    $resultado[] = $itemCategoria;
+            // 2. CATEGORIAS ESPECÍFICAS (CAMISAS, CALÇAS, ACESSÓRIOS)
+            $categoriasAlvo = [
+                'CAMISAS' => ['tag' => 'ESSENTIALS', 'filtros' => ['camisa', 'camiseta', 't-shirt']],
+                'CALÇAS' => ['tag' => 'STREETSTYLE', 'filtros' => ['calça', 'calca', 'jeans']],
+                'ACESSÓRIOS' => ['tag' => 'DETALHES', 'filtros' => ['acessório', 'acessorio', 'boné', 'cinto', 'carteira']]
+            ];
+
+            foreach ($categoriasAlvo as $label => $config) {
+                $filtros = array_map(fn($f) => "nome_categorias LIKE '%$f%'", $config['filtros']);
+                $whereFiltro = "(" . implode(" OR ", $filtros) . ")";
+
+                $sqlCat = "SELECT id_categorias FROM tbl_categorias WHERE $whereFiltro AND excluido_em IS NULL LIMIT 1";
+                $stmtCat = $this->db->prepare($sqlCat);
+                $stmtCat->execute();
+                $catId = $stmtCat->fetchColumn();
+
+                if ($catId) {
+                    $sqlProd = "SELECT id_produto, nome_produtos, preco_produtos, imagem_produtos 
+                                FROM tbl_produtos 
+                                WHERE id_categoria = ? AND excluido_em IS NULL AND estoque_produtos > 0
+                                LIMIT 12";
+                    $stmtProd = $this->db->prepare($sqlProd);
+                    $stmtProd->execute([$catId]);
+                    $produtos = $stmtProd->fetchAll(\PDO::FETCH_ASSOC);
+
+                    if (!empty($produtos)) {
+                        $section = ['categoria' => $label, 'tag' => $config['tag'], 'itens' => []];
+                        foreach ($produtos as $prod) {
+                            $section['itens'][] = $this->formatarProdutoVitrine($prod);
+                        }
+                        $resultado[] = $section;
+                    }
                 }
             }
 
@@ -184,6 +188,19 @@ class PublicApiController
             echo json_encode(['error' => $e->getMessage()]);
         }
         exit;
+    }
+
+    private function formatarProdutoVitrine($prod)
+    {
+        // Buscar Tamanhos e Cores (Simplificado para a vitrine rápida)
+        return [
+            'id' => (int) $prod['id_produto'],
+            'nome' => $prod['nome_produtos'],
+            'preco' => (float) $prod['preco_produtos'],
+            'img' => $this->converterParaBase64('backend/upload/' . $prod['imagem_produtos']),
+            'oferta' => null,
+            'desconto' => null
+        ];
     }
 
     // ==================== PEDIDOS ====================

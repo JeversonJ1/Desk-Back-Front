@@ -5,9 +5,9 @@ const SearchManager = (() => {
     const API_URL = '/api/vitrine.php';
     let allProducts = [];
 
-    const init = async () => {
-        const searchInput = document.getElementById('globalSearch');
-        const resultsContainer = document.getElementById('searchResults');
+    const init = async (customInputId = 'globalSearch', customResultsId = 'searchResults') => {
+        const searchInput = document.getElementById(customInputId);
+        const resultsContainer = document.getElementById(customResultsId);
         if (!searchInput || !resultsContainer) return;
 
         // Carrega produtos para cache local

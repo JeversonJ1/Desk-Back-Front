@@ -9,6 +9,9 @@
     
     <!-- Tailwind CSS with no preflight to avoid breaking Bootstrap injected modais -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
     <script>
         tailwind.config = {
             corePlugins: {
@@ -30,126 +33,21 @@
     <link rel="stylesheet" href="assets/css/components/auth.css">
     <link rel="stylesheet" href="assets/css/components/home-modern.css">
     
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Custom Global Styles (Internal styles moved to main.css) -->
+    <link rel="stylesheet" href="assets/css/global/main.css">
     <style type="text/tailwindcss">
+        /* Tailwind-specific overrides that must stay in HTML for JIT engine if not using a build tool */
         :root {
             --brand-yellow: #FFD700;
             --brand-dark: #0A0A0A;
             --brand-grey: #1A1A1A;
-            --brand-light-grey: #2D2D2D;
         }
         body {
-            background-color: var(--brand-dark);
-            color: #FFFFFF;
-            overflow-x: hidden;
-            font-family: 'Montserrat', sans-serif;
-            margin: 0;
-            /* Reset Bootstrap typography overrides */
+            @apply bg-[var(--brand-dark)] text-white overflow-x-hidden font-sans;
             --bs-body-bg: var(--brand-dark);
             --bs-body-color: #FFFFFF;
-        }
-        
-        /* Reset basic HTML elements for Tailwind compatibility since we disabled preflight */
-        h1, h2, h3, h4, h5, h6 { margin: 0; padding: 0; }
-        p { margin: 0; padding: 0; }
-        a { text-decoration: none; color: inherit; }
-        button { cursor: pointer; background: transparent; border: none; padding: 0; outline: none; }
-        ul, ol { margin: 0; padding: 0; list-style: none; }
-        
-        .font-heading { font-family: 'Oswald', sans-serif; }
-        .font-sans { font-family: 'Montserrat', sans-serif; }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-        }
-        .gold-badge {
-            background-color: var(--brand-yellow);
-            color: var(--brand-dark);
-            font-weight: 800;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-        .exclusive-overlay {
-            background: linear-gradient(to top, rgba(10, 10, 10, 1) 0%, rgba(10, 10, 10, 0.4) 50%, rgba(10, 10, 10, 0) 100%);
-        }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .product-card-hover img {
-            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .product-card-hover:hover img {
-            transform: scale(1.05);
-        }
-        /* Reference-inspired Styles */
-        .nav-search-container {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 9999px;
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 280px;
-        }
-        .nav-search-input {
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 13px;
-            width: 100%;
-            outline: none;
-        }
-        .nav-search-input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-        .icon-pill-button {
-            background-color: black;
-            border-radius: 9999px;
-            color: white;
-            padding: 8px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .icon-pill-button:hover {
-            background-color: #1a1a1a;
-        }
-        .logo-main {
-            max-height: 85px;
-            width: auto;
-            object-fit: contain;
-            transition: transform 0.3s ease, filter 0.3s ease;
-            filter: drop-shadow(0 2px 4px rgba(248, 211, 70, 0.2));
-        }
-        .logo-main:hover {
-            transform: scale(1.1);
-            filter: drop-shadow(0 4px 8px rgba(248, 211, 70, 0.4));
-        }
-        @keyframes ticker-slow {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .animate-ticker-slow {
-            animation: ticker-slow 40s linear infinite;
-        }
-        
-        /* Ajuste do dropdown de pesquisa custom do novo design */
-        #searchResultsTailwind {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--brand-grey);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            margin-top: 8px;
-            max-height: 300px;
-            overflow-y: auto;
-            z-index: 1000;
-        }
-        #searchResultsTailwind.d-none {
-            display: none !important;
         }
     </style>
 </head>
@@ -214,89 +112,140 @@
     </div>
 </nav>
 
-<section class="relative min-h-screen flex flex-col justify-center items-center pt-24 overflow-hidden" data-purpose="hero-banner">
-    <img alt="Coleção Exclusiva" class="absolute inset-0 w-full h-full object-cover grayscale opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdo1bZ3zeAbNMIEP8ZFqZVOCmOIJxJH_FlELBepVvO9n3I6-DvI7rCji9Wa8p8mO3AarZyUIld72zamFFHDfyocx66aVvZd_RQszSo5I7FlWCNZvIovcCH19ncq2u72Z4WHvIHTJ_KG6k_1nlXgbv4eMD8yAC2CvYfGMD2Z1phr_tHBDjBzxzv54UONlUngH9FwRp9Uabd6MPl4fwDN2o8irvYz7AcnNAzd1m6ks8R8KMXjcg76_6_X0oZlzQ6e1jFTtSdNBha8p-4"/>
-    <div class="absolute inset-0 exclusive-overlay"></div>
-    <div class="relative z-10 container mx-auto px-6 text-center">
-        <div class="inline-block gold-badge px-4 py-1 text-[10px] mb-8">Lançamento em Edição Limitada</div>
-        <h2 class="font-heading text-6xl md:text-9xl font-bold leading-[0.85] tracking-tighter mb-4 text-white">WINTER <br/><span class="text-[var(--brand-yellow)]">ARCHIVE 01</span></h2>
+<!-- Hero Banner Swiper -->
+<section class="hero-swiper-container relative h-[600px] w-full overflow-hidden pt-24" data-purpose="hero-banner">
+    <div class="swiper heroSwiper h-full">
+        <div class="swiper-wrapper">
+            <!-- Slide 1 -->
+            <div class="swiper-slide relative">
+                <img src="assets/img/banner1.png" class="absolute inset-0 w-full h-full object-cover" alt="Banner 1">
+            </div>
+            <!-- Slide 2 -->
+            <div class="swiper-slide relative">
+                <img src="assets/img/banner2.png" class="absolute inset-0 w-full h-full object-cover" alt="Banner 2">
+            </div>
+        </div>
+        <!-- Pagination/Navigation for Hero -->
+        <div class="swiper-pagination !bottom-10"></div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator-container">
+        <div class="mouse-icon">
+            <div class="mouse-wheel"></div>
+        </div>
+        <span class="scroll-text">Role para descobrir</span>
+    </div>
+</section>
+
+<!-- Setores de Benefícios (4 cards) -->
+<section class="py-12 bg-black border-t border-[var(--brand-grey)]">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- Benefício 1 -->
+            <div class="bg-[#111111] p-6 text-center rounded-xl border border-white/5 flex flex-col justify-center items-center h-full">
+                <span class="material-symbols-outlined text-[var(--brand-yellow)] text-3xl mb-3">local_shipping</span>
+                <h4 class="text-white text-[11px] font-bold uppercase tracking-widest mb-2">Frete Grátis</h4>
+                <p class="text-gray-500 text-[10px] leading-tight">Para todo o Brasil acima de R$ 200</p>
+            </div>
+            <!-- Benefício 2 -->
+            <div class="bg-[#111111] p-6 text-center rounded-xl border border-white/5 flex flex-col justify-center items-center h-full">
+                <span class="material-symbols-outlined text-[var(--brand-yellow)] text-3xl mb-3">security</span>
+                <h4 class="text-white text-[11px] font-bold uppercase tracking-widest mb-2">Compra Segura</h4>
+                <p class="text-gray-500 text-[10px] leading-tight">Seus dados estão 100% protegidos</p>
+            </div>
+            <!-- Benefício 3 -->
+            <div class="bg-[#111111] p-6 text-center rounded-xl border border-white/5 flex flex-col justify-center items-center h-full">
+                <span class="material-symbols-outlined text-[var(--brand-yellow)] text-3xl mb-3">swap_horiz</span>
+                <h4 class="text-white text-[11px] font-bold uppercase tracking-widest mb-2">Troca Fácil</h4>
+                <p class="text-gray-500 text-[10px] leading-tight">Até 7 dias para devolução</p>
+            </div>
+            <!-- Benefício 4 -->
+            <div class="bg-[#111111] p-6 text-center rounded-xl border border-white/5 flex flex-col justify-center items-center h-full">
+                <span class="material-symbols-outlined text-[var(--brand-yellow)] text-3xl mb-3">support_agent</span>
+                <h4 class="text-white text-[11px] font-bold uppercase tracking-widest mb-2">Atendimento</h4>
+                <p class="text-gray-500 text-[10px] leading-tight">Suporte Focado em Você</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Nossas Categorias -->
+<section class="py-16 bg-black relative">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-10">
+            <div class="inline-block border border-[var(--brand-yellow)] text-[var(--brand-yellow)] px-4 py-1 rounded-full text-[10px] font-bold tracking-[0.2em] mb-4">
+                [ CATEGORIAS ]
+            </div>
+            <h2 class="font-heading text-3xl md:text-4xl font-black uppercase text-white mb-2 tracking-tight">NOSSAS CATEGORIAS</h2>
+            <p class="text-gray-400 text-xs md:text-sm">Encontre a sua peça perfeita para todas as ocasiões.</p>
+        </div>
         
-        <div class="mt-12 mb-16 max-w-xl mx-auto">
-            <p class="text-[var(--brand-yellow)] font-bold tracking-[0.4em] uppercase text-xs mb-6">O Próximo Drop Começa Em:</p>
-            <div class="flex justify-center space-x-6 md:space-x-12">
-                <div class="text-center">
-                    <span class="block font-heading text-4xl md:text-6xl font-bold text-white">02</span>
-                    <span class="text-[10px] text-gray-400 uppercase tracking-widest">Dias</span>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            <!-- Categoria 1: Camisetas -->
+            <div class="bg-white rounded-xl overflow-hidden flex flex-col group cursor-pointer transition-transform hover:scale-105 shadow-2xl shadow-yellow-500/10" onclick="window.location.href='/frontend/pages/catalogo.html?categoria=camisetas'">
+                <div class="p-4 flex-1 flex items-center justify-center bg-[#f5f5f5] overflow-hidden">
+                    <img src="assets/img/camiseta off white.png" alt="Camisetas" class="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-110" style="max-height: 200px;">
                 </div>
-                <div class="text-center">
-                    <span class="block font-heading text-4xl md:text-6xl font-bold text-white">14</span>
-                    <span class="text-[10px] text-gray-400 uppercase tracking-widest">Horas</span>
+                <div class="bg-[#1A1A1A] p-4 text-center border-t border-white/5">
+                    <h3 class="text-white font-bold text-xs uppercase tracking-widest m-0 group-hover:text-[var(--brand-yellow)] transition">Camisetas Oversized</h3>
                 </div>
-                <div class="text-center">
-                    <span class="block font-heading text-4xl md:text-6xl font-bold text-white">35</span>
-                    <span class="text-[10px] text-gray-400 uppercase tracking-widest">Minutos</span>
+            </div>
+            <!-- Categoria 2: Moletons -->
+            <div class="bg-white rounded-xl overflow-hidden flex flex-col group cursor-pointer transition-transform hover:scale-105 shadow-2xl shadow-yellow-500/10" onclick="window.location.href='/frontend/pages/catalogo.html?categoria=moletons'">
+                <div class="p-4 flex-1 flex items-center justify-center bg-[#f5f5f5] overflow-hidden">
+                    <img src="assets/img/moletom.png" alt="Moletons" class="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-110" style="max-height: 200px;">
                 </div>
-                <div class="text-center">
-                    <span class="block font-heading text-4xl md:text-6xl font-bold text-white">59</span>
-                    <span class="text-[10px] text-gray-400 uppercase tracking-widest">Seg.</span>
+                <div class="bg-[#1A1A1A] p-4 text-center border-t border-white/5">
+                    <h3 class="text-white font-bold text-xs uppercase tracking-widest m-0 group-hover:text-[var(--brand-yellow)] transition">Coleção Moletons</h3>
+                </div>
+            </div>
+            <!-- Categoria 3: Calças -->
+            <div class="bg-white rounded-xl overflow-hidden flex flex-col group cursor-pointer transition-transform hover:scale-105 shadow-2xl shadow-yellow-500/10" onclick="window.location.href='/frontend/pages/catalogo.html?categoria=calcas'">
+                <div class="p-4 flex-1 flex items-center justify-center bg-[#f5f5f5] overflow-hidden">
+                    <img src="assets/img/calca-cargo.png" alt="Calças" class="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-110" style="max-height: 200px;">
+                </div>
+                <div class="bg-[#1A1A1A] p-4 text-center border-t border-white/5">
+                    <h3 class="text-white font-bold text-xs uppercase tracking-widest m-0 group-hover:text-[var(--brand-yellow)] transition">Calças Cargo</h3>
+                </div>
+            </div>
+            <!-- Categoria 4: Tênis -->
+            <div class="bg-white rounded-xl overflow-hidden flex flex-col group cursor-pointer transition-transform hover:scale-105 shadow-2xl shadow-yellow-500/10" onclick="window.location.href='/frontend/pages/catalogo.html?categoria=calcados'">
+                <div class="p-4 flex-1 flex items-center justify-center bg-[#f5f5f5] overflow-hidden">
+                    <img src="assets/img/dn.png" alt="Tênis" class="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-110" style="max-height: 200px;">
+                </div>
+                <div class="bg-[#1A1A1A] p-4 text-center border-t border-white/5">
+                    <h3 class="text-white font-bold text-xs uppercase tracking-widest m-0 group-hover:text-[var(--brand-yellow)] transition">Tênis Premium</h3>
                 </div>
             </div>
         </div>
         
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a class="bg-[var(--brand-yellow)] text-black px-12 py-5 font-extrabold text-[11px] uppercase tracking-[0.2em] hover:bg-white transition" href="/frontend/pages/catalogo.html">Obter Acesso Antecipado</a>
-            <a class="bg-white/5 backdrop-blur-md border border-white/20 text-white px-12 py-5 font-extrabold text-[11px] uppercase tracking-[0.2em] hover:bg-white/10 transition" href="/frontend/pages/catalogo.html">Ver Lookbook</a>
+        <div class="text-center">
+            <a href="/frontend/pages/catalogo.html" class="inline-block border border-[var(--brand-yellow)] text-[var(--brand-yellow)] px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-[var(--brand-yellow)] hover:text-black transition">
+                Ver Catálogo Completo
+            </a>
         </div>
-    </div>
-    <div class="absolute bottom-10 flex flex-col items-center">
-        <span class="text-[9px] uppercase tracking-[0.4em] text-gray-500 mb-4 z-10 relative">Descubra Mais</span>
-        <div class="w-px h-16 bg-gradient-to-b from-[var(--brand-yellow)] to-transparent z-10 relative"></div>
     </div>
 </section>
 
-<div class="bg-[var(--brand-yellow)] py-3 overflow-hidden border-y border-black/20">
-    <div class="flex whitespace-nowrap animate-ticker-slow">
-        <div class="flex space-x-12 px-4 font-black text-[10px] uppercase tracking-[0.3em] text-black">
-            <span>Apenas 50 unidades por estilo</span>
-            <span class="opacity-30">•</span>
-            <span>Etiquetas numeradas à mão</span>
-            <span class="opacity-30">•</span>
-            <span>Sem reposição garantida</span>
-            <span class="opacity-30">•</span>
-            <span>Embalagem exclusiva para colecionadores</span>
-            <span class="opacity-30">•</span>
-            <span>Acesso exclusivo para membros</span>
-            <span class="opacity-30">•</span>
-            <span>Apenas 50 unidades por estilo</span>
-            <span class="opacity-30">•</span>
-            <span>Etiquetas numeradas à mão</span>
+    <!-- VITRINE DINÂMICA (SUBSTITUI SEÇÕES ESTÁTICAS) -->
+    <div id="vitrineTailwind">
+        <div class="py-24 text-center">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--brand-yellow)]"></div>
         </div>
     </div>
-</div>
 
-<!-- CONTAINER PRINCIPAL DA VITRINE DINÂMICA (Renderizada pelo products.js) -->
-<div id="vitrineTailwind">
-    <div class="text-center py-32">
-        <div class="spinner-border text-warning" role="status">
-            <span class="visually-hidden">Carregando coleções exclusivas...</span>
-        </div>
-    </div>
-</div>
-
-<!-- MANIFESTO -->
-<section class="py-24 bg-black">
-    <div class="container mx-auto px-6 text-center">
-        <div class="max-w-2xl mx-auto border border-white/5 p-16 bg-gradient-to-b from-[var(--brand-grey)] to-black">
-            <span class="material-symbols-outlined text-[var(--brand-yellow)] text-4xl mb-6">workspace_premium</span>
-            <h2 class="font-heading text-3xl font-bold mb-6 text-white">MANIFESTO DO COLECIONADOR</h2>
-            <p class="text-gray-400 text-sm font-light leading-relaxed mb-8 italic">
-                "Nós não fabricamos tendências. Nós arquivamos momentos da alta cultura urbana. Cada peça é um certificado digital e físico de exclusividade."
+    <!-- Brand Story Section -->
+    <section class="brand-story-section">
+        <div class="watermark-text">KOKETSU</div>
+        <div class="brand-story-content">
+            <h2 class="brand-story-quote">O essencial é invisível aos olhos</h2>
+            <p class="brand-story-text">
+                "A Koketsu nasceu da necessidade de expressar a alma urbana através do luxo silencioso. 
+                Não fazemos apenas roupas, criamos armaduras para quem domina a cidade com elegância e atitude."
             </p>
-            <div class="w-12 h-px bg-[var(--brand-yellow)] mx-auto mb-8"></div>
-            <a class="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--brand-yellow)] hover:text-white transition" href="/frontend/pages/catalogo.html">O Protocolo de Arquivo →</a>
         </div>
-    </div>
-</section>
+    </section>
 
 <footer class="bg-black pt-24 pb-12 border-t border-white/5">
     <div class="container mx-auto px-6">
@@ -356,25 +305,9 @@
         // Inicializa parciais normais
         window.Utils.loadPartials();
         
-        // Mocked event hook for custom Search Bar
-        const searchInput = document.getElementById("globalSearchTailwind");
-        if(searchInput && window.SearchManager) {
-            // Overriding SearchManager elements dynamically for the home page
-            window.SearchManager.searchInput = searchInput;
-            window.SearchManager.searchResults = document.getElementById("searchResultsTailwind");
-            window.SearchManager.init(); // Re-init
-            
-            searchInput.addEventListener('input', window.Utils.debounce((e) => {
-                window.SearchManager.handleSearch(e.target.value);
-            }, 300));
-            
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.nav-search-container')) {
-                    if(window.SearchManager.searchResults) {
-                        window.SearchManager.searchResults.classList.add('d-none');
-                    }
-                }
-            });
+        // Initialize Search Manager with Tailwind IDs
+        if(window.SearchManager) {
+            window.SearchManager.init("globalSearchTailwind", "searchResultsTailwind");
         }
         
         // Newsletter
@@ -387,15 +320,15 @@
                 msgEl.classList.remove('d-none', 'text-success', 'text-danger');
                 
                 try {
-                    const response = await fetch('/api/newsletter.php', {
+                    const response = await fetch('/api/newsletter/inscrever', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: email })
+                        body: JSON.stringify({ email_newsletter: email })
                     });
                     const result = await response.json();
                     msgEl.textContent = result.message || 'Membro adicionado à Whitelist!';
-                    msgEl.classList.add('text-success');
-                    nsForm.reset();
+                    msgEl.classList.add(result.success ? 'text-success' : 'text-danger');
+                    if(result.success) nsForm.reset();
                 } catch (error) {
                     msgEl.textContent = 'Erro ao processar. Tente novamente.';
                     msgEl.classList.add('text-danger');
