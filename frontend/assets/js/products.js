@@ -48,31 +48,26 @@ const ProductManager = (() => {
       const precoFormatado = formatPrice(product.preco);
       return `
         <div class="swiper-slide h-auto">
-          <div class="product-card group bg-[var(--brand-grey)] border border-white/5 flex flex-col h-full w-full">
-            <div class="aspect-[3/4] overflow-hidden relative">
-              ${product.oferta || product.desconto ? `<span class="absolute top-2 left-2 gold-badge px-2 py-0.5 text-[7px] z-10">${product.oferta || product.desconto}</span>` : ''}
-              <img alt="${product.nome}" class="card-main-img w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="${product.img}" loading="lazy"/>
-              <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center gap-4">
-                 <a href="pages/produto.html?id=${product.id}" class="w-10 h-10 bg-white text-black flex items-center justify-center rounded-full hover:bg-[var(--brand-yellow)] transition">
-                    <i class="bi bi-eye"></i>
+          <div class="product-card group bg-transparent flex flex-col h-full w-full transition-all duration-500">
+            <div class="aspect-[3/4] overflow-hidden relative rounded-2xl bg-[#111]">
+              ${product.oferta || product.desconto ? `<span class="absolute top-4 left-4 bg-[var(--brand-yellow)] text-black font-black px-3 py-1 text-[8px] z-10 rounded-full tracking-widest uppercase shadow-lg shadow-yellow-500/20">${product.oferta || product.desconto}</span>` : ''}
+              <img alt="${product.nome}" class="card-main-img w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100" src="${product.img}" loading="lazy"/>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-6">
+                 <a href="/frontend/pages/produto.html?id=${product.id}" class="w-full bg-white text-black font-bold py-3 text-[10px] uppercase tracking-widest text-center rounded-lg hover:bg-[var(--brand-yellow)] transition-colors shadow-xl">
+                    Ver Detalhes
                  </a>
               </div>
             </div>
-            <div class="p-4 flex flex-col flex-1 bg-black/50 backdrop-blur-sm">
-              <h4 class="card-title font-heading text-[18px] font-black uppercase tracking-tight text-white mb-4 leading-tight">${product.nome}</h4>
+            <div class="pt-6 flex flex-col flex-1">
+              <h4 class="card-title font-sans text-xs font-bold uppercase tracking-[0.2em] text-white/40 group-hover:text-white transition-colors mb-2 leading-tight">${product.nome}</h4>
               
               <div class="mt-auto">
-                <div class="flex flex-col mb-4">
-                  <span class="text-[var(--brand-yellow)] font-bold text-2xl tracking-tighter">R$ ${precoFormatado}</span>
+                <div class="flex flex-col">
+                  <span class="text-white font-black text-xl tracking-tighter group-hover:text-[var(--brand-yellow)] transition-colors">R$ ${precoFormatado}</span>
                   <div class="mt-1">
-                    <span class="text-[11px] text-white uppercase tracking-wider font-medium">4x de <span class="text-[var(--brand-yellow)] font-bold">R$ ${(product.preco / 4).toFixed(2).replace('.', ',')}</span></span>
-                    <span class="text-[9px] text-white/40 uppercase ml-1">sem juros</span>
+                    <span class="text-[9px] text-white/20 uppercase tracking-widest font-medium">10x de <span class="text-white/40">R$ ${(product.preco / 10).toFixed(2).replace('.', ',')}</span> s/ juros</span>
                   </div>
                 </div>
-                
-                <button class="btn-quick-buy w-full bg-[var(--brand-yellow)] text-black font-bold py-3 text-[10px] uppercase tracking-[0.2em] hover:bg-white transition-all duration-300 transform active:scale-95" data-product-id="${product.id}">
-                  ADICIONAR AO CARRINHO
-                </button>
               </div>
             </div>
           </div>

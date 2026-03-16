@@ -1,36 +1,25 @@
-/**
- * Sistema de Busca Global em Tempo Real
- */
 const SearchManager = (() => {
     const API_URL = '/api/vitrine.php';
     let allProducts = [];
 
-    const init = async (customInputId = 'globalSearch', customResultsId = 'searchResults') => {
-        const searchInput = document.getElementById(customInputId);
-        const resultsContainer = document.getElementById(customResultsId);
-        if (!searchInput || !resultsContainer) return;
+    const init = async () => {
+        const input = document.getElementById('overlaySearchInput');
+        if (!input) return;
 
-        // Carrega produtos para cache local
         allProducts = await fetchProducts();
 
-        searchInput.addEventListener('input', Utils.debounce((e) => {
+        input.addEventListener('input', Utils.debounce((e) => {
             const term = e.target.value.toLowerCase().trim();
-
+            const resultsContainer = document.getElementById('overlayResults');
+            
             if (term.length < 2) {
-                resultsContainer.classList.add('d-none');
+                resultsContainer.innerHTML = '<p class="text-white/20 text-xs italic">Aguardando sua busca...</p>';
                 return;
             }
 
             const filtered = filterProducts(term);
             renderResults(filtered, resultsContainer);
         }, 300));
-
-        // Fecha ao clicar fora
-        document.addEventListener('click', (e) => {
-            if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
-                resultsContainer.classList.add('d-none');
-            }
-        });
     };
 
     const fetchProducts = async () => {
@@ -40,7 +29,7 @@ const SearchManager = (() => {
             if (!Array.isArray(data)) return [];
             let flat = [];
             data.forEach(cat => {
-                if (cat && cat.itens && Array.isArray(cat.itens)) {
+                if (cat?.itens) {
                     cat.itens.forEach(item => {
                         flat.push({ ...item, category: cat.categoria || '' });
                     });
@@ -48,7 +37,7 @@ const SearchManager = (() => {
             });
             return flat;
         } catch (e) {
-            console.error('Erro ao buscar produtos para busca:', e);
+            console.error('Search fetch error:', e);
             return [];
         }
     };
@@ -57,27 +46,53 @@ const SearchManager = (() => {
         return allProducts.filter(p =>
             p.nome.toLowerCase().includes(term) ||
             p.category.toLowerCase().includes(term)
-        ).slice(0, 6); // Limite de 6 resultados
+        ).slice(0, 10);
     };
 
     const renderResults = (products, container) => {
         if (products.length === 0) {
-            container.innerHTML = '<div class="p-4 text-center small text-secondary">Nenhum produto encontrado.</div>';
-        } else {
-            container.innerHTML = products.map(p => `
-        <a href="/pages/produto.html?id=${p.id}" class="search-result-item text-decoration-none">
-          <img src="${p.img}" alt="${p.nome}" class="mini-thumb">
-          <div>
-            <div class="text-white small fw-bold">${p.nome}</div>
-            <div class="gold-text x-small">R$ ${p.preco.toFixed(2).replace('.', ',')}</div>
-          </div>
-        </a>
-      `).join('');
+            container.innerHTML = '<p class="text-white/40 text-sm">Nenhum resultado encontrado.</p>';
+            return;
         }
-        container.classList.remove('d-none');
+        container.innerHTML = products.map(p => `
+            <a href="/frontend/pages/produto.html?id=${p.id}" class="flex items-center gap-4 group text-decoration-none bg-white/5 p-3 rounded-xl border border-white/5 hover:border-[var(--brand-yellow)] transition">
+                <img src="${p.img}" alt="${p.nome}" class="w-16 h-16 object-cover rounded-lg group-hover:scale-105 transition duration-500">
+                <div class="flex-grow">
+                    <div class="text-white text-xs font-bold uppercase tracking-widest group-hover:text-[var(--brand-yellow)] transition">${p.nome}</div>
+                    <div class="text-[var(--brand-yellow)] text-[10px] font-black mt-1">R$ ${p.preco.toFixed(2).replace('.', ',')}</div>
+                </div>
+                <span class="bi bi-arrow-right-short text-white/20 group-hover:text-[var(--brand-yellow)] transition text-xl"></span>
+            </a>
+        `).join('');
     };
 
-    return { init };
+    const openOverlay = () => {
+        const overlay = document.getElementById('searchOverlay');
+        const input = document.getElementById('overlaySearchInput');
+        if (overlay) {
+            overlay.classList.remove('invisible', 'opacity-0');
+            setTimeout(() => input?.focus(), 100);
+            document.body.style.overflow = 'hidden';
+        }
+    };
+
+    const closeOverlay = () => {
+        const overlay = document.getElementById('searchOverlay');
+        if (overlay) {
+            overlay.classList.add('invisible', 'opacity-0');
+            document.body.style.overflow = '';
+        }
+    };
+
+    const setQuery = (query) => {
+        const input = document.getElementById('overlaySearchInput');
+        if (input) {
+            input.value = query;
+            input.dispatchEvent(new Event('input'));
+        }
+    };
+
+    return { init, openOverlay, closeOverlay, setQuery };
 })();
 
 window.SearchManager = SearchManager;
