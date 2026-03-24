@@ -1,5 +1,5 @@
 /* ============================================================
-   MEGA MENU - Estilo CompSupply
+   MEGA MENU - Estilo CompSupply v2 (Dark Mode Koketsu)
    Koketsu Grife 2026
    ============================================================ */
 
@@ -7,9 +7,9 @@
 .mega-menu-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.85); /* Escurecido */
+  backdrop-filter: blur(8px); /* Mais blur */
+  -webkit-backdrop-filter: blur(8px);
   z-index: 9998;
   opacity: 0;
   visibility: hidden;
@@ -28,8 +28,9 @@
   left: 0;
   right: 0;
   z-index: 9999;
-  background: #ffffff;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
+  background: #0f0f0f; /* Fundo base escuro */
+  border-bottom: 2px solid #F2C84B; /* Linha de requinte inferior */
+  box-shadow: 0 12px 50px rgba(0, 0, 0, 0.9);
   transform: translateY(-20px);
   opacity: 0;
   visibility: hidden;
@@ -55,8 +56,8 @@
   justify-content: center;
   gap: 32px;
   padding: 18px 32px;
-  border-bottom: 1px solid #e5e7eb;
-  background: #fff;
+  border-bottom: 1px solid #1f1f1f;
+  background: #000;
   flex-shrink: 0;
 }
 
@@ -64,29 +65,29 @@
   font-family: 'Montserrat', sans-serif;
   font-size: 14px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
   padding: 6px 0;
   border: none;
   background: none;
-  color: #374151;
+  color: rgba(255, 255, 255, 0.5);
   border-bottom: 2px solid transparent;
   transition: color 0.2s, border-color 0.2s;
   text-decoration: none;
 }
 
 .mega-menu-tab.is-active {
-  color: #111827;
-  border-bottom-color: #111827;
+  color: #fff;
+  border-bottom-color: #F2C84B; /* Linha amarela da logo */
 }
 
 .mega-menu-tab.tab-close {
-  color: #dc2626;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .mega-menu-tab.tab-close:hover {
-  color: #b91c1c;
+  color: #F2C84B; /* Foco no fechar usando o amarelo */
 }
 
 /* ── Menu body (two panels) ── */
@@ -95,23 +96,24 @@
   flex: 1;
   overflow: hidden;
   min-height: 0;
+  background: #0f0f0f;
 }
 
 /* ── Left panel: Categories ── */
 .mega-menu-left {
   width: 280px;
   flex-shrink: 0;
-  border-right: 1px solid #e5e7eb;
+  border-right: 1px solid #1f1f1f;
   overflow-y: auto;
   padding: 20px 0;
-  background: #fff;
+  background: #050505;
 }
 
 .mega-menu-left::-webkit-scrollbar {
   width: 4px;
 }
 .mega-menu-left::-webkit-scrollbar-track { background: transparent; }
-.mega-menu-left::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
+.mega-menu-left::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 
 .menu-brand-label {
   font-family: 'Montserrat', sans-serif;
@@ -119,7 +121,7 @@
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #9ca3af;
+  color: #666;
   padding: 0 28px 12px;
 }
 
@@ -128,50 +130,51 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 11px 28px;
+  padding: 14px 28px;
   font-family: 'Montserrat', sans-serif;
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: #374151;
+  font-weight: 700; /* Mais peso */
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ccc;
   cursor: pointer;
   border: none;
   background: none;
   text-align: left;
-  transition: background 0.15s ease, color 0.15s ease, padding-left 0.15s ease;
+  transition: background 0.2s ease, color 0.2s ease, padding-left 0.2s ease, transform 0.2s ease;
   border-left: 3px solid transparent;
   text-decoration: none;
 }
 
 .menu-category-item:hover {
-  background: #f9fafb;
-  color: #111827;
+  background: rgba(242, 200, 75, 0.05); /* Brilho dourado sutil */
+  color: #F2C84B;
   padding-left: 32px;
 }
 
 .menu-category-item.is-active {
-  background: #f3f4f6;
-  color: #111827;
+  background: rgba(242, 200, 75, 0.1);
+  color: #F2C84B;
   border-left-color: #F2C84B;
-  font-weight: 700;
   padding-left: 32px;
 }
 
 .menu-category-item .cat-arrow {
   font-size: 10px;
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, transform 0.2s;
   color: #F2C84B;
 }
 
 .menu-category-item:hover .cat-arrow,
 .menu-category-item.is-active .cat-arrow {
   opacity: 1;
+  transform: translateX(3px);
 }
 
 .menu-category-count {
   font-size: 10px;
-  color: #9ca3af;
+  color: #666;
   font-weight: 400;
   margin-left: 4px;
 }
@@ -179,7 +182,7 @@
 /* Divider */
 .menu-divider {
   height: 1px;
-  background: #f3f4f6;
+  background: #1f1f1f;
   margin: 8px 0;
 }
 
@@ -188,28 +191,32 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 11px 28px;
+  padding: 14px 28px;
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 800;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #F2C84B;
   text-decoration: none;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, transform 0.2s;
 }
-.menu-ver-todos:hover { opacity: 0.75; color: #F2C84B; }
+.menu-ver-todos:hover { 
+  opacity: 0.8; 
+  color: #F2C84B;
+  transform: translateX(4px);
+}
 
-/* Skeleton loading */
+/* Skeleton loading Dark */
 .menu-skeleton {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px 28px;
+  gap: 12px;
+  padding: 14px 28px;
 }
 .menu-skeleton-item {
   height: 16px;
-  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background: linear-gradient(90deg, #1f1f1f 25%, #2a2a2a 50%, #1f1f1f 75%);
   background-size: 200% 100%;
   border-radius: 4px;
   animation: skeleton-shimmer 1.5s infinite;
@@ -223,50 +230,61 @@
 .mega-menu-right {
   flex: 1;
   overflow-y: auto;
-  padding: 24px 32px 16px;
-  background: #fafafa;
+  padding: 24px 32px 24px;
+  background: #000;
 }
 
-.mega-menu-right::-webkit-scrollbar { width: 4px; }
+.mega-menu-right::-webkit-scrollbar { width: 5px; }
 .mega-menu-right::-webkit-scrollbar-track { background: transparent; }
-.mega-menu-right::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
+.mega-menu-right::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 
 .menu-products-title {
   font-family: 'Montserrat', sans-serif;
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  font-weight: 800;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #9ca3af;
-  margin-bottom: 20px;
+  color: #fff;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-products-title::before {
+  content: '';
+  display: block;
+  width: 12px;
+  height: 2px;
+  background: #F2C84B;
 }
 
 .menu-products-title span {
-  color: #374151;
+  color: #F2C84B;
 }
 
 /* Product grid */
 .menu-products-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 18px;
 }
 
 /* Product card */
 .menu-product-card {
-  background: #fff;
-  border-radius: 12px;
+  background: #111;
+  border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #f3f4f6;
-  transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+  border: 1px solid #1f1f1f;
+  transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
   cursor: pointer;
   text-decoration: none;
   display: block;
 }
 
 .menu-product-card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
-  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  transform: translateY(-4px);
   border-color: #F2C84B;
   text-decoration: none;
 }
@@ -274,7 +292,7 @@
 .menu-product-img-wrapper {
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  background: #f5f5f5;
+  background: #0a0a0a; /* Fundo hiper-preto na imagem para produtos ghost mannequin saltarem */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -284,15 +302,16 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .menu-product-card:hover .menu-product-img-wrapper img {
-  transform: scale(1.07);
+  transform: scale(1.08);
 }
 
 .menu-product-info {
-  padding: 10px 12px 12px;
+  padding: 12px 14px 14px;
+  background: linear-gradient(180deg, #111 0%, #0a0a0a 100%);
 }
 
 .menu-product-name {
@@ -300,21 +319,21 @@
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #111827;
-  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+  color: #fff;
+  margin-bottom: 8px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .menu-product-stars {
   display: flex;
   align-items: center;
   gap: 3px;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 
 .menu-product-stars .star {
@@ -324,57 +343,59 @@
 
 .menu-product-stars .star-count {
   font-size: 10px;
-  color: #9ca3af;
-  margin-left: 2px;
+  color: #666;
+  margin-left: 4px;
 }
 
 .menu-product-price {
   font-family: 'Montserrat', sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
-  color: #111827;
+  color: #F2C84B;
 }
 
 .menu-product-price .pix-badge {
   display: inline-block;
   font-size: 9px;
-  font-weight: 700;
-  color: #059669;
-  background: #d1fae5;
-  padding: 2px 5px;
+  font-weight: 800;
+  color: #000;
+  background: #F2C84B;
+  padding: 3px 6px;
   border-radius: 4px;
-  margin-left: 5px;
-  letter-spacing: 0.04em;
+  margin-left: 6px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
-/* Product skeleton */
+/* Product skeleton Dark */
 .menu-product-skeleton {
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid #f3f4f6;
+  background: #111;
+  border-radius: 8px;
+  border: 1px solid #1f1f1f;
   overflow: hidden;
 }
 .menu-product-skeleton .skel-img {
   aspect-ratio: 1/1;
-  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s infinite;
 }
 .menu-product-skeleton .skel-text {
-  padding: 10px 12px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  background: #0a0a0a;
 }
 .menu-product-skeleton .skel-line {
   height: 10px;
-  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%);
   background-size: 200% 100%;
   border-radius: 4px;
   animation: skeleton-shimmer 1.5s infinite;
 }
-.menu-product-skeleton .skel-line.w-2-3 { width: 66%; }
-.menu-product-skeleton .skel-line.w-1-3 { width: 33%; }
+.menu-product-skeleton .skel-line.w-2-3 { width: 70%; }
+.menu-product-skeleton .skel-line.w-1-3 { width: 40%; }
 
 /* No products state */
 .menu-no-products {
@@ -383,10 +404,17 @@
   align-items: center;
   justify-content: center;
   height: 200px;
-  color: #9ca3af;
+  color: #666;
   font-family: 'Montserrat', sans-serif;
-  font-size: 13px;
-  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  gap: 12px;
+}
+.menu-no-products i {
+  font-size: 24px;
+  color: #333;
 }
 
 /* ── Footer ── */
@@ -394,27 +422,28 @@
   display: flex;
   align-items: center;
   gap: 24px;
-  padding: 14px 32px;
-  border-top: 1px solid #e5e7eb;
-  background: #fff;
+  padding: 16px 32px;
+  border-top: 1px solid #1f1f1f;
+  background: #000; /* Rodapé hiper preto */
   flex-shrink: 0;
 }
 
 .mega-menu-footer a {
   font-family: 'Montserrat', sans-serif;
   font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  color: #6b7280;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #888;
   text-decoration: none;
+  text-transform: uppercase;
   transition: color 0.2s;
 }
-.mega-menu-footer a:hover { color: #111827; }
+.mega-menu-footer a:hover { color: #fff; }
 
 .mega-menu-footer .footer-sep {
   width: 1px;
   height: 14px;
-  background: #e5e7eb;
+  background: #333;
 }
 
 /* ── Responsive ── */
@@ -426,18 +455,18 @@
   .mega-menu-left {
     width: 100%;
     border-right: none;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 2px solid #1f1f1f;
     max-height: 240px;
     padding: 12px 0;
   }
 
   .mega-menu-right {
-    padding: 16px;
+    padding: 20px 16px;
   }
 
   .menu-products-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 12px;
   }
 
   .mega-menu-container {
