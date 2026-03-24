@@ -1,38 +1,175 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sobre Nós | Koketsu Grife</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+      tailwind.config = { corePlugins: { preflight: false } }
+  </script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/global/variables.css">
-  <link rel="stylesheet" href="../assets/css/global/main.css">
+  <link rel="stylesheet" href="../assets/css/global/main.css">`n    <link rel="stylesheet" href="../assets/css/components/menu-modal.css">
   <link rel="stylesheet" href="../assets/css/global/footer.css">
   <link rel="stylesheet" href="../assets/css/components/institutional.css">
   <link rel="stylesheet" href="../assets/css/components/auth.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Outfit:wght@400;700;900&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root { --gold: #D4A017; }
+    .inst-hero {
+      background: linear-gradient(180deg, #111 0%, #0a0a0a 100%);
+      border-bottom: 1px solid rgba(212,160,23,0.2);
+      padding: 120px 0 60px;
+      text-align: center;
+    }
+    .inst-hero .badge-pill {
+      display: inline-block;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 5px 16px;
+      margin-bottom: 20px;
+    }
+    .inst-hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+    .inst-hero p {
+      color: #888;
+      font-size: 1rem;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .inst-body {
+      background: #0a0a0a;
+      padding: 80px 0;
+    }
+    .inst-section {
+      max-width: 800px;
+      margin: 0 auto 60px;
+      padding: 0 24px;
+    }
+    .inst-section h2 {
+      color: var(--gold);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(212,160,23,0.2);
+    }
+    .inst-section p, .inst-section li {
+      color: #aaa;
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+    .inst-section ul { padding-left: 20px; }
+    .inst-section li { margin-bottom: 8px; }
+    .inst-values {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+      margin-top: 24px;
+    }
+    .inst-value-card {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 12px;
+      padding: 24px;
+      transition: border-color 0.3s;
+    }
+    .inst-value-card:hover { border-color: var(--gold); }
+    .inst-value-card i {
+      font-size: 28px;
+      color: var(--gold);
+      margin-bottom: 12px;
+      display: block;
+    }
+    .inst-value-card h4 {
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    .inst-value-card p { color: #777; font-size: 0.82rem; margin: 0; }
+  </style>
 </head>
 
 <body class="bg-black">
   <header></header>
 
-  <!-- Modal de Login & Footer Renderizado em Utils.js -->
+  <section class="inst-hero">
+
+    <h1 class="shimmer-title">Sobre a Koketsu</h1>
+    <p>Nascemos da necessidade de expressar a alma urbana através do luxo silencioso.</p>
+  </section>
+
+  <div class="inst-body">
+    <div class="inst-section">
+      <h2>Quem Somos</h2>
+      <p>A <strong style="color:#fff">Koketsu Grife</strong> é um laboratório exclusivo de streetwear de alto padrão, fundado com a missão de vestir quem domina a cidade com elegância e atitude. Não fazemos apenas roupas — criamos armaduras para quem vive a vida sem filtros.</p>
+      <p>Cada peça é pensada para durar, para chamar atenção e para contar uma história. Qualidade sobre quantidade, sempre.</p>
+    </div>
+
+    <div class="inst-section">
+      <h2>Nossos Valores</h2>
+      <div class="inst-values">
+        <div class="inst-value-card">
+          <i class="bi bi-gem"></i>
+          <h4>Exclusividade</h4>
+          <p>Edições limitadas que tornam cada peça única e colecionável.</p>
+        </div>
+        <div class="inst-value-card">
+          <i class="bi bi-shield-check"></i>
+          <h4>Qualidade</h4>
+          <p>Materiais premium selecionados para durar e impressionar.</p>
+        </div>
+        <div class="inst-value-card">
+          <i class="bi bi-lightning-charge"></i>
+          <h4>Atitude</h4>
+          <p>Design que reflete a postura de quem não pede licença.</p>
+        </div>
+        <div class="inst-value-card">
+          <i class="bi bi-people"></i>
+          <h4>Comunidade</h4>
+          <p>Um movimento de estilo compartilhado por quem entende.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="inst-section">
+      <h2>Nossa Missão</h2>
+      <p>Democratizar o acesso ao streetwear premium sem abrir mão da exclusividade. Cada drop é uma declaração, cada peça é uma obra de arte usável.</p>
+    </div>
+  </div>
+
   <footer></footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
   <script src="../assets/js/utils.js?v=1.1"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        window.Utils.loadPartials();
-    });
+    document.addEventListener("DOMContentLoaded", () => { window.Utils.loadPartials(); });
   </script>
-  <script src="../assets/js/navbar.js?v=1.1"></script>
+  <script src="../assets/js/navbar.js?v=1.1"></script>`n  <script src="../assets/js/mega-menu.js?v=1.0"></script>
   <script src="../assets/js/search.js?v=1.1"></script>
   <script src="../assets/js/cart.js?v=1.1"></script>
   <script src="../assets/js/auth.js?v=1.1"></script>
@@ -40,5 +177,4 @@
 </body>
 
 </html>
-
 

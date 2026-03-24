@@ -46,8 +46,8 @@ $current_uri = $_SERVER['REQUEST_URI'] ?? '/backend/admin/dashboard';
       --text-main: #ffffff;
       --text-muted: #888888;
       --border-color: #222222;
-      --accent: #ffd84d;
-      --accent-hover: #f5c400;
+      --accent: #F2C84B;
+      --accent-hover: #F2C84B;
       /* Efeitos baseados em Desktop box-shadow e bordas globais */
       --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
       --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);

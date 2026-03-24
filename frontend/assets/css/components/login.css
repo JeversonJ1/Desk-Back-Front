@@ -1,38 +1,183 @@
- .body{
-    background-color: #f5f7f9;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  .login-container {
-    max-width: 400px;
-    margin: 80px auto;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    padding: 30px;
-  }
-  .logo {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  .logo img {
-    width: 120px;
-  }
-  .btn-google {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background-color: white;
-    border: 1px solid #ccc;
-  }
-  .btn-google img {
-    width: 18px;
-    height: 18px;
-  }
-  .footer {
-    text-align: center;
-    font-size: 12px;
-    color: #666;
-    margin-top: 20px;
-  }
-  
+/* ============================================================
+   Login Page — Koketsu Grife
+   Paleta extraída da logo: Preto #0a0a0a + Dourado âmbar #D4A017
+   ============================================================ */
+
+:root {
+  --koketsu-black:  #0a0a0a;
+  --koketsu-dark:   #111111;
+  --koketsu-card:   #181818;
+  --koketsu-border: #2a2a2a;
+  --koketsu-gold:   #D4A017;
+  --koketsu-gold-hover: #f0b820;
+  --koketsu-text:   #ffffff;
+  --koketsu-muted:  #888888;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--koketsu-black);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Card central ─────────────────────────────────────────── */
+.login-container {
+  width: 100%;
+  max-width: 420px;
+  margin: 40px auto;
+  background: var(--koketsu-card);
+  border-radius: 16px;
+  border: 1px solid rgba(212, 160, 23, 0.25);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,160,23,0.1);
+  padding: 40px 36px;
+}
+
+/* ── Logo ─────────────────────────────────────────────────── */
+.logo {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.logo img {
+  width: 110px;
+  filter: drop-shadow(0 0 12px rgba(212, 160, 23, 0.35));
+}
+
+/* ── Título ───────────────────────────────────────────────── */
+.login-container h5,
+.login-container h2 {
+  color: var(--koketsu-text);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 6px;
+  font-size: 1.1rem;
+  letter-spacing: 0.03em;
+}
+
+/* ── Subtitulo/label ──────────────────────────────────────── */
+.login-container label,
+.login-container .text-muted {
+  color: var(--koketsu-muted) !important;
+  font-size: 0.85rem;
+}
+
+/* ── Inputs ───────────────────────────────────────────────── */
+.login-container .form-control {
+  background: #0f0f0f !important;
+  border: 2px solid var(--koketsu-border) !important;
+  border-radius: 10px !important;
+  color: var(--koketsu-text) !important;
+  padding: 12px 16px !important;
+  font-size: 0.9rem;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.login-container .form-control::placeholder {
+  color: #555 !important;
+}
+
+.login-container .form-control:focus {
+  border-color: var(--koketsu-gold) !important;
+  box-shadow: 0 0 0 3px rgba(212, 160, 23, 0.15) !important;
+  background: #131313 !important;
+  outline: none;
+}
+
+/* ── Botão primário dourado ───────────────────────────────── */
+.btn-gold,
+.btn-success,
+.btn-primary {
+  display: block !important;
+  width: 100% !important;
+  background: linear-gradient(135deg, var(--koketsu-gold) 0%, #b8880e 100%) !important;
+  color: #000 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 13px !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 15px rgba(212, 160, 23, 0.3);
+}
+
+.btn-gold:hover,
+.btn-success:hover,
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(212, 160, 23, 0.5) !important;
+  background: linear-gradient(135deg, var(--koketsu-gold-hover) 0%, #d4a017 100%) !important;
+  color: #000 !important;
+}
+
+/* ── Botão Google (outline) ───────────────────────────────── */
+.btn-google {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+  background: transparent !important;
+  border: 2px solid var(--koketsu-border) !important;
+  border-radius: 10px !important;
+  color: var(--koketsu-text) !important;
+  padding: 11px !important;
+  font-size: 0.88rem !important;
+  font-weight: 500 !important;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.btn-google:hover {
+  border-color: var(--koketsu-gold) !important;
+  background: rgba(212,160,23,0.06) !important;
+}
+
+.btn-google img {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Box "Consulte seu pedido" ────────────────────────────── */
+.login-container .border.rounded {
+  background: #0f0f0f !important;
+  border: 1px solid var(--koketsu-border) !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+}
+
+.login-container .border.rounded p {
+  color: var(--koketsu-text) !important;
+}
+
+.login-container .border.rounded .text-muted {
+  color: var(--koketsu-muted) !important;
+}
+
+/* ── Footer / Rodapé info ─────────────────────────────────── */
+.footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--koketsu-muted);
+  margin-top: 24px;
+}
+
+.footer a {
+  color: var(--koketsu-gold);
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.footer p {
+  color: var(--koketsu-muted) !important;
+}

@@ -24,7 +24,6 @@
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;800&family=Oswald:wght@300;400;500;700&display=swap" rel="stylesheet"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     
@@ -32,15 +31,17 @@
     <link rel="stylesheet" href="assets/css/global/main.css">
     <link rel="stylesheet" href="assets/css/components/auth.css">
     <link rel="stylesheet" href="assets/css/components/home-modern.css">
+    <link rel="stylesheet" href="assets/css/components/menu-modal.css">
     
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <!-- Custom Global Styles (Internal styles moved to main.css) -->
     <link rel="stylesheet" href="assets/css/global/main.css">
+    <link rel="stylesheet" href="assets/css/global/footer.css">
     <style type="text/tailwindcss">
         /* Tailwind-specific overrides that must stay in HTML for JIT engine if not using a build tool */
         :root {
-            --brand-yellow: #FFD700;
+            --brand-yellow: #F2C84B;
             --brand-dark: #0A0A0A;
             --brand-grey: #1A1A1A;
         }
@@ -53,85 +54,7 @@
 </head>
 <body class="font-sans" data-page="home-tailwind">
 
-<!-- Injetada Navbar Custom da Home -->
-<nav class="fixed top-0 w-full z-50 bg-black/90 backdrop-blur-xl border-b border-white/5 h-24 flex items-center" data-purpose="main-navigation">
-    <div class="container mx-auto px-6 flex items-center justify-between gap-4">
-        
-        <!-- Left Section: Menu & Search -->
-        <div class="flex items-center space-x-6">
-            <button class="flex items-center space-x-3 group" onclick="window.location.href='/frontend/pages/catalogo.html'">
-                <i class="bi bi-list text-white text-2xl group-hover:text-[var(--brand-yellow)] transition"></i>
-                <span class="text-xs font-bold uppercase tracking-[0.2em] text-white">Catálogo</span>
-            </button>
-            <div class="hidden lg:flex w-64 px-4 py-2 bg-white/5 border border-white/10 rounded-full group cursor-pointer hover:border-[var(--brand-yellow)] transition-all" onclick="SearchManager.openOverlay()">
-                <div class="flex items-center space-x-3 w-full">
-                    <i class="bi bi-search text-white/40 group-hover:text-[var(--brand-yellow)] transition text-sm"></i>
-                    <span class="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-white/40 transition">Pesquisar...</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Center Section: Logo -->
-        <div class="flex justify-center flex-1">
-            <a href="/frontend/index.html">
-                <img alt="Koketsu Grife" class="logo-main" src="assets/img/logo2026.png" />
-            </a>
-        </div>
-        
-        <!-- Right Section: Admin & Cart -->
-        <div class="flex items-center justify-end space-x-6 flex-1">
-            
-            <!-- Auth Container (managed by auth.js) -->
-            <div id="navUserContainer" style="display: none;" class="flex items-center space-x-3">
-                 <button id="userAvatarBtn" class="icon-pill-button">
-                    <i id="userAvatarFallback" class="bi bi-person"></i>
-                </button>
-                <span id="navUserName" class="hidden md:inline text-xs font-bold uppercase tracking-[0.1em] text-white"></span>
-            </div>
-            
-            <!-- Login Button with Hover Dropdown -->
-            <div class="relative group flex items-center h-full">
-                <a href="#" id="navLoginBtn" class="icon-pill-button group-hover:bg-[var(--brand-yellow)] group-hover:text-black transition-all duration-300" data-bs-toggle="modal" data-bs-target="#loginModal" aria-label="Login">
-                    <i class="bi bi-person text-lg"></i>
-                    <span class="text-xs font-bold uppercase tracking-[0.1em]">LOGIN</span>
-                </a>
-                
-                <!-- CompSupply Style Dropdown -->
-                <div class="absolute top-12 right-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[100] translate-y-2 group-hover:translate-y-0 pointer-events-none group-hover:pointer-events-auto">
-                    <div class="bg-white rounded-2xl p-6 w-[280px] shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-gray-100">
-                        <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-4">Acesse sua conta</p>
-                        
-                        <a href="#" class="block w-full bg-black text-white text-center py-3 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-gray-800 transition mb-3" data-bs-toggle="modal" data-bs-target="#loginModal">
-                            Entrar na conta
-                        </a>
-                        
-                        <a href="#" class="block w-full border-2 border-black text-black text-center py-3 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-black hover:text-white transition mb-6">
-                            Criar nova conta
-                        </a>
-                        
-                        <div class="border-t border-gray-100 pt-4">
-                            <a href="#" class="flex items-center justify-between group/link">
-                                <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider group-hover/link:text-black transition">Rastrear meu pedido</span>
-                                <i class="bi bi-arrow-right text-gray-300 group-hover/link:text-black transition"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Cart Button -->
-            <button class="icon-pill-button relative" data-bs-toggle="offcanvas" data-bs-target="#miniCartOffcanvas">
-                <i class="bi bi-bag text-xl"></i>
-                <span class="uppercase tracking-widest text-[11px]">Carrinho</span>
-                <span class="cart-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none; top: -5px!important; right:-10px!important;">
-                    0
-                </span>
-            </button>
-        </div>
-    </div>
-</nav>
-
-<!-- Hero Banner Swiper -->
+<header></header><!-- Hero Banner Swiper -->
 <section class="hero-swiper-container relative h-[600px] w-full overflow-hidden pt-24" data-purpose="hero-banner">
     <div class="swiper heroSwiper h-full">
         <div class="swiper-wrapper">
@@ -164,25 +87,25 @@
             <!-- Benefício 1 -->
             <div class="bg-[#111111] p-6 text-center rounded-xl border border-white/5 flex flex-col justify-center items-center h-full">
                 <span class="material-symbols-outlined text-[var(--brand-yellow)] text-3xl mb-3">local_shipping</span>
-                <h4 class="text-white text-[11px] font-bold uppercase tracking-widest mb-2">Frete Grátis</h4>
+                <h4 class="text-white text-[11px] font-bold uppercase tracking-[0.1em] mb-2">Frete Grátis</h4>
                 <p class="text-gray-500 text-[10px] leading-tight">Para todo o Brasil acima de R$ 200</p>
             </div>
             <!-- Benefício 2 -->
             <div class="bg-[#111111] p-6 text-center rounded-xl border border-white/5 flex flex-col justify-center items-center h-full">
                 <span class="material-symbols-outlined text-[var(--brand-yellow)] text-3xl mb-3">security</span>
-                <h4 class="text-white text-[11px] font-bold uppercase tracking-widest mb-2">Compra Segura</h4>
+                <h4 class="text-white text-[11px] font-bold uppercase tracking-[0.1em] mb-2">Compra Segura</h4>
                 <p class="text-gray-500 text-[10px] leading-tight">Seus dados estão 100% protegidos</p>
             </div>
             <!-- Benefício 3 -->
             <div class="bg-[#111111] p-6 text-center rounded-xl border border-white/5 flex flex-col justify-center items-center h-full">
                 <span class="material-symbols-outlined text-[var(--brand-yellow)] text-3xl mb-3">swap_horiz</span>
-                <h4 class="text-white text-[11px] font-bold uppercase tracking-widest mb-2">Troca Fácil</h4>
+                <h4 class="text-white text-[11px] font-bold uppercase tracking-[0.1em] mb-2">Troca Fácil</h4>
                 <p class="text-gray-500 text-[10px] leading-tight">Até 7 dias para devolução</p>
             </div>
             <!-- Benefício 4 -->
             <div class="bg-[#111111] p-6 text-center rounded-xl border border-white/5 flex flex-col justify-center items-center h-full">
                 <span class="material-symbols-outlined text-[var(--brand-yellow)] text-3xl mb-3">support_agent</span>
-                <h4 class="text-white text-[11px] font-bold uppercase tracking-widest mb-2">Atendimento</h4>
+                <h4 class="text-white text-[11px] font-bold uppercase tracking-[0.1em] mb-2">Atendimento</h4>
                 <p class="text-gray-500 text-[10px] leading-tight">Suporte Focado em Você</p>
             </div>
         </div>
@@ -193,54 +116,94 @@
 <section class="py-24 bg-black relative">
     <div class="container mx-auto px-4">
         <div class="text-center mb-10">
-            <div class="inline-block border border-[var(--brand-yellow)] text-[var(--brand-yellow)] px-4 py-1 rounded-full text-[10px] font-bold tracking-[0.2em] mb-4">
-                CATEGORIAS 
-            </div>
-            <h2 class="font-heading text-3xl md:text-4xl font-black uppercase text-white mb-2 tracking-tight">NOSSAS CATEGORIAS</h2>
+            <h2 class="shimmer-title">NOSSAS CATEGORIAS</h2>
             <p class="text-gray-400 text-xs md:text-sm">Encontre a sua peça perfeita para todas as ocasiões.</p>
         </div>
         
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10" id="dynamic-categories-grid">
             <!-- Categoria 1: Camisetas -->
-            <div class="bg-white rounded-xl overflow-hidden flex flex-col group cursor-pointer transition-transform hover:scale-105 shadow-2xl shadow-yellow-500/10" onclick="window.location.href='/frontend/pages/catalogo.html?categoria=camisetas'">
-                <div class="p-4 flex-1 flex items-center justify-center bg-[#f5f5f5] overflow-hidden">
-                    <img src="assets/img/camiseta off white.png" alt="Camisetas" class="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-110" style="max-height: 200px;">
+            <div class="relative rounded-2xl overflow-hidden flex flex-col group cursor-pointer transition-all duration-500 hover:-translate-y-2 shadow-2xl hover:shadow-[0_10px_40px_rgba(242,200,75,0.15)] border border-[#F2C84B]/10 hover:border-[#F2C84B]/40 bg-[#0a0a0a]" onclick="window.location.href='/pages/catalogo.html?categoria=camisetas'">
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(242,200,75,0.08)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                <div class="absolute top-6 left-6 z-10">
+                    <span class="text-[#111] bg-[#F2C84B] px-3 py-1 text-[8px] font-bold uppercase tracking-widest rounded-full shadow-lg">
+                        ESSENCIAIS
+                    </span>
                 </div>
-                <div class="bg-[#1A1A1A] p-4 text-center border-t border-white/5">
-                    <h3 class="text-white font-bold text-xs uppercase tracking-widest m-0 group-hover:text-[var(--brand-yellow)] transition">Camisetas Oversized</h3>
+                <div class="m-2 rounded-2xl bg-[#f5f5f5] p-4 pt-12 flex-1 flex items-center justify-center overflow-hidden relative z-0">
+                    <img src="assets/img/camiseta off white.png" alt="Camisetas" class="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-110 drop-shadow-sm" style="max-height: 200px;">
+                </div>
+                <div class="p-6 pt-4 pb-10 text-center relative z-10 flex flex-col items-center">
+                    <h3 class="text-white font-black text-sm uppercase tracking-[0.15em] m-0 group-hover:text-[#F2C84B] transition-transform duration-300 group-hover:-translate-y-2">Camisetas Oversized</h3>
+                    <div class="absolute bottom-4 left-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-1 translate-y-2 group-hover:translate-y-0">
+                        <span class="text-[#F2C84B] text-[9px] font-bold uppercase tracking-widest">Explorar</span>
+                        <i class="bi bi-arrow-right text-[#F2C84B] text-[10px]"></i>
+                    </div>
                 </div>
             </div>
+
             <!-- Categoria 2: Moletons -->
-            <div class="bg-white rounded-xl overflow-hidden flex flex-col group cursor-pointer transition-transform hover:scale-105 shadow-2xl shadow-yellow-500/10" onclick="window.location.href='/frontend/pages/catalogo.html?categoria=moletons'">
-                <div class="p-4 flex-1 flex items-center justify-center bg-[#f5f5f5] overflow-hidden">
-                    <img src="assets/img/moletom.png" alt="Moletons" class="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-110" style="max-height: 200px;">
+            <div class="relative rounded-2xl overflow-hidden flex flex-col group cursor-pointer transition-all duration-500 hover:-translate-y-2 shadow-2xl hover:shadow-[0_10px_40px_rgba(242,200,75,0.15)] border border-[#F2C84B]/10 hover:border-[#F2C84B]/40 bg-[#0a0a0a]" onclick="window.location.href='/pages/catalogo.html?categoria=moletons'">
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(242,200,75,0.08)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                <div class="absolute top-6 left-6 z-10">
+                    <span class="text-[#111] bg-[#F2C84B] px-3 py-1 text-[8px] font-bold uppercase tracking-widest rounded-full shadow-lg">
+                        INVERNO
+                    </span>
                 </div>
-                <div class="bg-[#1A1A1A] p-4 text-center border-t border-white/5">
-                    <h3 class="text-white font-bold text-xs uppercase tracking-widest m-0 group-hover:text-[var(--brand-yellow)] transition">Coleção Moletons</h3>
+                <div class="m-2 rounded-2xl bg-[#f5f5f5] p-4 pt-12 flex-1 flex items-center justify-center overflow-hidden relative z-0">
+                    <img src="assets/img/moletom.png" alt="Moletons" class="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-110 drop-shadow-sm" style="max-height: 200px;">
+                </div>
+                <div class="p-6 pt-4 pb-10 text-center relative z-10 flex flex-col items-center">
+                    <h3 class="text-white font-black text-sm uppercase tracking-[0.15em] m-0 group-hover:text-[#F2C84B] transition-transform duration-300 group-hover:-translate-y-2">Coleção Moletons</h3>
+                    <div class="absolute bottom-4 left-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-1 translate-y-2 group-hover:translate-y-0">
+                        <span class="text-[#F2C84B] text-[9px] font-bold uppercase tracking-widest">Explorar</span>
+                        <i class="bi bi-arrow-right text-[#F2C84B] text-[10px]"></i>
+                    </div>
                 </div>
             </div>
+
             <!-- Categoria 3: Calças -->
-            <div class="bg-white rounded-xl overflow-hidden flex flex-col group cursor-pointer transition-transform hover:scale-105 shadow-2xl shadow-yellow-500/10" onclick="window.location.href='/frontend/pages/catalogo.html?categoria=calcas'">
-                <div class="p-4 flex-1 flex items-center justify-center bg-[#f5f5f5] overflow-hidden">
-                    <img src="assets/img/calca-cargo.png" alt="Calças" class="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-110" style="max-height: 200px;">
+            <div class="relative rounded-2xl overflow-hidden flex flex-col group cursor-pointer transition-all duration-500 hover:-translate-y-2 shadow-2xl hover:shadow-[0_10px_40px_rgba(242,200,75,0.15)] border border-[#F2C84B]/10 hover:border-[#F2C84B]/40 bg-[#0a0a0a]" onclick="window.location.href='/pages/catalogo.html?categoria=calcas'">
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(242,200,75,0.08)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                <div class="absolute top-6 left-6 z-10">
+                    <span class="text-[#111] bg-[#F2C84B] px-3 py-1 text-[8px] font-bold uppercase tracking-widest rounded-full shadow-lg">
+                        STREETWEAR
+                    </span>
                 </div>
-                <div class="bg-[#1A1A1A] p-4 text-center border-t border-white/5">
-                    <h3 class="text-white font-bold text-xs uppercase tracking-widest m-0 group-hover:text-[var(--brand-yellow)] transition">Calças Cargo</h3>
+                <div class="m-2 rounded-2xl bg-[#f5f5f5] p-4 pt-12 flex-1 flex items-center justify-center overflow-hidden relative z-0">
+                    <img src="assets/img/calca-cargo.png" alt="Calças" class="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-110 drop-shadow-sm" style="max-height: 200px;">
+                </div>
+                <div class="p-6 pt-4 pb-10 text-center relative z-10 flex flex-col items-center">
+                    <h3 class="text-white font-black text-sm uppercase tracking-[0.15em] m-0 group-hover:text-[#F2C84B] transition-transform duration-300 group-hover:-translate-y-2">Calças Cargo</h3>
+                    <div class="absolute bottom-4 left-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-1 translate-y-2 group-hover:translate-y-0">
+                        <span class="text-[#F2C84B] text-[9px] font-bold uppercase tracking-widest">Explorar</span>
+                        <i class="bi bi-arrow-right text-[#F2C84B] text-[10px]"></i>
+                    </div>
                 </div>
             </div>
+
             <!-- Categoria 4: Tênis -->
-            <div class="bg-white rounded-xl overflow-hidden flex flex-col group cursor-pointer transition-transform hover:scale-105 shadow-2xl shadow-yellow-500/10" onclick="window.location.href='/frontend/pages/catalogo.html?categoria=calcados'">
-                <div class="p-4 flex-1 flex items-center justify-center bg-[#f5f5f5] overflow-hidden">
-                    <img src="assets/img/dn.png" alt="Tênis" class="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-110" style="max-height: 200px;">
+            <div class="relative rounded-2xl overflow-hidden flex flex-col group cursor-pointer transition-all duration-500 hover:-translate-y-2 shadow-2xl hover:shadow-[0_10px_40px_rgba(242,200,75,0.15)] border border-[#F2C84B]/10 hover:border-[#F2C84B]/40 bg-[#0a0a0a]" onclick="window.location.href='/pages/catalogo.html?categoria=calcados'">
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(242,200,75,0.08)_0%,transparent_70%)] opacity-50 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                <div class="absolute top-6 left-6 z-10">
+                    <span class="text-[#111] bg-[#F2C84B] px-3 py-1 text-[8px] font-bold uppercase tracking-widest rounded-full shadow-lg">
+                        EXCLUSIVO
+                    </span>
                 </div>
-                <div class="bg-[#1A1A1A] p-4 text-center border-t border-white/5">
-                    <h3 class="text-white font-bold text-xs uppercase tracking-widest m-0 group-hover:text-[var(--brand-yellow)] transition">Tênis Premium</h3>
+                <div class="m-2 rounded-2xl bg-[#f5f5f5] p-4 pt-12 flex-1 flex items-center justify-center overflow-hidden relative z-0">
+                    <img src="assets/img/dn.png" alt="Tênis" class="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-110 drop-shadow-sm" style="max-height: 200px;">
+                </div>
+                <div class="p-6 pt-4 pb-10 text-center relative z-10 flex flex-col items-center">
+                    <h3 class="text-white font-black text-sm uppercase tracking-[0.15em] m-0 group-hover:text-[#F2C84B] transition-transform duration-300 group-hover:-translate-y-2">Tênis Premium</h3>
+                    <div class="absolute bottom-4 left-0 right-0 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-1 translate-y-2 group-hover:translate-y-0">
+                        <span class="text-[#F2C84B] text-[9px] font-bold uppercase tracking-widest">Explorar</span>
+                        <i class="bi bi-arrow-right text-[#F2C84B] text-[10px]"></i>
+                    </div>
                 </div>
             </div>
         </div>
         
         <div class="text-center">
-            <a href="/frontend/pages/catalogo.html" class="inline-block border border-[var(--brand-yellow)] text-[var(--brand-yellow)] px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-[var(--brand-yellow)] hover:text-black transition">
+            <a href="/pages/catalogo.html" class="inline-block border border-[var(--brand-yellow)] text-[var(--brand-yellow)] px-8 py-3 rounded-full text-xs font-bold uppercase tracking-[0.1em] hover:bg-[var(--brand-yellow)] hover:text-black transition">
                 Ver Catálogo Completo
             </a>
         </div>
@@ -256,7 +219,6 @@
 
     <!-- Brand Story Section -->
     <section class="brand-story-section">
-        <div class="watermark-text">KOKETSU</div>
         <div class="brand-story-content">
             <h2 class="brand-story-quote">O essencial é invisível aos olhos</h2>
             <p class="brand-story-text">
@@ -266,87 +228,11 @@
         </div>
     </section>
 
-<footer class="bg-black pt-24 pb-12 border-t border-white/5">
-    <div class="container mx-auto px-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-16 mb-20 text-left">
-            <div>
-                <h1 class="font-heading text-3xl font-bold tracking-tighter mb-6 uppercase text-white">KOKETSU<span class="text-[var(--brand-yellow)]">.</span></h1>
-                <p class="text-gray-500 text-xs leading-relaxed max-w-xs mb-8">Laboratório exclusivo de streetwear para colecionadores de alto nível. Qualidade sobre quantidade, sempre.</p>
-                <div class="flex space-x-5">
-                    <a class="text-gray-400 hover:text-[var(--brand-yellow)] transition text-lg" href="#"><i class="bi bi-instagram"></i></a>
-                    <a class="text-gray-400 hover:text-[var(--brand-yellow)] transition text-lg" href="#"><i class="bi bi-tiktok"></i></a>
-                    <a class="text-gray-400 hover:text-[var(--brand-yellow)] transition text-lg" href="#"><i class="bi bi-discord"></i></a>
-                </div>
-            </div>
-            <div>
-                <h4 class="text-[10px] font-bold uppercase tracking-widest text-[var(--brand-yellow)] mb-8">Protocolo</h4>
-                <ul class="space-y-4 text-gray-500 text-[11px] uppercase tracking-wider font-medium">
-                    <li><a class="hover:text-white transition" href="#">Política de Envio</a></li>
-                    <li><a class="hover:text-white transition" href="#">Autenticação</a></li>
-                    <li><a class="hover:text-white transition" href="#">Guia de Tamanhos</a></li>
-                    <li><a class="hover:text-white transition" href="#">Canal de Contato</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-[10px] font-bold uppercase tracking-widest text-[var(--brand-yellow)] mb-8">Registro na Whitelist</h4>
-                <p class="text-gray-500 text-xs mb-6">Entre na whitelist para receber códigos secretos e chaves de acesso antecipado.</p>
-                <form class="flex flex-col space-y-4" id="newsletterFormTailwind">
-                    <input id="newsletterEmailTailwind" class="bg-white/5 border border-white/10 px-4 py-3 text-xs text-white focus:border-[var(--brand-yellow)] focus:ring-0 outline-none transition" placeholder="INSIRA SEU ENDEREÇO DE E-MAIL" type="email" required/>
-                    <button type="submit" class="bg-[var(--brand-yellow)] text-black font-black text-[10px] uppercase py-4 hover:bg-white transition duration-300 w-full border-0">Solicitar Whitelist</button>
-                    <div id="newsletterMessageTailwind" class="d-none small mt-2"></div>
-                </form>
-            </div>
-        </div>
-        <div class="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p class="text-[9px] text-gray-600 uppercase tracking-widest m-0">© 2026 Koketsu Archive. Distribuição Restrita.</p>
-            <div class="flex items-center space-x-6">
-                <span class="text-[9px] text-gray-600 border border-white/10 px-2 py-1 uppercase rounded-sm">Cripto Aceito</span>
-                <span class="text-[9px] text-gray-600 border border-white/10 px-2 py-1 uppercase rounded-sm">PIX</span>
-            </div>
-        </div>
-    </div>
-</footer>
+<footer></footer>
 
-<!-- Full-screen Search Overlay -->
-<div id="searchOverlay" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl invisible opacity-0 transition-all duration-500 flex flex-col p-6 md:p-12">
-    <div class="container mx-auto max-w-4xl flex flex-col h-full">
-        <div class="flex justify-between items-center mb-12">
-            <span class="text-[var(--brand-yellow)] font-black italic text-2xl tracking-tighter">KOKETSU<span class="text-white">SEARCH</span></span>
-            <button class="text-white/40 hover:text-white transition" onclick="SearchManager.closeOverlay()">
-                <i class="bi bi-x-lg text-4xl"></i>
-            </button>
-        </div>
-        
-        <div class="relative mb-12">
-            <input type="text" id="overlaySearchInput" class="w-full bg-transparent border-0 border-b-2 border-white/10 py-6 text-3xl md:text-5xl font-black uppercase text-white placeholder-white/5 focus:ring-0 focus:border-[var(--brand-yellow)] transition-all outline-none" placeholder="O QUE VOCÊ BUSCA?">
-            <div class="absolute right-0 top-1/2 -translate-y-1/2">
-                <i class="bi bi-search text-4xl text-white/20"></i>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 flex-grow overflow-auto">
-            <div>
-                <h4 class="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--brand-yellow)] mb-6">Sugestões de Termos</h4>
-                <div class="flex flex-wrap gap-2">
-                    <button class="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider text-white/60 hover:bg-[var(--brand-yellow)] hover:text-black transition" onclick="SearchManager.setQuery('Camiseta')">Camiseta</button>
-                    <button class="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider text-white/60 hover:bg-[var(--brand-yellow)] hover:text-black transition" onclick="SearchManager.setQuery('Moletom')">Moletom</button>
-                    <button class="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider text-white/60 hover:bg-[var(--brand-yellow)] hover:text-black transition" onclick="SearchManager.setQuery('Cargo')">Cargo</button>
-                    <button class="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-wider text-white/60 hover:bg-[var(--brand-yellow)] hover:text-black transition" onclick="SearchManager.setQuery('Oversized')">Oversized</button>
-                </div>
-            </div>
-            <div>
-                <h4 class="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--brand-yellow)] mb-6">Resultados Relevantes</h4>
-                <div id="overlayResults" class="space-y-4">
-                    <p class="text-white/20 text-xs italic">Aguardando sua busca...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Modals Container: Utilizado pelo utils.js para injetar os modais do Bootstrap -->
 <!-- <header> is intentionally omitted here to prevent injection of the default Bootstrap header by utils.js, as controlled below -->
-<footer style="display:none;"></footer> <!-- Fake footer tag to satisfy utils.js if it tries to replace it without rendering -->
 
 <!-- Bootstrap JS needed for offcanvas and modals -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -354,8 +240,7 @@
 <!-- Global scripts -->
 <script src="assets/js/utils.js?v=2.0"></script>
 <script>
-    // Configura uma flag para o utils.js pular a injeção do cabeçalho global na Home
-    window.isTailwindHomePage = true;
+
     
     document.addEventListener("DOMContentLoaded", () => {
         // Inicializa parciais normais
@@ -440,10 +325,12 @@
 
 <!-- Scripts do site -->
 <script src="assets/js/animations.js?v=2.0"></script>
+<script src="assets/js/navbar.js?v=2.0"></script>
 <script src="assets/js/search.js?v=2.0"></script>
 <script src="assets/js/cart.js?v=2.0"></script>
-<script src="assets/js/products.js?v=2.0"></script>
+<script src="assets/js/products.js?v=2.1"></script>
 <script src="assets/js/auth.js?v=2.0"></script>
 <script src="assets/js/ai-assistant.js?v=2.0"></script>
+<script src="assets/js/mega-menu.js?v=1.0"></script>
 </body>
 </html>

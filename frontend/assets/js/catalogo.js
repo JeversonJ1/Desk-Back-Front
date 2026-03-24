@@ -62,9 +62,9 @@ const CatalogManager = (() => {
         // Setup de filtros (conecta os listeners antes de aplicar para evitar conflitos)
         setupFilters();
 
-        // Verifica parâmetro de categoria na URL
+        // Verifica parâmetro de categoria na URL (suporta 'cat' e 'categoria')
         const params = new URLSearchParams(window.location.search);
-        const urlCat = params.get('cat');
+        const urlCat = params.get('cat') || params.get('categoria');
 
         if (urlCat) {
             handleURLCategory(urlCat);
@@ -156,9 +156,6 @@ const CatalogManager = (() => {
     /**
      * Renderiza o grid de produtos
      */
-    /**
-     * Renderiza o grid de produtos
-     */
     const renderCatalog = (products) => {
         const container = document.getElementById('vitrine-catalogo');
         if (!container) return;
@@ -167,14 +164,14 @@ const CatalogManager = (() => {
         container.innerHTML = '';
 
         // Atualiza contador
-        const countEl = document.querySelector('.product-count b');
+        const countEl = document.getElementById('catalogCount') || document.querySelector('.product-count b') || document.querySelector('[data-product-count]');
         if (countEl) countEl.textContent = products.length;
 
         if (products.length === 0) {
             container.innerHTML = `
-                <div class="col-12 text-center py-5">
-                    <i class="bi bi-search display-1 text-secondary opacity-25"></i>
-                    <p class="mt-3 text-secondary">Nenhum produto encontrado com os filtros selecionados.</p>
+                <div class="col-span-full text-center py-16 flex flex-col items-center">
+                    <i class="bi bi-search text-6xl text-gray-700 mb-4 opacity-50"></i>
+                    <p class="text-gray-400 tracking-wider">Nenhum produto encontrado com os filtros selecionados.</p>
                 </div>
             `;
             renderPagination(0); // Limpa paginação ou mostra vazia
@@ -187,11 +184,11 @@ const CatalogManager = (() => {
         const endIndex = startIndex + ITEMS_PER_PAGE;
         const productsToShow = products.slice(startIndex, endIndex);
 
-        // Grid responsivo e moderno
+        // Grid responsivo e moderno (CSS Grid no pai lida com a largura)
         productsToShow.forEach((prod) => {
             const html = createCatalogCard(prod);
             const col = document.createElement('div');
-            col.className = 'col-6 col-md-4 col-lg-3';
+            col.className = 'w-full h-full'; 
             col.innerHTML = html;
             container.appendChild(col);
         });
@@ -207,26 +204,23 @@ const CatalogManager = (() => {
      * Renderiza a paginação
      */
     const renderPagination = (totalItems) => {
-        const nav = document.querySelector('nav ul.pagination-premium');
+        // Encontra o container da paginação
+        const nav = document.querySelector('nav ul'); 
         if (!nav) return;
 
         nav.innerHTML = '';
 
-        // Se não houver itens, não renderiza nada (garante que sumiu do DOM visualmente)
+        // Se não houver itens, não renderiza nada
         if (!totalItems || totalItems === 0) {
             return;
         }
 
-        if (totalItems === 0) return;
-
-        const minPages = 3;
         const calculatedPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-        // Garante pelo menos 3 páginas na visualização (pedido do usuário)
-        const totalPages = Math.max(minPages, calculatedPages);
+        const totalPages = calculatedPages || 1; 
 
         // Prev Button
         const prevLi = document.createElement('li');
-        prevLi.innerHTML = `<a href="#" class="${currentPage === 1 ? 'disabled-link' : ''}"><i class="bi bi-arrow-left"></i></a>`;
+        prevLi.innerHTML = `<a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 ${currentPage === 1 ? 'text-gray-700 cursor-not-allowed' : 'text-gray-400 hover:text-(--brand-yellow) hover:border-(--brand-yellow) transition'}"><i class="bi bi-arrow-left"></i></a>`;
         prevLi.onclick = (e) => {
             e.preventDefault();
             if (currentPage > 1) {
@@ -243,7 +237,11 @@ const CatalogManager = (() => {
             const a = document.createElement('a');
             a.href = "#";
             a.textContent = i;
-            if (i === currentPage) a.className = 'active';
+            if (i === currentPage) {
+                a.className = 'w-10 h-10 flex items-center justify-center rounded-lg bg-(--brand-yellow) text-black font-bold';
+            } else {
+                a.className = 'w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 text-white hover:border-(--brand-yellow) transition';
+            }
 
             a.onclick = (e) => {
                 e.preventDefault();
@@ -257,7 +255,7 @@ const CatalogManager = (() => {
 
         // Next Button
         const nextLi = document.createElement('li');
-        nextLi.innerHTML = `<a href="#" class="${currentPage >= totalPages ? 'disabled-link' : ''}"><i class="bi bi-arrow-right"></i></a>`;
+        nextLi.innerHTML = `<a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 ${currentPage >= totalPages ? 'text-gray-700 cursor-not-allowed' : 'text-gray-400 hover:text-(--brand-yellow) hover:border-(--brand-yellow) transition'}"><i class="bi bi-arrow-right"></i></a>`;
         nextLi.onclick = (e) => {
             e.preventDefault();
             if (currentPage < totalPages) {
@@ -550,7 +548,7 @@ const CatalogManager = (() => {
 
         // Na primeira execução REAL (após fetch), renderiza cores, categorias e tamanhos
         const colorContainer = document.getElementById('color-filter-container');
-        if (colorContainer && colorContainer.querySelector('.small') && flatProducts.length > 0) {
+        if (colorContainer && !colorContainer.querySelector('.form-check') && flatProducts.length > 0) {
             renderCategoryFilters();
             renderSizeFilters();
             renderColorFilters();

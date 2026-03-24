@@ -1,129 +1,116 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Produto | Koketsu Grife</title>
 
-  <!-- CSS Base -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+      tailwind.config = { corePlugins: { preflight: false } }
+  </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-  <!-- Estilos Customizados -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Outfit:wght@400;700;900&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/global/variables.css">
-  <link rel="stylesheet" href="../assets/css/global/main.css">
+  <link rel="stylesheet" href="../assets/css/global/main.css">`n    <link rel="stylesheet" href="../assets/css/components/menu-modal.css">
   <link rel="stylesheet" href="../assets/css/global/footer.css">
   <link rel="stylesheet" href="../assets/css/components/produto.css">
   <link rel="stylesheet" href="../assets/css/components/reviews.css">
   <link rel="stylesheet" href="../assets/css/components/auth.css">
   <link rel="icon" type="image/png" href="../assets/img/logo2026.png">
   <style>
-    /* Ajuste para carregar imagens lazy */
-    .fade-in {
-      animation: fadeIn 0.8s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
-    }
+    .fade-in { animation: fadeIn 0.8s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
 
-<body>
+<body class="bg-[var(--brand-dark)] text-white">
   <header></header>
 
-  <main class="product-detail-section">
-    <div class="container px-lg-5">
+  <main class="pt-8 pb-16">
+    <div class="container mx-auto px-4 lg:px-12">
 
       <!-- Breadcrumb -->
-      <nav aria-label="breadcrumb" class="breadcrumb-premium">
-        <ol class="breadcrumb" id="product-breadcrumb">
-          <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
-          <li class="breadcrumb-item"><a href="catalogo.html">Loja</a></li>
-          <li class="breadcrumb-item active" aria-current="page" id="breadcrumb-current">Carregando...</li>
+      <nav aria-label="breadcrumb" class="mb-8">
+        <ol class="flex text-sm text-gray-500 space-x-2" id="product-breadcrumb">
+          <li><a href="/" class="hover:text-white transition uppercase tracking-wider text-[10px] font-bold">Home</a> <span class="mx-2">/</span></li>
+          <li><a href="catalogo.html" class="hover:text-white transition uppercase tracking-wider text-[10px] font-bold">Loja</a> <span class="mx-2">/</span></li>
+          <li class="text-[var(--brand-yellow)] uppercase tracking-wider text-[10px] font-bold" aria-current="page" id="breadcrumb-current">Carregando...</li>
         </ol>
       </nav>
 
-      <div class="row g-5">
+      <div class="flex flex-col lg:flex-row gap-8 lg:gap-16">
         <!-- Galeria de Imagens -->
-        <div class="col-lg-6">
+        <div class="w-full lg:w-1/2">
           <div class="product-gallery">
-            <div class="main-image-container fade-in">
-              <img id="main-product-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Produto">
+            <div class="main-image-container fade-in rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative aspect-[4/5] bg-[#111]">
+              <img id="main-product-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="w-full h-full object-cover" alt="Produto">
             </div>
           </div>
         </div>
 
         <!-- Informações do Produto -->
-        <div class="col-lg-6">
-          <div class="product-info-column fade-in">
-            <span class="product-category" id="product-category">GERAL</span>
-            <h1 class="product-title" id="product-name">Buscando produto...</h1>
+        <div class="w-full lg:w-1/2">
+          <div class="fade-in pt-4">
+            <span class="text-[var(--brand-yellow)] text-xs font-bold uppercase tracking-[0.2em] mb-2 block" id="product-category">GERAL</span>
+            <h1 class="font-['Outfit'] text-3xl md:text-5xl font-extrabold uppercase mb-4" id="product-name">Buscando produto...</h1>
 
-            <div class="product-rating">
-              <div class="stars" id="product-rating-stars">
+            <div class="flex items-center gap-4 mb-6">
+              <div class="flex text-[var(--brand-yellow)] text-xl" id="product-rating-stars">
                 <i class="bi bi-star"></i>
                 <i class="bi bi-star"></i>
                 <i class="bi bi-star"></i>
                 <i class="bi bi-star"></i>
                 <i class="bi bi-star"></i>
               </div>
-              <a href="#tab-reviews" class="rating-count" id="product-rating-count-text">(0 avaliações)</a>
+              <a href="#tab-reviews" class="text-sm text-gray-400 hover:text-white transition" id="product-rating-count-text">(0 avaliações)</a>
             </div>
             
-            <p id="product-short-desc" class="product-short-desc mt-3 text-secondary" style="font-size: 0.95rem; line-height: 1.6; max-height: 120px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 4; line-clamp: 4; -webkit-box-orient: vertical;"></p>
+            <p id="product-short-desc" class="text-gray-400 text-[0.95rem] leading-relaxed line-clamp-4 mb-8"></p>
 
-            <div class="product-price-container">
-              <p class="price-old" id="price-old">R$ 00,00</p>
-              <p class="price-current" id="price-current">R$ 00,00</p>
-              <p class="price-installments" id="price-installments">em até 6x de R$ 0,00 sem juros</p>
+            <div class="mb-8 p-6 bg-[#111] rounded-2xl border border-white/5">
+              <p class="text-sm text-gray-500 line-through mb-1" id="price-old">R$ 00,00</p>
+              <p class="text-4xl font-bold text-white mb-2" id="price-current">R$ 00,00</p>
+              <p class="text-xs text-[var(--brand-yellow)] font-bold tracking-[0.1em] uppercase" id="price-installments">em até 6x de R$ 0,00 sem juros</p>
             </div>
 
             <!-- Seletores -->
-            <div class="attribute-group">
-              <span class="attribute-label">Selecione o Tamanho</span>
-              <div class="size-selector">
-                <input type="radio" name="size" id="size-p" class="size-option"><label for="size-p"
-                  class="size-label">P</label>
-                <input type="radio" name="size" id="size-m" class="size-option" checked><label for="size-m"
-                  class="size-label">M</label>
-                <input type="radio" name="size" id="size-g" class="size-option"><label for="size-g"
-                  class="size-label">G</label>
-                <input type="radio" name="size" id="size-gg" class="size-option"><label for="size-gg"
-                  class="size-label">GG</label>
-                <input type="radio" name="size" id="size-xg" class="size-option"><label for="size-xg"
-                  class="size-label">XG</label>
+            <div class="mb-6">
+              <span class="block text-xs font-bold text-gray-400 uppercase tracking-[0.1em] mb-3">Selecione o Tamanho</span>
+              <div class="flex gap-3">
+                <input type="radio" name="size" id="size-p" class="hidden peer/p"><label for="size-p"
+                  class="w-12 h-12 flex items-center justify-center border border-gray-700 rounded-lg cursor-pointer text-sm font-bold peer-checked/p:bg-[var(--brand-yellow)] peer-checked/p:text-black peer-checked/p:border-[var(--brand-yellow)] hover:border-gray-500 transition">P</label>
+                <input type="radio" name="size" id="size-m" class="hidden peer/m" checked><label for="size-m"
+                  class="w-12 h-12 flex items-center justify-center border border-gray-700 rounded-lg cursor-pointer text-sm font-bold peer-checked/m:bg-[var(--brand-yellow)] peer-checked/m:text-black peer-checked/m:border-[var(--brand-yellow)] hover:border-gray-500 transition">M</label>
+                <input type="radio" name="size" id="size-g" class="hidden peer/g"><label for="size-g"
+                  class="w-12 h-12 flex items-center justify-center border border-gray-700 rounded-lg cursor-pointer text-sm font-bold peer-checked/g:bg-[var(--brand-yellow)] peer-checked/g:text-black peer-checked/g:border-[var(--brand-yellow)] hover:border-gray-500 transition">G</label>
+                <input type="radio" name="size" id="size-gg" class="hidden peer/gg"><label for="size-gg"
+                  class="w-12 h-12 flex items-center justify-center border border-gray-700 rounded-lg cursor-pointer text-sm font-bold peer-checked/gg:bg-[var(--brand-yellow)] peer-checked/gg:text-black peer-checked/gg:border-[var(--brand-yellow)] hover:border-gray-500 transition">GG</label>
+                <input type="radio" name="size" id="size-xg" class="hidden peer/xg"><label for="size-xg"
+                  class="w-12 h-12 flex items-center justify-center border border-gray-700 rounded-lg cursor-pointer text-sm font-bold peer-checked/xg:bg-[var(--brand-yellow)] peer-checked/xg:text-black peer-checked/xg:border-[var(--brand-yellow)] hover:border-gray-500 transition">XG</label>
               </div>
             </div>
 
-            <div class="attribute-group mt-3">
-              <span class="attribute-label">Selecione a Cor</span>
-              <div class="color-selector">
+            <div class="mb-8">
+              <span class="block text-xs font-bold text-gray-400 uppercase tracking-[0.1em] mb-3">Selecione a Cor</span>
+              <div class="color-selector flex gap-3">
                 <!-- Carregado via JS -->
               </div>
             </div>
 
             <!-- Ações -->
-            <div class="purchase-actions">
-              <div class="quantity-selector">
-                <button class="qty-btn" onclick="adjustQty(-1)"><i class="bi bi-dash"></i></button>
-                <input type="number" value="1" min="1" class="qty-input" id="buy-qty" readonly>
-                <button class="qty-btn" onclick="adjustQty(1)"><i class="bi bi-plus"></i></button>
+            <div class="flex flex-col sm:flex-row gap-4">
+              <div class="flex items-center border border-gray-700 rounded-xl bg-black">
+                <button class="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-white transition" onclick="adjustQty(-1)"><i class="bi bi-dash text-xl"></i></button>
+                <input type="number" value="1" min="1" class="w-12 h-12 bg-transparent text-center text-white border-none focus:ring-0 font-bold p-0 m-0 [&::-webkit-inner-spin-button]:appearance-none" id="buy-qty" readonly>
+                <button class="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-white transition" onclick="adjustQty(1)"><i class="bi bi-plus text-xl"></i></button>
               </div>
-              <button class="btn btn-add-cart" id="btn-add-to-cart">
-                <i class="bi bi-bag-plus"></i> ADICIONAR AO CARRINHO
+              <button class="flex-1 bg-[var(--brand-yellow)] text-black font-bold uppercase tracking-[0.1em] rounded-xl hover:brightness-110 shadow-lg shadow-yellow-500/20 py-4 px-6 flex items-center justify-center gap-2 transition" id="btn-add-to-cart">
+                <i class="bi bi-bag-plus text-xl"></i> ADICIONAR AO CARRINHO
               </button>
             </div>
           </div>
@@ -131,53 +118,49 @@
       </div>
 
       <!-- Tabs de Informações -->
-      <section class="product-tabs-section">
-        <ul class="nav nav-tabs nav-tabs-premium" id="productTabs" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="desc-tab" data-bs-toggle="tab" data-bs-target="#tab-description"
-              type="button" role="tab">Descrição</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#tab-reviews" type="button"
-              role="tab">Avaliações</button>
-          </li>
-        </ul>
+      <section class="mt-20">
+        <div class="flex border-b border-gray-800 mb-8" id="productTabs" role="tablist">
+            <button class="px-8 py-4 border-b-2 border-[var(--brand-yellow)] text-[var(--brand-yellow)] font-bold uppercase text-sm tracking-wider" id="tab-btn-description" onclick="switchProductTab('description')">
+              Descrição
+            </button>
+            <button class="px-8 py-4 border-b-2 border-transparent text-gray-500 hover:text-white font-bold uppercase text-sm tracking-wider transition" id="tab-btn-reviews" onclick="switchProductTab('reviews')">
+              Avaliações
+            </button>
+        </div>
 
-        <div class="tab-content tab-content-premium" id="productTabsContent">
-          <div class="tab-pane fade show active" id="tab-description" role="tabpanel">
-            <p id="product-long-desc">Carregando descrição do produto...</p>
+        <div>
+          <div id="tab-description" class="block">
+            <p id="product-long-desc" class="text-gray-300 leading-loose">Carregando descrição do produto...</p>
           </div>
-          <div class="tab-pane fade" id="tab-reviews" role="tabpanel">
+          <div id="tab-reviews" class="hidden">
             <div id="reviews-list">
               <!-- Cargado via JS -->
-              <div class="text-center py-4">
-                <div class="spinner-border text-warning" role="status">
-                  <span class="visually-hidden">Carregando...</span>
-                </div>
+              <div class="flex justify-center py-8">
+                <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--brand-yellow)]"></div>
               </div>
             </div>
 
             <!-- Form de Avaliação (visível apenas para compradores) -->
-            <div id="review-form-container" class="mt-5 p-4 review-form-premium rounded-4 d-none shadow-lg">
-              <h4 class="text-white mb-3">Sua Avaliação</h4>
+            <div id="review-form-container" class="mt-8 p-8 bg-[#111] border border-white/5 rounded-2xl hidden shadow-2xl">
+              <h4 class="text-white text-xl font-bold mb-6 font-['Outfit'] tracking-[0.1em] uppercase">Sua Avaliação</h4>
               <form id="product-review-form">
-                <div class="mb-3">
-                  <label class="form-label text-secondary small">Sua Nota</label>
-                  <div class="star-rating fs-3 text-warning">
-                    <i class="bi bi-star rating-star" data-value="1"></i>
-                    <i class="bi bi-star rating-star" data-value="2"></i>
-                    <i class="bi bi-star rating-star" data-value="3"></i>
-                    <i class="bi bi-star rating-star" data-value="4"></i>
-                    <i class="bi bi-star rating-star" data-value="5"></i>
+                <div class="mb-6">
+                  <label class="block text-gray-400 text-xs font-bold tracking-[0.1em] uppercase mb-3">Sua Nota</label>
+                  <div class="flex text-3xl text-gray-600 gap-2 cursor-pointer transition-colors" id="star-rating-container">
+                    <i class="bi bi-star rating-star hover:text-[var(--brand-yellow)] transition" data-value="1"></i>
+                    <i class="bi bi-star rating-star hover:text-[var(--brand-yellow)] transition" data-value="2"></i>
+                    <i class="bi bi-star rating-star hover:text-[var(--brand-yellow)] transition" data-value="3"></i>
+                    <i class="bi bi-star rating-star hover:text-[var(--brand-yellow)] transition" data-value="4"></i>
+                    <i class="bi bi-star rating-star hover:text-[var(--brand-yellow)] transition" data-value="5"></i>
                     <input type="hidden" name="rating" id="review-rating-value" value="5">
                   </div>
                 </div>
-                <div class="mb-3">
-                  <label for="review-comment" class="form-label text-secondary small">Seu Comentário</label>
-                  <textarea class="form-control bg-black text-white border-secondary" id="review-comment" rows="3"
+                <div class="mb-6">
+                  <label for="review-comment" class="block text-gray-400 text-xs font-bold tracking-[0.1em] uppercase mb-3">Seu Comentário</label>
+                  <textarea class="w-full bg-black text-white border border-gray-800 rounded-xl p-4 focus:border-[var(--brand-yellow)] focus:ring-1 focus:ring-[var(--brand-yellow)] transition outline-none" id="review-comment" rows="4"
                     required></textarea>
                 </div>
-                <button type="submit" class="btn btn-warning fw-bold px-4">ENVIAR AVALIAÇÃO</button>
+                <button type="submit" class="bg-[var(--brand-yellow)] text-black font-bold tracking-[0.1em] uppercase px-8 py-3 rounded-lg hover:brightness-110 transition shadow-lg shadow-yellow-500/20">ENVIAR AVALIAÇÃO</button>
               </form>
             </div>
           </div>
@@ -185,12 +168,12 @@
       </section>
 
       <!-- Produtos Relacionados -->
-      <section class="mt-5 pt-5 pb-5">
-        <div class="text-center mb-5">
-          <h2 class="h2-titulo">QUEM VIU, TAMBÉM VIU</h2>
-          <div class="gold-divider mx-auto"></div>
+      <section class="mt-24 pb-12">
+        <div class="text-center mb-12">
+          <h2 class="font-['Outfit'] text-3xl font-extrabold text-white tracking-[0.2em] uppercase">QUEM VIU, TAMBÉM VIU</h2>
+          <div class="w-16 h-1 bg-[var(--brand-yellow)] mx-auto mt-4 rounded-full"></div>
         </div>
-        <div id="related-products-grid" class="row row-cols-2 row-cols-md-4 g-4 mt-4">
+        <div id="related-products-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           <!-- Carregado via JS -->
         </div>
       </section>
@@ -202,14 +185,62 @@
   <footer></footer>
 
   <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function switchProductTab(tab) {
+      document.getElementById('tab-description').classList.add('hidden');
+      document.getElementById('tab-reviews').classList.add('hidden');
+      document.getElementById('tab-btn-description').className = 'px-8 py-4 border-b-2 border-transparent text-gray-500 hover:text-white font-bold uppercase text-sm tracking-wider transition';
+      document.getElementById('tab-btn-reviews').className = 'px-8 py-4 border-b-2 border-transparent text-gray-500 hover:text-white font-bold uppercase text-sm tracking-wider transition';
+
+      if(tab === 'description') {
+        document.getElementById('tab-description').classList.remove('hidden');
+        document.getElementById('tab-btn-description').className = 'px-8 py-4 border-b-2 border-[var(--brand-yellow)] text-[var(--brand-yellow)] font-bold uppercase text-sm tracking-wider';
+      } else {
+        document.getElementById('tab-reviews').classList.remove('hidden');
+        document.getElementById('tab-btn-reviews').className = 'px-8 py-4 border-b-2 border-[var(--brand-yellow)] text-[var(--brand-yellow)] font-bold uppercase text-sm tracking-wider';
+      }
+    }
+  </script>
   <script src="../assets/js/utils.js?v=1.1"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
         window.Utils.loadPartials();
+
+        // Adjust rating stars script
+        const stars = document.querySelectorAll('.rating-star');
+        const ratingInput = document.getElementById('review-rating-value');
+        if(stars.length > 0) {
+            const highlightStars = (val) => {
+                stars.forEach(s => {
+                    if (parseInt(s.dataset.value) <= val) {
+                        s.classList.add('text-[var(--brand-yellow)]');
+                        s.classList.replace('bi-star', 'bi-star-fill');
+                    } else {
+                        s.classList.remove('text-[var(--brand-yellow)]');
+                        s.classList.replace('bi-star-fill', 'bi-star');
+                    }
+                });
+            };
+            stars.forEach(star => {
+                star.addEventListener('mouseover', () => highlightStars(parseInt(star.dataset.value)));
+                star.addEventListener('mouseleave', () => highlightStars(parseInt(ratingInput.value)));
+                star.addEventListener('click', () => { ratingInput.value = star.dataset.value; highlightStars(parseInt(star.dataset.value)); });
+            });
+            highlightStars(5);
+        }
     });
+
+    // Make adjustQty available to onclick
+    function adjustQty(change) {
+       const input = document.getElementById('buy-qty');
+       let current = parseInt(input.value) || 1;
+       current += change;
+       if(current < 1) current = 1;
+       if(current > 99) current = 99;
+       input.value = current;
+    }
   </script>
-  <script src="../assets/js/navbar.js?v=1.1"></script>
+  <script src="../assets/js/navbar.js?v=1.1"></script>`n  <script src="../assets/js/mega-menu.js?v=1.0"></script>
   <script src="../assets/js/search.js?v=1.1"></script>
   <script src="../assets/js/accordion.js?v=1.1"></script>
   <script src="../assets/js/cart.js?v=1.1"></script>
@@ -218,7 +249,7 @@
   <script src="../assets/js/auth.js?v=1.1"></script>
   <script src="../assets/js/categorias.js"></script>
 </body>
-
 </html>
+
 
 

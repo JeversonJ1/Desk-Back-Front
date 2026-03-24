@@ -125,7 +125,7 @@
     display: inline-flex;
     align-items: center;
     padding: 18px 40px;
-    background: linear-gradient(135deg, var(--color-primary), #d4a853);
+    background: linear-gradient(135deg, var(--color-primary), #F2C84B);
     color: #000;
     font-weight: 700;
     font-size: 0.9rem;
@@ -320,7 +320,7 @@
     display: inline-flex;
     align-items: center;
     padding: 18px 40px;
-    background: linear-gradient(135deg, var(--color-primary), #d4a853);
+    background: linear-gradient(135deg, var(--color-primary), #F2C84B);
     color: #000;
     font-weight: 700;
     font-size: 0.9rem;

@@ -282,12 +282,6 @@ const ProductDetailManager = (() => {
                     // Abrir o mini-carrinho após adicionar
                     if (typeof cartManager.openDrawer === 'function') {
                         cartManager.openDrawer();
-                    } else if (window.bootstrap) {
-                        const miniCartEl = document.getElementById('miniCartOffcanvas');
-                        if (miniCartEl) {
-                            const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(miniCartEl);
-                            bsOffcanvas.show();
-                        }
                     }
                 } else {
                     console.error('CartManager não encontrado!');

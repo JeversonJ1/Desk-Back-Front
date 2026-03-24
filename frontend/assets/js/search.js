@@ -51,17 +51,17 @@ const SearchManager = (() => {
 
     const renderResults = (products, container) => {
         if (products.length === 0) {
-            container.innerHTML = '<p class="text-white/40 text-sm">Nenhum resultado encontrado.</p>';
+            container.innerHTML = '<p class="text-white-50 small">Nenhum resultado encontrado.</p>';
             return;
         }
         container.innerHTML = products.map(p => `
-            <a href="/frontend/pages/produto.html?id=${p.id}" class="flex items-center gap-4 group text-decoration-none bg-white/5 p-3 rounded-xl border border-white/5 hover:border-[var(--brand-yellow)] transition">
-                <img src="${p.img}" alt="${p.nome}" class="w-16 h-16 object-cover rounded-lg group-hover:scale-105 transition duration-500">
-                <div class="flex-grow">
-                    <div class="text-white text-xs font-bold uppercase tracking-widest group-hover:text-[var(--brand-yellow)] transition">${p.nome}</div>
-                    <div class="text-[var(--brand-yellow)] text-[10px] font-black mt-1">R$ ${p.preco.toFixed(2).replace('.', ',')}</div>
+            <a href="/pages/produto.html?id=${p.id}" class="d-flex align-items-center gap-3 text-decoration-none bg-dark p-3 rounded-3 border border-secondary transition-all" style="border-color: rgba(255,255,255,0.1) !important;" onmouseover="this.style.borderColor='var(--brand-yellow)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
+                <img src="${p.img}" alt="${p.nome}" class="rounded shadow-sm" style="width: 64px; height: 64px; object-fit: cover;">
+                <div class="grow">
+                    <div class="text-white small fw-bold text-uppercase" style="letter-spacing: 0.1em; transition: color 0.3s;" onmouseover="this.style.color='var(--brand-yellow)'" onmouseout="this.style.color='white'">${p.nome}</div>
+                    <div class="text-warning small fw-bolder mt-1">R$ ${p.preco.toFixed(2).replace('.', ',')}</div>
                 </div>
-                <span class="bi bi-arrow-right-short text-white/20 group-hover:text-[var(--brand-yellow)] transition text-xl"></span>
+                <i class="bi bi-arrow-right-short text-white-50 fs-4 transition-all" onmouseover="this.style.color='var(--brand-yellow)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'"></i>
             </a>
         `).join('');
     };
@@ -70,7 +70,12 @@ const SearchManager = (() => {
         const overlay = document.getElementById('searchOverlay');
         const input = document.getElementById('overlaySearchInput');
         if (overlay) {
+            // Tailwind compat
             overlay.classList.remove('invisible', 'opacity-0');
+            // Global Bootstrap compat
+            overlay.style.visibility = 'visible';
+            overlay.style.opacity = '1';
+            
             setTimeout(() => input?.focus(), 100);
             document.body.style.overflow = 'hidden';
         }
@@ -79,7 +84,12 @@ const SearchManager = (() => {
     const closeOverlay = () => {
         const overlay = document.getElementById('searchOverlay');
         if (overlay) {
+             // Tailwind compat
             overlay.classList.add('invisible', 'opacity-0');
+             // Global Bootstrap compat
+            overlay.style.visibility = 'hidden';
+            overlay.style.opacity = '0';
+            
             document.body.style.overflow = '';
         }
     };

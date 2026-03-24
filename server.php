@@ -19,6 +19,12 @@ if (preg_match('/^\/api\/(.+\.php)$/', $uri, $m)) {
     // Se não existe o proxy, cai no backend REST
 }
 
+// ── Redirecionamento da Inicial Repetida (Clean URL) ────────────────────
+if ($uri === '/frontend/index.html' || $uri === '/frontend/') {
+    header("Location: /", true, 301);
+    exit;
+}
+
 // ── 2. Arquivos estáticos do frontend (CSS, JS, imagens, HTML) ───────────────
 //       Verificado ANTES do backend. Como o frontend/ não é o docroot,
 //       precisamos servir com readfile() + Content-Type correto.

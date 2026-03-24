@@ -1,0 +1,59 @@
+# Koketsu Grife | Drop Exclusivo para Colecionadores
+
+[LOGIN](http://localhost:8000/)
+Acesse sua conta
+[Entrar na conta](http://localhost:8000/)
+[Criar nova conta](http://localhost:8000/)
+[Rastrear meu pedido](http://localhost:8000/)
+
+#### Frete Grátis
+Para todo o Brasil acima de R$ 200
+
+#### Compra Segura
+Seus dados estão 100% protegidos
+
+#### Troca Fácil
+Até 7 dias para devolução
+
+#### Atendimento
+Suporte Focado em Você
+
+## NOSSAS CATEGORIAS
+Encontre a sua peça perfeita para todas as ocasiões.
+
+### Camisetas Oversized
+
+### Coleção Moletons
+
+### Calças Cargo
+
+### Tênis Premium
+[Ver Catálogo Completo](http://localhost:8000/frontend/pages/catalogo.html)
+
+## O essencial é invisível aos olhos
+"A Koketsu nasceu da necessidade de expressar a alma urbana através do luxo silencioso. Não fazemos apenas roupas, criamos armaduras para quem domina a cidade com elegância e atitude."
+
+# KOKETSU.
+Laboratório exclusivo de streetwear para colecionadores de alto nível. Qualidade sobre quantidade, sempre.
+
+#### Protocolo
+- [Política de Envio](http://localhost:8000/)
+- [Autenticação](http://localhost:8000/)
+- [Guia de Tamanhos](http://localhost:8000/)
+- [Canal de Contato](http://localhost:8000/)
+[Política de Envio](http://localhost:8000/)
+[Autenticação](http://localhost:8000/)
+[Guia de Tamanhos](http://localhost:8000/)
+[Canal de Contato](http://localhost:8000/)
+
+#### Registro na Whitelist
+Entre na whitelist para receber códigos secretos e chaves de acesso antecipado.
+© 2026 Koketsu Archive. Distribuição Restrita.
+
+#### Sugestões de Termos
+
+#### Resultados Relevantes
+Aguardando sua busca...
+
+#### Concierge Koketsu
+Estilista Pessoal AI

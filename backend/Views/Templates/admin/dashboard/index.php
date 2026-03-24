@@ -114,7 +114,7 @@
     }
 
     .action-btn.relatorios {
-        background: linear-gradient(135deg, #ffd84d 0%, #f5c400 100%);
+        background: linear-gradient(135deg, #F2C84B 0%, #F2C84B 100%);
         color: #000;
         box-shadow: 0 4px 12px rgba(255, 216, 77, 0.3);
     }

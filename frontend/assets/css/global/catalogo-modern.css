@@ -691,7 +691,7 @@
 }
 
 .pagination-premium a.active {
-    background: linear-gradient(135deg, var(--color-primary), #fce5a1);
+    background: linear-gradient(135deg, var(--color-primary), #F2C84B);
     border-color: transparent;
     color: #000;
     font-weight: 800;

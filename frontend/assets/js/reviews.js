@@ -19,7 +19,7 @@ const ReviewManager = (() => {
         initRatingSummary(productId);
 
         try {
-            reviewsContainer.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-warning spinner-border-sm"></div></div>';
+            reviewsContainer.innerHTML = '<div class="flex justify-center py-4"><div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#F2C84B]"></div></div>';
 
             const response = await fetch(`${API_BASE}/produto/${productId}`);
             const result = await response.json();
@@ -162,7 +162,7 @@ const ReviewManager = (() => {
             const btn = form.querySelector('button');
             const originalText = btn.innerHTML;
 
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>ENVIANDO...';
+            btn.innerHTML = '<span class="inline-block animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-current mr-2 align-middle"></span>ENVIANDO...';
             btn.disabled = true;
 
             const payload = {
@@ -240,39 +240,66 @@ const ReviewManager = (() => {
 
     const renderHomeCarousel = (reviews) => {
         const container = document.getElementById('home-reviews-container');
+        
+        // Tailwind/Pure JS Carousel implementation
+        window.nextReviewSlide = () => {
+            const inner = document.getElementById('reviewCarouselInner');
+            if(!inner) return;
+            const items = inner.children.length;
+            let currentStr = inner.getAttribute('data-index') || '0';
+            let current = parseInt(currentStr);
+            current = (current + 1) % items;
+            inner.setAttribute('data-index', current);
+            inner.style.transform = `translateX(-${current * 100}%)`;
+        };
+
+        window.prevReviewSlide = () => {
+            const inner = document.getElementById('reviewCarouselInner');
+            if(!inner) return;
+            const items = inner.children.length;
+            let currentStr = inner.getAttribute('data-index') || '0';
+            let current = parseInt(currentStr);
+            current = (current - 1 + items) % items;
+            inner.setAttribute('data-index', current);
+            inner.style.transform = `translateX(-${current * 100}%)`;
+        };
+
+        // Auto slide every 5s
+        if(window.reviewInterval) clearInterval(window.reviewInterval);
+        window.reviewInterval = setInterval(window.nextReviewSlide, 5000);
+
         container.innerHTML = `
-            <div id="reviewCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
+            <div id="reviewCarousel" class="relative overflow-hidden w-full group">
+                <div id="reviewCarouselInner" class="flex transition-transform duration-700 ease-in-out w-full" data-index="0" style="transform: translateX(0%);">
                     ${reviews.map((review, index) => `
-                        <div class="carousel-item ${index === 0 ? 'active' : ''}">
-                            <div class="review-card-modern mx-auto">
-                                <div class="row g-0 align-items-center">
-                                    <div class="col-md-4 d-none d-md-block">
-                                        <div class="review-img-wrapper" style="height: 350px; overflow: hidden; border-radius: 20px 0 0 20px;">
+                        <div class="w-full shrink-0 px-2 lg:px-4">
+                            <div class="bg-[#0a0a0a] border border-[#F2C84B]/20 rounded-2xl mx-auto shadow-2xl overflow-hidden" style="max-width: 900px;">
+                                <div class="flex flex-col md:flex-row items-center">
+                                    <div class="hidden md:block md:w-1/3">
+                                        <div class="h-[350px] overflow-hidden">
                                             <img src="${review.foto_produto ? '/backend/upload/' + review.foto_produto : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}" 
-                                                 class="img-fluid h-100 w-100 object-fit-cover" 
+                                                 class="h-full w-full object-cover" 
                                                  alt="${review.nome_cliente}"
                                                  onerror="this.onerror=null; this.src='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'">
                                         </div>
                                     </div>
-                                    <div class="col-md-8 p-4 p-lg-5">
-                                        <div class="stars text-warning mb-3">
+                                    <div class="w-full md:w-2/3 p-6 lg:p-10">
+                                        <div class="flex text-[#F2C84B] mb-4 text-xl">
                                             ${generateStars(review.nota_avaliacoes)}
                                         </div>
-                                        <h4 class="review-quote text-white mb-3">"${review.comentario_avaliacoes || 'Produto sensacional, recomendo muito!'}"</h4>
-                                        <div class="reviewer-meta d-flex align-items-center mt-4">
-                                            <div class="reviewer-avatar-wrapper position-relative me-3">
+                                        <h4 class="text-white text-lg md:text-xl italic mb-6 leading-relaxed">"${review.comentario_avaliacoes || 'Produto sensacional, recomendo muito!'}"</h4>
+                                        <div class="flex items-center mt-6">
+                                            <div class="relative mr-4">
                                                 <img src="${review.foto_usuarios ? '/backend/upload/' + review.foto_usuarios : 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'}" 
-                                                     class="reviewer-avatar" 
-                                                     style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold-primary);" 
+                                                     class="w-16 h-16 rounded-full object-cover border-2 border-[#F2C84B]" 
                                                      onerror="this.onerror=null; this.src='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'">
-                                                <div class="verified-badge position-absolute bottom-0 end-0 bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 20px; height: 20px; border: 2px solid #000;">
-                                                    <i class="bi bi-check-lg text-black" style="font-size: 10px;"></i>
+                                                <div class="absolute bottom-0 right-0 bg-[#F2C84B] rounded-full w-5 h-5 flex items-center justify-center border-2 border-black">
+                                                    <i class="bi bi-check-lg text-black text-[10px]"></i>
                                                 </div>
                                             </div>
                                             <div>
-                                                <div class="reviewer-name text-white fw-bold">${review.nome_cliente || 'Cliente Koketsu'}</div>
-                                                <div class="reviewed-product small text-secondary">Comprou: ${review.nome_produto || 'Produto Exclusivo'}</div>
+                                                <div class="text-white font-bold text-sm tracking-widest uppercase">${review.nome_cliente || 'Cliente Koketsu'}</div>
+                                                <div class="text-gray-400 text-xs mt-1">Comprou: <span class="text-[#F2C84B]">${review.nome_produto || 'Produto Exclusivo'}</span></div>
                                             </div>
                                         </div>
                                     </div>
@@ -281,12 +308,12 @@ const ReviewManager = (() => {
                         </div>
                     `).join('')}
                 </div>
-                <div class="carousel-controls mt-4 d-flex justify-content-center gap-3">
-                    <button class="control-btn" type="button" data-bs-target="#reviewCarousel" data-bs-slide="prev">
-                        <i class="bi bi-chevron-left"></i>
+                <div class="flex justify-center gap-4 mt-8">
+                    <button class="w-12 h-12 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-[#F2C84B] hover:text-black hover:border-transparent transition-all" type="button" onclick="window.prevReviewSlide()">
+                        <i class="bi bi-chevron-left text-lg"></i>
                     </button>
-                    <button class="control-btn" type="button" data-bs-target="#reviewCarousel" data-bs-slide="next">
-                        <i class="bi bi-chevron-right"></i>
+                    <button class="w-12 h-12 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-[#F2C84B] hover:text-black hover:border-transparent transition-all" type="button" onclick="window.nextReviewSlide()">
+                        <i class="bi bi-chevron-right text-lg"></i>
                     </button>
                 </div>
             </div>

@@ -83,7 +83,7 @@
     }
 
     .btn-main-action {
-        background: linear-gradient(135deg, #ffd84d 0%, #f5c400 100%);
+        background: linear-gradient(135deg, #F2C84B 0%, #F2C84B 100%);
         color: #000 !important;
         padding: 15px 25px;
         border-radius: 12px;
@@ -272,7 +272,7 @@
     }
 
     .page-link.active {
-        background: linear-gradient(135deg, #ffd84d 0%, #f5c400 100%);
+        background: linear-gradient(135deg, #F2C84B 0%, #F2C84B 100%);
         color: #000;
         border-color: var(--accent);
     }

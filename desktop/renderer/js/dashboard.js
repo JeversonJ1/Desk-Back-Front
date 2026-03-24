@@ -125,16 +125,16 @@ function atualizarTopProdutos(produtos) {
       <div style="padding: 16px; border-bottom: 1px solid #333; cursor: pointer;" onclick="window.location.href='produtos.html'" onmouseover="this.style.background='rgba(255,216,77,0.05)'" onmouseout="this.style.background='transparent'" style="transition: all 0.2s;">
         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
           <div>
-            <div style="color: #ffd84d; font-size: 13px; font-weight: bold; margin-bottom: 4px;">#${i + 1}</div>
+            <div style="color: #F2C84B; font-size: 13px; font-weight: bold; margin-bottom: 4px;">#${i + 1}</div>
             <div style="color: #e0e0e0; font-weight: 600; font-size: 14px;">${p.nome.substring(0, 28)}</div>
           </div>
           <div style="text-align: right;">
-            <div style="color: #ffd84d; font-weight: bold; font-size: 14px;">${p.estoque} un</div>
+            <div style="color: #F2C84B; font-weight: bold; font-size: 14px;">${p.estoque} un</div>
             <div style="color: #888; font-size: 12px;">R$ ${valorProduto}</div>
           </div>
         </div>
         <div style="width: 100%; height: 6px; background: #333; border-radius: 3px; overflow: hidden;">
-          <div style="width: ${percentualMax}%; height: 100%; background: linear-gradient(90deg, #ffd84d, #ffbe33); transition: width 0.3s;"></div>
+          <div style="width: ${percentualMax}%; height: 100%; background: linear-gradient(90deg, #F2C84B, #F2C84B); transition: width 0.3s;"></div>
         </div>
       </div>
     `;

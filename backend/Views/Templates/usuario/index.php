@@ -102,7 +102,7 @@
         display: inline-flex;
         align-items: center;
         gap: 10px;
-        background: linear-gradient(135deg, #ffd84d 0%, #f5c400 100%) !important;
+        background: linear-gradient(135deg, #F2C84B 0%, #F2C84B 100%) !important;
         color: #000 !important;
         padding: 12px 24px;
         border-radius: 10px;
@@ -323,7 +323,7 @@
     }
 
     .page-link.active {
-        background: linear-gradient(135deg, #ffd84d 0%, #f5c400 100%);
+        background: linear-gradient(135deg, #F2C84B 0%, #F2C84B 100%);
         color: #000;
         border-color: var(--accent);
     }

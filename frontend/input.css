@@ -1,0 +1,15 @@
+@import "tailwindcss/utilities" layer(utilities);
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/container-queries";
+
+:root {
+    --brand-yellow: #F2C84B;
+    --brand-dark: #0A0A0A;
+    --brand-grey: #1A1A1A;
+}
+
+body {
+    @apply bg-[var(--brand-dark)] text-white overflow-x-hidden font-sans;
+    --bs-body-bg: var(--brand-dark);
+    --bs-body-color: #FFFFFF;
+}

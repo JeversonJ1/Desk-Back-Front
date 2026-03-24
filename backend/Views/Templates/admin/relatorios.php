@@ -355,14 +355,14 @@
         const style = getComputedStyle(document.body);
         const textColor = style.getPropertyValue('--text-muted').trim() || '#888';
         const gridColor = style.getPropertyValue('--border-color').trim() || 'rgba(0,0,0,0.1)';
-        const accentColor = style.getPropertyValue('--accent').trim() || '#ffd700';
+        const accentColor = style.getPropertyValue('--accent').trim() || '#F2C84B';
 
         Chart.defaults.color = textColor;
         Chart.defaults.borderColor = gridColor;
         Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
 
         const chartColors = {
-            primary: '#ffd700',
+            primary: '#F2C84B',
             secondary: '#ff6b6b',
             tertiary: '#4ecdc4',
             quaternary: '#45b7d1',

@@ -1,5 +1,7 @@
 /* ========================================
-   FOOTER
+   FOOTER — Koketsu Grife
+   Layout: 4 colunas horizontais em desktop,
+   2 colunas em tablet, 1 coluna em mobile
    ======================================== */
 
 footer {
@@ -12,11 +14,23 @@ footer {
   margin-top: 80px;
 }
 
-footer .container {
+/* ── Grid principal: 4 colunas lado a lado ── */
+.footer-grid {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 60px;
-  padding-bottom: 80px;
+  gap: 48px;
+  padding-bottom: 60px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* ── Coluna genérica ── */
+.coluna-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .titulo {
@@ -24,26 +38,21 @@ footer .container {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-black);
   letter-spacing: 1px;
-  margin-bottom: 30px;
+  margin-bottom: 16px;
   text-transform: uppercase;
   line-height: 1.3;
-}
-
-.coluna-footer {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
 }
 
 .coluna-footer a {
   color: #888;
   font-size: var(--font-size-sm);
   text-decoration: none;
-  transition: all var(--transition-normal);
+  transition: color var(--transition-normal);
+  line-height: 1.8;
+}
 
-  &:hover {
-    color: var(--color-primary);
-  }
+.coluna-footer a:hover {
+  color: var(--color-primary);
 }
 
 .coluna-footer p {
@@ -51,16 +60,17 @@ footer .container {
   font-size: var(--font-size-sm);
   line-height: 1.6;
   margin-bottom: 0;
+}
 
-  &.small {
-    font-size: var(--font-size-xs);
-  }
+.coluna-footer p.small {
+  font-size: var(--font-size-xs);
+}
 
-  &.email-sac {
-    font-weight: var(--font-weight-bold);
-    color: var(--color-light);
-    margin-top: 10px;
-  }
+.coluna-footer p.email-sac {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-light);
+  margin-top: 10px;
+  word-break: break-all;
 }
 
 /* ========================================
@@ -68,21 +78,23 @@ footer .container {
    ======================================== */
 
 .newsletter {
-  max-width: 450px;
+  max-width: 100%;
+}
 
-  h3 {
-    font-family: var(--font-heading);
-    color: var(--color-primary);
-    font-size: 24px;
-    margin-bottom: 20px;
-    font-weight: 900;
-  }
+.newsletter h3 {
+  font-family: var(--font-heading);
+  color: var(--color-primary);
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+  font-weight: 900;
+  line-height: 1.3;
+}
 
-  p {
-    color: #666;
-    font-size: var(--font-size-sm);
-    margin-bottom: 30px;
-  }
+.newsletter p {
+  color: #666;
+  font-size: var(--font-size-sm);
+  margin-bottom: 20px;
+  line-height: 1.6;
 }
 
 .input-group {
@@ -93,10 +105,10 @@ footer .container {
   border-radius: var(--radius-sm);
   margin-top: var(--spacing-lg);
   transition: border-color var(--transition-normal);
+}
 
-  &:focus-within {
-    border-color: var(--color-primary);
-  }
+.input-group:focus-within {
+  border-color: var(--color-primary);
 }
 
 .form-email input[type="email"] {
@@ -107,10 +119,10 @@ footer .container {
   width: 100%;
   outline: none;
   font-size: var(--font-size-sm);
+}
 
-  &::placeholder {
-    color: var(--color-gray-medium);
-  }
+.form-email input[type="email"]::placeholder {
+  color: var(--color-gray-medium);
 }
 
 .form-email button {
@@ -119,39 +131,39 @@ footer .container {
   border: none;
   font-weight: 900;
   cursor: pointer;
-  padding: 0 30px;
+  padding: 0 20px;
   border-radius: var(--radius-sm);
   text-transform: uppercase;
   font-size: var(--font-size-xs);
   transition: all var(--transition-normal);
   white-space: nowrap;
+}
 
-  &:hover {
-    background-color: #fff;
-    color: #000;
-  }
+.form-email button:hover {
+  background-color: #fff;
+  color: #000;
 }
 
 /* Redes Sociais */
 .redes-sociais-icones {
   display: flex;
-  gap: 25px;
-  margin-top: 30px;
+  gap: 20px;
+  margin-top: 24px;
+}
 
-  a {
-    color: #fff;
-    font-size: 24px;
-    transition: all var(--transition-normal);
+.redes-sociais-icones a {
+  color: #fff;
+  font-size: 22px;
+  transition: all var(--transition-normal);
+}
 
-    &:hover {
-      color: var(--color-primary);
-      transform: translateY(-3px);
-    }
-  }
+.redes-sociais-icones a:hover {
+  color: var(--color-primary);
+  transform: translateY(-3px);
 }
 
 /* ========================================
-   RODAPÉ - ÁREA DE CONTATO
+   BOTÃO WHATSAPP
    ======================================== */
 
 .btn-whatsapp-footer {
@@ -161,23 +173,25 @@ footer .container {
   background-color: transparent;
   color: var(--color-gray-medium);
   text-decoration: none;
-  padding: var(--spacing-sm) 0;
   border: 1px solid var(--color-gray-medium);
   border-radius: var(--radius-sm);
   padding: var(--spacing-sm) var(--spacing-lg);
   font-weight: var(--font-weight-bold);
   transition: all var(--transition-normal);
   font-size: var(--font-size-sm);
+  margin-top: 12px;
+  width: 100%;
+  justify-content: center;
+}
 
-  &:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-    transform: translateY(-2px);
-  }
+.btn-whatsapp-footer:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+}
 
-  i {
-    font-size: var(--font-size-lg);
-  }
+.btn-whatsapp-footer i {
+  font-size: var(--font-size-lg);
 }
 
 /* ========================================
@@ -187,15 +201,19 @@ footer .container {
 .copyright-container {
   background-color: var(--color-dark-secondary);
   padding: var(--spacing-lg) 0;
-  border-top: 1px solid var(--color-dark-border);
+  border-top: 1px solid rgba(255,255,255,0.06);
 }
 
-.copyright-container .container {
+.footer-copyright-inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
 .copyright-container p {
@@ -209,42 +227,54 @@ footer .container {
   gap: var(--spacing-lg);
   color: var(--color-gray-medium);
   font-size: var(--font-size-xl);
+}
 
-  i {
-    transition: color var(--transition-normal), transform var(--transition-fast);
+.pagamentos i {
+  transition: color var(--transition-normal), transform 0.1s ease;
+}
 
-    &:hover {
-      color: var(--color-primary);
-      transform: scale(1.2);
-    }
-  }
+.pagamentos i:hover {
+  color: var(--color-primary);
+  transform: scale(1.2);
 }
 
 /* ========================================
    RESPONSIVIDADE
    ======================================== */
 
-@media (max-width: 992px) {
-  footer .container {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-2xl);
+/* Tablet grande (≤ 1024px): 3 colunas */
+@media (max-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 36px;
+  }
+
+  .newsletter {
+    grid-column: 1 / -1; /* Newsletter ocupa a linha inteira */
+  }
+}
+
+/* Tablet (≤ 768px): 2 colunas */
+@media (max-width: 768px) {
+  footer {
+    padding-top: 48px;
+    margin-top: 48px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    padding-bottom: 40px;
   }
 
   .newsletter {
     grid-column: 1 / -1;
   }
-}
 
-@media (max-width: 768px) {
-  footer .container {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-xl);
-    padding-bottom: var(--spacing-xl);
-  }
-
-  .copyright-container .container {
+  .footer-copyright-inner {
     flex-direction: column;
     text-align: center;
+    gap: var(--spacing-sm);
   }
 
   .pagamentos {
@@ -252,16 +282,38 @@ footer .container {
   }
 }
 
+/* Mobile (≤ 576px): 1 coluna empilhada */
 @media (max-width: 576px) {
   footer {
-    padding-top: var(--spacing-2xl);
+    padding-top: 40px;
+    margin-top: 40px;
   }
 
-  .titulo {
-    font-size: var(--font-size-base);
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding-bottom: 32px;
   }
 
   .newsletter {
-    max-width: 100%;
+    grid-column: unset;
+  }
+
+  .titulo {
+    font-size: var(--font-size-sm);
+    margin-bottom: 10px;
+  }
+
+  .newsletter h3 {
+    font-size: 1.15rem;
+  }
+
+  .form-email button {
+    padding: 0 14px;
+  }
+
+  .redes-sociais-icones {
+    gap: 16px;
+    margin-top: 16px;
   }
 }

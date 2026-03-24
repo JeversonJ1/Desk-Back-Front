@@ -1,11 +1,15 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catá Premium | Koketsu Grife</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Catálogo | Koketsu Grife</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = { corePlugins: { preflight: false } }
+    </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,7 +17,7 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Outfit:wght@400;700;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/global/variables.css">
-    <link rel="stylesheet" href="../assets/css/global/main.css">
+    <link rel="stylesheet" href="../assets/css/global/main.css">`n    <link rel="stylesheet" href="../assets/css/components/menu-modal.css">
     <link rel="stylesheet" href="../assets/css/global/footer.css">
     <link rel="stylesheet" href="../assets/css/global/catalogo.css">
     <link rel="stylesheet" href="../assets/css/global/catalogo-modern.css">
@@ -21,85 +25,90 @@
     <link rel="icon" type="image/png" href="../assets/img/logo2026.png">
 </head>
 
-<body class="bg-black text-white">
+<body class="bg-[var(--brand-dark)] text-white">
 
     <header></header>
 
-    <section class="catalog-hero-new text-center">
-        <div class="container">
-            <span class="catalog-badge">
-                <i class="bi bi-stars me-2"></i>COLEÇÃO EXCLUSIVA 2026
-            </span>
-            <h1 class="catalog-title">DESCUBRA SEU ESTILO</h1>
-            <p class="catalog-subtitle">Peças exclusivas para quem domina a cidade com elegância e atitude</p>
+    <section class="catalog-hero-new text-center py-16 bg-[#111] border-b border-white/10 mt-20">
+        <div class="container mx-auto px-4">
+            <h1 class="shimmer-title drop-shadow-[0_0_15px_rgba(242,200,75,0.3)]">DESCUBRA SEU ESTILO</h1>
+            <p class="text-gray-400 max-w-2xl mx-auto text-lg tracking-wider font-light">Peças exclusivas para quem domina a cidade com elegância e atitude</p>
         </div>
     </section>
 
-    <div class="container-fluid px-lg-5 pt-4">
-        <nav class="breadcrumb-catalog" aria-label="breadcrumb">
-            <ol>
-                <li><a href="../index.html">Home</a></li>
-                <li class="active">Catálogo</li>
+    <div class="container mx-auto px-4 lg:px-12 pt-8">
+        <nav aria-label="breadcrumb">
+            <ol class="flex text-sm text-gray-500 space-x-2">
+                <li><a href="/" class="hover:text-white transition uppercase tracking-wider text-[10px] font-bold">Home</a> <span class="mx-2">/</span></li>
+                <li class="text-[var(--brand-yellow)] uppercase tracking-wider text-[10px] font-bold">Catálogo</li>
             </ol>
         </nav>
     </div>
 
-    <main class="container-fluid px-lg-5 pb-5">
-        <div class="row g-5">
+    <main class="container mx-auto px-4 lg:px-12 pb-16 mt-8">
+        <div class="flex flex-col lg:flex-row gap-8 lg:gap-12">
 
-            <aside class="col-lg-3">
-                <div class="sticky-sidebar">
-                    <div class="filter-card">
-                        <div class="filter-header d-flex justify-content-between align-items-center mb-4">
-                            <h2 class="h5 fw-bold mb-0 gold-text"><i class="bi bi-sliders2-vertical me-2"></i>FILTROS
+            <!-- Sidebar Filtros -->
+            <aside class="w-full lg:w-1/4">
+                <div class="sticky top-[100px]">
+                    <div class="bg-[#111] border border-white/5 rounded-2xl p-6 shadow-2xl">
+                        <div class="flex justify-between items-center mb-8 pb-4 border-b border-white/10">
+                            <h2 class="text-[var(--brand-yellow)] font-bold tracking-[0.1em] uppercase flex items-center gap-2"><i class="bi bi-sliders2-vertical"></i>FILTROS
                             </h2>
-                            <button class="btn btn-sm text-secondary p-0">Limpar Tudo</button>
+                            <button class="text-xs text-gray-500 hover:text-white transition uppercase tracking-[0.1em] font-bold">Limpar Tudo</button>
                         </div>
 
-                        <div class="filter-group">
-                            <button class="filter-collapse-btn" data-bs-toggle="collapse" data-bs-target="#collapseCat">
-                                CATEGORIAS <i class="bi bi-chevron-down"></i>
+                        <!-- Categoria -->
+                        <div class="mb-6">
+                            <button class="w-full flex justify-between items-center text-left text-sm font-bold text-white uppercase tracking-[0.1em] focus:outline-none" onclick="toggleFilter('collapseCat', 'iconCat')">
+                                CATEGORIAS <i class="bi bi-chevron-up transition-transform" id="iconCat"></i>
                             </button>
-                            <div class="collapse show" id="collapseCat">
+                            <div class="block mt-4" id="collapseCat">
                                 <div class="filter-content" id="category-filter-container">
-                                    <p class="small text-secondary m-0">Carregando categorias...</p>
+                                    <p class="text-xs text-gray-500 m-0">Carregando categorias...</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="filter-group">
-                            <span class="filter-label">TAMANHOS</span>
-                            <div class="size-grid mt-3" id="size-filter-container">
-                                <p class="small text-secondary m-0">Carregando tamanhos...</p>
+                        <hr class="border-white/10 my-6">
+
+                        <!-- Tamanhos -->
+                        <div class="mb-6">
+                            <span class="block text-sm font-bold text-white uppercase tracking-[0.1em] mb-4">TAMANHOS</span>
+                            <div class="grid grid-cols-4 gap-2" id="size-filter-container">
+                                <p class="text-xs text-gray-500 m-0 col-span-4">Carregando tamanhos...</p>
                             </div>
                         </div>
 
-                        <div class="filter-group">
-                            <button class="filter-collapse-btn" data-bs-toggle="collapse"
-                                data-bs-target="#collapseCores">
-                                CORES <i class="bi bi-chevron-down"></i>
+                        <hr class="border-white/10 my-6">
+
+                        <!-- Cores -->
+                        <div class="mb-6">
+                            <button class="w-full flex justify-between items-center text-left text-sm font-bold text-white uppercase tracking-[0.1em] focus:outline-none" onclick="toggleFilter('collapseCores', 'iconCores')">
+                                CORES <i class="bi bi-chevron-up transition-transform" id="iconCores"></i>
                             </button>
-                            <div class="collapse show" id="collapseCores">
-                                <div class="filter-content" id="color-filter-container">
+                            <div class="block mt-4" id="collapseCores">
+                                <div class="grid grid-cols-5 gap-2" id="color-filter-container">
                                     <!-- Carregado dinamicamente via JS -->
-                                    <p class="small text-secondary m-0">Carregando cores...</p>
+                                    <p class="text-xs text-gray-500 m-0 col-span-5">Carregando cores...</p>
                                 </div>
                             </div>
                         </div>
 
+                        <hr class="border-white/10 my-6">
 
-
-                        <div class="filter-group border-0">
-                            <span class="filter-label">FAIXA DE PREÇO</span>
-                            <div class="mt-4">
-                                <div class="range-container">
-                                    <div class="range-tooltip" id="rangeTooltip">R$ 1.000</div>
-                                    <input type="range" class="form-range gold-range" min="0" max="1000" id="rangePreco"
+                        <!-- Faixa de Preço -->
+                        <div class="mb-2">
+                            <span class="block text-sm font-bold text-white uppercase tracking-[0.1em] mb-4">FAIXA DE PREÇO</span>
+                            <div>
+                                <div class="relative pt-6">
+                                    <div class="absolute -top-1 left-1/2 -translate-x-1/2 bg-[var(--brand-yellow)] text-black text-xs font-bold px-2 py-1 rounded hidden" id="rangeTooltip">R$ 1.000</div>
+                                    <input type="range" class="w-full h-1 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-[var(--brand-yellow)]" min="0" max="1000" id="rangePreco"
                                         value="1000">
                                 </div>
-                                <div class="d-flex justify-content-between small opacity-75 mt-2">
+                                <div class="flex justify-between text-xs text-gray-500 mt-2 font-bold tracking-[0.1em]">
                                     <span>R$ 0</span>
-                                    <span class="gold-text fw-bold" id="maxPriceLabel">R$ 1.000</span>
+                                    <span class="text-[var(--brand-yellow)]" id="maxPriceLabel">R$ 1.000</span>
                                 </div>
                             </div>
                         </div>
@@ -107,13 +116,13 @@
                 </div>
             </aside>
 
-            <section class="col-lg-9">
-                <div class="catalog-toolbar">
-                    <span class="product-count">EXIBINDO <b>0</b> PRODUTOS</span>
-                    <div class="d-flex align-items-center gap-3">
-                        <span class="small text-uppercase opacity-50 d-none d-md-inline"
-                            style="letter-spacing: 1px; font-size: 0.7rem;">Ordenar:</span>
-                        <select class="form-select sort-select shadow-none">
+            <!-- Produtos -->
+            <section class="w-full lg:w-3/4">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 bg-[#111] p-4 rounded-xl border border-white/5">
+                    <span class="text-sm text-gray-400 tracking-[0.1em] uppercase font-bold">EXIBINDO <b class="text-[var(--brand-yellow)]">0</b> PRODUTOS</span>
+                    <div class="flex items-center gap-3 w-full md:w-auto">
+                        <span class="text-xs text-gray-500 uppercase tracking-[0.1em] font-bold hidden md:inline">Ordenar:</span>
+                        <select class="w-full md:w-auto bg-black text-white border border-gray-700 rounded-lg px-4 py-2 text-sm focus:border-[var(--brand-yellow)] focus:ring-1 focus:ring-[var(--brand-yellow)] outline-none transition">
                             <option selected>Lançamentos</option>
                             <option>Menor Preço</option>
                             <option>Maior Preço</option>
@@ -122,67 +131,48 @@
                     </div>
                 </div>
 
-                <div class="row g-4" id="vitrine-catalogo">
+                <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6" id="vitrine-catalogo">
                     <!-- Conteúdo carregado via JS -->
-                    <div class="col-12 text-center py-5">
-                        <div class="spinner-border text-warning" role="status">
-                            <span class="visually-hidden">Carregando...</span>
-                        </div>
+                    <div class="col-span-full flex justify-center py-16">
+                        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--brand-yellow)]"></div>
                     </div>
                 </div>
 
-                <nav class="mt-5 pt-5">
-                    <ul class="pagination-premium justify-content-center">
-                        <li><a href="#" class="prev"><i class="bi bi-arrow-left"></i></a></li>
-                        <li><a href="#" class="active">01</a></li>
-                        <li><a href="#">02</a></li>
-                        <li><a href="#">03</a></li>
-                        <li><span>...</span></li>
-                        <li><a href="#">12</a></li>
-                        <li><a href="#" class="next"><i class="bi bi-arrow-right"></i></a></li>
+                <nav class="mt-16 flex justify-center w-full">
+                    <ul class="flex items-center gap-2">
+                        <li><a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 text-gray-500 hover:text-[var(--brand-yellow)] hover:border-[var(--brand-yellow)] transition"><i class="bi bi-arrow-left"></i></a></li>
+                        <li><a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--brand-yellow)] text-black font-bold">01</a></li>
+                        <li><a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 text-white hover:border-[var(--brand-yellow)] transition">02</a></li>
+                        <li><a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 text-white hover:border-[var(--brand-yellow)] transition">03</a></li>
+                        <li><span class="w-10 h-10 flex items-center justify-center text-gray-500">...</span></li>
+                        <li><a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 text-white hover:border-[var(--brand-yellow)] transition">12</a></li>
+                        <li><a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 text-gray-500 hover:text-[var(--brand-yellow)] hover:border-[var(--brand-yellow)] transition"><i class="bi bi-arrow-right"></i></a></li>
                     </ul>
                 </nav>
             </section>
 
         </div>
     </main>
-    <div class="top-bar">
-        <div class="info-box">
-            <i class="bi bi-clock"></i>
-            <div>
-                <h4>ATENDIMENTO</h4>
-                <p>SEG A SEX DAS 08H-11:30 E DAS 13H-17:30H</p>
-            </div>
-        </div>
-
-        <div class="info-box">
-            <i class="bi bi-box-seam"></i>
-            <div>
-                <h4>TROCAS E DEVOLUÇÕES</h4>
-                <p>ATÉ 7 DIAS PARA TROCAS OU DEVOLUÇÕES</p>
-            </div>
-        </div>
-
-        <div class="info-box">
-            <i class="bi bi-truck"></i>
-            <div>
-                <h4>FRETE</h4>
-                <p>GRÁTIS PARA COMPRAS ACIMA DE R$349<br>PARA TODO O BRASIL</p>
-            </div>
-        </div>
-
-        <div class="info-box">
-            <i class="bi bi-credit-card"></i>
-            <div>
-                <h4>PARCELAMENTO</h4>
-                <p>EM ATÉ 4X SEM JUROS NO CARTÃO</p>
-            </div>
-        </div>
-    </div>
 
     <footer></footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleFilter(collapseId, iconId) {
+            const collapse = document.getElementById(collapseId);
+            const icon = document.getElementById(iconId);
+            if(collapse.classList.contains('hidden')) {
+                collapse.classList.remove('hidden');
+                collapse.classList.add('block');
+                icon.classList.remove('bi-chevron-down');
+                icon.classList.add('bi-chevron-up');
+            } else {
+                collapse.classList.add('hidden');
+                collapse.classList.remove('block');
+                icon.classList.add('bi-chevron-down');
+                icon.classList.remove('bi-chevron-up');
+            }
+        }
+    </script>
     <script src="../assets/js/utils.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -190,7 +180,7 @@
         });
     </script>
     <script src="../assets/js/animations.js"></script>
-    <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/navbar.js"></script>`n  <script src="../assets/js/mega-menu.js?v=1.0"></script>
     <script src="../assets/js/search.js"></script>
     <script src="../assets/js/cart.js"></script>
     <script src="../assets/js/catalogo.js"></script>
@@ -199,5 +189,4 @@
 </body>
 
 </html>
-
 
