@@ -20,9 +20,6 @@ html, body {
   background: var(--koketsu-black);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* ── Card central ─────────────────────────────────────────── */

@@ -213,7 +213,7 @@ const Components = {
     <!-- Center Section: Logo -->
     <div class="flex justify-center flex-1">
       <a href="/" aria-label="Página inicial" class="hover:scale-110 transition-transform duration-300 filter drop-shadow-[0_2px_4px_rgba(248,211,70,0.2)] hover:drop-shadow-[0_4px_8px_rgba(248,211,70,0.4)]">
-        <img src="/frontend/assets/img/logo2026.png" alt="Logo Koketsu Grife" class="max-h-[85px] w-auto object-contain" />
+        <img src="/assets/img/logo2026.png" alt="Logo Koketsu Grife" class="max-h-[85px] w-auto object-contain" />
       </a>
     </div>
 
@@ -400,7 +400,7 @@ const Components = {
   <div id="loginModalOverlay" class="login-modal-overlay">
     <div class="login-modal-card">
       <button id="loginModalClose" class="login-modal-close" aria-label="Fechar">&times;</button>
-      <img src="/frontend/assets/img/logo2026.png" alt="Koketsu" class="login-modal-logo">
+      <img src="/assets/img/logo2026.png" alt="Koketsu" class="login-modal-logo">
       <h2 class="login-modal-title">BEM-VINDO</h2>
       <p class="login-modal-subtitle">Acesse sua área exclusiva</p>
 

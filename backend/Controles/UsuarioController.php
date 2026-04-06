@@ -88,8 +88,17 @@ class UsuarioController extends AdminController
         }
 
         $imagem = null;
-        if (isset($_FILES['foto_usuarios']) && $_FILES['foto_usuarios']['error'] == 0) {
-            $imagem = $this->gerenciarImagem->salvarArquivo($_FILES['foto_usuarios'], 'usuarios');
+        if (isset($_FILES['foto_usuarios']) && !empty($_FILES['foto_usuarios']['name'])) {
+            if ($_FILES['foto_usuarios']['error'] !== UPLOAD_ERR_OK) {
+                Redirect::redirecionarComMensagem("/usuario/criar", "error", "Erro ao fazer upload da imagem.");
+                return;
+            }
+            try {
+                $imagem = $this->gerenciarImagem->salvarArquivo($_FILES['foto_usuarios'], 'usuarios');
+            } catch (\Exception $e) {
+                Redirect::redirecionarComMensagem("/usuario/criar", "error", $e->getMessage());
+                return;
+            }
         }
 
         if (
@@ -125,8 +134,15 @@ class UsuarioController extends AdminController
         $tipo = $_POST['nivel_acesso'];
         $imagem = null;
 
-        if (isset($_FILES['foto_usuarios']) && $_FILES['foto_usuarios']['error'] == 0) {
-            $imagem = $this->gerenciarImagem->salvarArquivo($_FILES['foto_usuarios'], 'usuarios');
+        if (isset($_FILES['foto_usuarios']) && !empty($_FILES['foto_usuarios']['name'])) {
+            if ($_FILES['foto_usuarios']['error'] !== UPLOAD_ERR_OK) {
+                Redirect::redirecionarComMensagem("/usuario/editar/" . $id, "error", "Erro ao fazer upload da imagem.");
+            }
+            try {
+                $imagem = $this->gerenciarImagem->salvarArquivo($_FILES['foto_usuarios'], 'usuarios');
+            } catch (\Exception $e) {
+                Redirect::redirecionarComMensagem("/usuario/editar/" . $id, "error", $e->getMessage());
+            }
         }
 
 

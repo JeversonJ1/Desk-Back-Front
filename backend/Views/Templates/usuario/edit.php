@@ -15,11 +15,16 @@
             <div class="photo-container">
                 <img id="photoPreview" 
                      src="<?php 
-                        // CAMINHO CORRIGIDO: pasta onde as fotos são salvas
-                        $caminho_base = '/backend/upload/usuarios/';
-                        echo (!empty($usuario['foto_usuarios'])) 
-                             ? $caminho_base . htmlspecialchars($usuario['foto_usuarios']) 
-                             : '/img/logoperf.jpg'; 
+                        $fotoRaw = $usuario['foto_usuarios'] ?? '';
+                        if (!empty($fotoRaw)) {
+                            if (filter_var($fotoRaw, FILTER_VALIDATE_URL) || str_starts_with($fotoRaw, '/img/')) {
+                                echo htmlspecialchars($fotoRaw);
+                            } else {
+                                echo '/backend/upload/' . htmlspecialchars($fotoRaw);
+                            }
+                        } else {
+                            echo '/img/logoperf.jpg';
+                        }
                      ?>" 
                      alt="Foto de perfil"
                      class="profile-photo"

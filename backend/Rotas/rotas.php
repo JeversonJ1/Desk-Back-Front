@@ -174,6 +174,7 @@ class Rotas
             '/login' => 'AuthController@login',
             '/logout' => 'AuthController@logout',
             // Aliases legados (URLs antigas — redirecionam para as rotas corretas)
+            '/backend/register' => 'AuthController@register',
             '/backend/login' => 'AuthController@login',
             '/backend/admin' => 'AuthController@loginadmin',
             '/backend/logout' => 'AuthController@logout',
@@ -266,7 +267,9 @@ class Rotas
 
             // Login
             '/register' => 'AuthController@cadastrarUsuario',
+            '/backend/register' => 'AuthController@cadastrarUsuario',
             '/login' => 'AuthController@authenticarUnificado',
+            '/backend/login' => 'AuthController@authenticarUnificado',
             '/adminlogin' => 'AuthController@authenticaradmin',
             '/backend/adminlogin' => 'AuthController@authenticaradmin',
             '/api/newsletter/inscrever' => 'NewsletterController@inscrever',

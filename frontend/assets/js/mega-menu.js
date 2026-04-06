@@ -100,7 +100,7 @@ const MegaMenu = (() => {
 
     html += '<div class="menu-divider"></div>';
     html += `
-      <a href="/frontend/pages/catalogo.html" class="menu-ver-todos" onclick="MegaMenu.close()">
+      <a href="/pages/catalogo.html" class="menu-ver-todos" onclick="MegaMenu.close()">
         <i class="bi bi-grid-3x3-gap-fill" style="font-size:13px;"></i>
         Ver Catálogo Completo
       </a>
@@ -183,7 +183,7 @@ const MegaMenu = (() => {
 
     const shown = products.slice(0, 6);
     grid.innerHTML = shown.map((p) => {
-      const id = p.id_produtos || p.id;
+      const id = p.id_produto || p.id_produtos || p.id;
       const nome = p.nome_produtos || p.nome || 'Produto';
       const preco = parseFloat(p.preco_produtos || p.preco || 0);
       const precoFormatted = preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -193,15 +193,15 @@ const MegaMenu = (() => {
       const stars = renderStars(nota);
 
       // Build image URL
-      let imgSrc = '/frontend/assets/img/placeholder-product.png';
+      let imgSrc = '/assets/img/placeholder-product.png';
       if (p.imagem_produtos) imgSrc = `/backend/upload/${p.imagem_produtos}`;
       else if (p.imagem) imgSrc = p.imagem.startsWith('http') ? p.imagem : `/backend/upload/${p.imagem}`;
       else if (p.url_imagem) imgSrc = p.url_imagem;
 
       return `
-        <a href="/frontend/pages/produto.html?id=${id}" class="menu-product-card" onclick="MegaMenu.close()">
+        <a href="/pages/produto.html?id=${id}" class="menu-product-card" onclick="MegaMenu.close()">
           <div class="menu-product-img-wrapper">
-            <img src="${imgSrc}" alt="${nome}" loading="lazy" onerror="this.src='/frontend/assets/img/logo2026.png'">
+            <img src="${imgSrc}" alt="${nome}" loading="lazy" onerror="this.src='/assets/img/logo2026.png'">
           </div>
           <div class="menu-product-info">
             <div class="menu-product-name">${nome}</div>

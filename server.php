@@ -97,7 +97,8 @@ $backendPrefixes = '/^\/(
 
 // ── 5a. Rota raiz: serve o frontend ──────────────────────────────────────────
 if ($uri === '/') {
-    require_once __DIR__ . '/frontend/index.html';
+    header('Content-Type: text/html; charset=utf-8');
+    readfile(__DIR__ . '/frontend/index.html');
     return true;
 }
 
@@ -107,11 +108,27 @@ if (preg_match($backendPrefixes, $uri)) {
 }
 
 // ── 6. Páginas HTML do frontend (/pages/*.html, etc.) ────────────────────────
-if (file_exists($frontendFile)) {
-    require_once $frontendFile;
+if (file_exists($frontendFile) && is_file($frontendFile)) {
+    $ext = strtolower(pathinfo($frontendFile, PATHINFO_EXTENSION));
+    $mime = match ($ext) {
+        'css'  => 'text/css',
+        'js'   => 'application/javascript',
+        'html' => 'text/html; charset=utf-8',
+        'json' => 'application/json',
+        'png'  => 'image/png',
+        'jpg', 'jpeg' => 'image/jpeg',
+        'gif'  => 'image/gif',
+        'webp' => 'image/webp',
+        'svg'  => 'image/svg+xml',
+        'ico'  => 'image/x-icon',
+        default => 'application/octet-stream',
+    };
+    header('Content-Type: ' . $mime);
+    readfile($frontendFile);
     return true;
 }
 
 // ── 7. Fallback: index do frontend (comportamento SPA) ───────────────────────
-require_once __DIR__ . '/frontend/index.html';
+header('Content-Type: text/html; charset=utf-8');
+readfile(__DIR__ . '/frontend/index.html');
 return true;

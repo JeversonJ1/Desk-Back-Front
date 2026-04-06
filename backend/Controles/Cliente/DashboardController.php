@@ -110,8 +110,15 @@ class DashboardController extends AuthenticatedController
 
         // Processar imagem
         $fotoCaminho = $usuario['foto_usuarios'];
-        if (isset($_FILES['foto_usuarios']) && $_FILES['foto_usuarios']['error'] == 0) {
-            $fotoCaminho = $this->gerenciarImagem->salvarArquivo($_FILES['foto_usuarios'], 'usuarios');
+        if (isset($_FILES['foto_usuarios']) && !empty($_FILES['foto_usuarios']['name'])) {
+            if ($_FILES['foto_usuarios']['error'] !== UPLOAD_ERR_OK) {
+                Redirect::redirecionarComMensagem("/backend/cliente/meu-perfil/$id", "error", "Erro ao enviar o arquivo de imagem.");
+            }
+            try {
+                $fotoCaminho = $this->gerenciarImagem->salvarArquivo($_FILES['foto_usuarios'], 'usuarios');
+            } catch (\Exception $e) {
+                Redirect::redirecionarComMensagem("/backend/cliente/meu-perfil/$id", "error", $e->getMessage());
+            }
         }
 
         // Atualizar usuário

@@ -331,8 +331,8 @@ $current_uri = $_SERVER['REQUEST_URI'] ?? '/backend/admin/dashboard';
             <?php
             // Verifica se a foto existe na sessão, senão usa a padrão
             $foto_raw = $_SESSION['foto_usuarios'] ?? null;
-            if ($foto_raw && !filter_var($foto_raw, FILTER_VALIDATE_URL)) {
-              // Se não é uma URL, constrói o caminho completo
+            if ($foto_raw && !filter_var($foto_raw, FILTER_VALIDATE_URL) && !str_starts_with($foto_raw, '/img/')) {
+              // Se não é uma URL nem padrão da pasta /img/, constrói o caminho do upload
               $foto_exibir = '/backend/upload/' . $foto_raw;
             } else {
               $foto_exibir = $foto_raw ?? '/img/logoperf.jpg';

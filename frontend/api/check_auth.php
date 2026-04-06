@@ -7,8 +7,6 @@ header('Access-Control-Allow-Origin: *');
 
 try {
     $session = new Session();
-    // DEBUG AUTH
-    file_put_contents(__DIR__ . '/../debug_auth.log', date('H:i:s') . " - Sessão: " . session_id() . " - User: " . ($session->get('usuario_id') ?? 'NULO') . "\n", FILE_APPEND);
 
     if ($session->has('usuario_id')) {
         $foto = $session->get('foto_usuarios');

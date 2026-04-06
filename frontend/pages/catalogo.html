@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -17,7 +17,8 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Outfit:wght@400;700;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/global/variables.css">
-    <link rel="stylesheet" href="../assets/css/global/main.css">`n    <link rel="stylesheet" href="../assets/css/components/menu-modal.css">
+    <link rel="stylesheet" href="../assets/css/global/main.css">
+    <link rel="stylesheet" href="../assets/css/components/menu-modal.css">
     <link rel="stylesheet" href="../assets/css/global/footer.css">
     <link rel="stylesheet" href="../assets/css/global/catalogo.css">
     <link rel="stylesheet" href="../assets/css/global/catalogo-modern.css">
@@ -119,10 +120,10 @@
             <!-- Produtos -->
             <section class="w-full lg:w-3/4">
                 <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 bg-[#111] p-4 rounded-xl border border-white/5">
-                    <span class="text-sm text-gray-400 tracking-[0.1em] uppercase font-bold">EXIBINDO <b class="text-[var(--brand-yellow)]">0</b> PRODUTOS</span>
+                    <span class="text-sm text-gray-400 tracking-[0.1em] uppercase font-bold">EXIBINDO <b id="catalogCount" class="text-[var(--brand-yellow)]">0</b> PRODUTOS</span>
                     <div class="flex items-center gap-3 w-full md:w-auto">
                         <span class="text-xs text-gray-500 uppercase tracking-[0.1em] font-bold hidden md:inline">Ordenar:</span>
-                        <select class="w-full md:w-auto bg-black text-white border border-gray-700 rounded-lg px-4 py-2 text-sm focus:border-[var(--brand-yellow)] focus:ring-1 focus:ring-[var(--brand-yellow)] outline-none transition">
+                        <select class="sort-select w-full md:w-auto bg-black text-white border border-gray-700 rounded-lg px-4 py-2 text-sm focus:border-[var(--brand-yellow)] focus:ring-1 focus:ring-[var(--brand-yellow)] outline-none transition">
                             <option selected>Lançamentos</option>
                             <option>Menor Preço</option>
                             <option>Maior Preço</option>
@@ -180,7 +181,8 @@
         });
     </script>
     <script src="../assets/js/animations.js"></script>
-    <script src="../assets/js/navbar.js"></script>`n  <script src="../assets/js/mega-menu.js?v=1.0"></script>
+    <script src="../assets/js/navbar.js"></script>
+  <script src="../assets/js/mega-menu.js?v=1.0"></script>
     <script src="../assets/js/search.js"></script>
     <script src="../assets/js/cart.js"></script>
     <script src="../assets/js/catalogo.js"></script>

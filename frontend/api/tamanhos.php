@@ -2,8 +2,7 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-require_once '../backend/Database/database.php';
-require_once '../backend/Models/Tamanho.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use App\Koketsu\Database\Database;
 use App\Koketsu\Models\Tamanho;
