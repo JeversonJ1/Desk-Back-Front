@@ -444,20 +444,24 @@ const Components = {
               </div>
           </div>
 
-          <div class="flex flex-col md:flex-row flex-1 overflow-y-auto gap-8 w-full">
-              <div class="w-full md:w-1/2">
-                  <h4 class="text-[var(--brand-yellow)] font-bold uppercase mb-6 text-[0.65rem] tracking-[0.3em]">Sugestões de Termos</h4>
+          <div class="flex flex-col flex-1 overflow-y-auto gap-10 w-full pb-10">
+              <!-- Termos Mais Buscados -->
+              <div class="w-full">
+                  <h4 class="text-gray-400 font-bold uppercase mb-4 text-[10px] tracking-[0.1em]">Termos mais buscados</h4>
                   <div class="flex flex-wrap gap-3">
-                      <button class="border border-white/20 hover:border-white/50 hover:bg-white/10 text-white rounded-full font-bold uppercase px-4 py-2 transition text-[0.65rem] tracking-[0.1em]" onclick="if(window.SearchManager) SearchManager.setQuery('Camiseta')">Camiseta</button>
-                      <button class="border border-white/20 hover:border-white/50 hover:bg-white/10 text-white rounded-full font-bold uppercase px-4 py-2 transition text-[0.65rem] tracking-[0.1em]" onclick="if(window.SearchManager) SearchManager.setQuery('Moletom')">Moletom</button>
-                      <button class="border border-white/20 hover:border-white/50 hover:bg-white/10 text-white rounded-full font-bold uppercase px-4 py-2 transition text-[0.65rem] tracking-[0.1em]" onclick="if(window.SearchManager) SearchManager.setQuery('Cargo')">Cargo</button>
-                      <button class="border border-white/20 hover:border-white/50 hover:bg-white/10 text-white rounded-full font-bold uppercase px-4 py-2 transition text-[0.65rem] tracking-[0.1em]" onclick="if(window.SearchManager) SearchManager.setQuery('Oversized')">Oversized</button>
+                      <button class="border border-white/20 hover:border-[#F2C84B] hover:text-[#F2C84B] text-white rounded-full font-bold px-5 py-2.5 transition text-[11px] tracking-wider flex items-center gap-2" onclick="if(window.SearchManager) SearchManager.setQuery('Camiseta')"><span class="bg-white/10 text-white/50 rounded-full w-4 h-4 flex items-center justify-center text-[8px]">1</span> Camiseta</button>
+                      <button class="border border-white/20 hover:border-[#F2C84B] hover:text-[#F2C84B] text-white rounded-full font-bold px-5 py-2.5 transition text-[11px] tracking-wider flex items-center gap-2" onclick="if(window.SearchManager) SearchManager.setQuery('Moletom')"><span class="bg-white/10 text-white/50 rounded-full w-4 h-4 flex items-center justify-center text-[8px]">2</span> Moletom</button>
+                      <button class="border border-white/20 hover:border-[#F2C84B] hover:text-[#F2C84B] text-white rounded-full font-bold px-5 py-2.5 transition text-[11px] tracking-wider flex items-center gap-2" onclick="if(window.SearchManager) SearchManager.setQuery('Cargo')"><span class="bg-white/10 text-white/50 rounded-full w-4 h-4 flex items-center justify-center text-[8px]">3</span> Cargo</button>
+                      <button class="border border-white/20 hover:border-[#F2C84B] hover:text-[#F2C84B] text-white rounded-full font-bold px-5 py-2.5 transition text-[11px] tracking-wider flex items-center gap-2" onclick="if(window.SearchManager) SearchManager.setQuery('Oversized')"><span class="bg-white/10 text-white/50 rounded-full w-4 h-4 flex items-center justify-center text-[8px]">4</span> Oversized</button>
+                      <button class="border border-white/20 hover:border-[#F2C84B] hover:text-[#F2C84B] text-white rounded-full font-bold px-5 py-2.5 transition text-[11px] tracking-wider flex items-center gap-2" onclick="if(window.SearchManager) SearchManager.setQuery('Calça')"><span class="bg-white/10 text-white/50 rounded-full w-4 h-4 flex items-center justify-center text-[8px]">5</span> Calça</button>
                   </div>
               </div>
-              <div class="w-full md:w-1/2">
-                  <h4 class="text-[var(--brand-yellow)] font-bold uppercase mb-6 text-[0.65rem] tracking-[0.3em]">Resultados Relevantes</h4>
-                  <div id="overlayResults" class="flex flex-col gap-4">
-                      <p class="text-white/50 italic text-sm">Aguardando sua busca...</p>
+
+              <!-- Resultados Relevantes -->
+              <div class="w-full">
+                  <h4 class="text-gray-400 font-bold mb-6 text-sm tracking-wide">Itens relevantes</h4>
+                  <div id="overlayResults" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                      <p class="text-white/50 italic text-sm col-span-full">Aguardando sua busca...</p>
                   </div>
               </div>
           </div>

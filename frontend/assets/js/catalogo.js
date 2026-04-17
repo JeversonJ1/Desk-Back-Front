@@ -268,7 +268,7 @@ const CatalogManager = (() => {
     };
 
     /**
-     * Cria o HTML do card para o catálogo
+     * Cria o HTML do card para o catálogo com tratamento premium
      */
     const createCatalogCard = (prod) => {
         const precoFormatado = prod.preco.toFixed(2).replace('.', ',');
@@ -282,41 +282,42 @@ const CatalogManager = (() => {
 
         let badges = '';
         if (prod.oferta) {
-            badges += `<span class="badge sale-badge">${prod.oferta}</span>`;
+            badges += `<span class="bg-[#F2C84B] text-black font-black px-3 py-1 text-[8px] rounded-sm tracking-widest uppercase shadow-lg shadow-yellow-500/20">${prod.oferta}</span>`;
         }
         if (prod.desconto) {
-            badges += `<span class="badge sale-badge-alt">${prod.desconto}</span>`;
+            badges += `<span class="bg-red-600 text-white font-black px-3 py-1 text-[8px] rounded-sm tracking-widest uppercase shadow-lg shadow-red-500/20">${prod.desconto}</span>`;
         }
 
-        const actionButton = `
-            <button class="btn-quick-buy" onclick="event.preventDefault(); window.location.href='produto.html?id=${prod.id}'">
-                VER DETALHES
-            </button>
-        `;
-
         return `
-        <div class="product-card">
-            <a href="produto.html?id=${prod.id}" class="card-link">
-                <div class="card-img-container">
-                    ${badges ? `<div class="card-badges">${badges}</div>` : ''}
-                    <img src="${prod.img}" class="card-main-img" alt="${prod.nome}" loading="lazy">
-                </div>
-                <div class="card-body">
-                    <p class="card-category text-uppercase small opacity-50 mb-1">${prod.categoriaOrigem || 'Geral'}</p>
-                    <h5 class="card-title">${prod.nome}</h5>
-                    <div class="price-info">
-                        <p class="original-price">R$ ${precoOriginal}</p>
-                        <p class="main-price gold-text">R$ ${precoFormatado}</p>
-                        <p class="card-installments">6x de <span class="installments-value">R$ ${parcelasFormatadas}</span></p>
-                    </div>
+        <div class="group relative flex flex-col h-full bg-[#050505] rounded-2xl overflow-hidden border border-white/5 transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(242,200,75,0.15)] hover:border-[#F2C84B]/30 cursor-pointer" onclick="window.location.href='produto.html?id=${prod.id}'">
+            
+            <!-- Imagem -->
+            <div class="relative aspect-[3/4] overflow-hidden bg-[#111]">
+                ${badges ? `<div class="absolute top-4 left-4 flex flex-col gap-2 z-10">${badges}</div>` : ''}
+                <img src="${prod.img}" alt="${prod.nome}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100" loading="lazy">
+                <!-- Overlay sutil -->
+                <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60 pointer-events-none"></div>
+            </div>
 
+            <!-- Conteúdo -->
+            <div class="p-6 flex flex-col items-center text-center flex-1 relative z-10">
+                <p class="text-[9px] text-[#F2C84B] font-bold uppercase tracking-widest mb-2">${prod.categoriaOrigem || 'Geral'}</p>
+                <h5 class="text-white font-bold text-sm uppercase tracking-[0.1em] mb-4 group-hover:text-[#F2C84B] transition-colors leading-snug">${prod.nome}</h5>
+                
+                <div class="mt-auto flex flex-col items-center w-full">
+                    <div class="flex items-center justify-center gap-2 mb-1">
+                        <span class="text-white font-black text-xl tracking-tighter group-hover:text-[#F2C84B] transition-colors">R$ ${precoFormatado}</span>
+                    </div>
+                    <p class="text-[10px] text-white/50 uppercase tracking-widest mb-6">6x de <span class="text-white/80 font-bold">R$ ${parcelasFormatadas}</span> s/ juros</p>
+                    
+                    <!-- Botão Ver Detalhes animado -->
+                    <button class="w-full bg-transparent border border-white/20 text-white font-bold py-3 text-[10px] uppercase tracking-widest text-center rounded-lg transition-all duration-500 group-hover:bg-[#F2C84B] group-hover:text-black group-hover:border-[#F2C84B] shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                        VER DETALHES
+                    </button>
                 </div>
-            </a>
-            <div class="card-actions">
-                ${actionButton}
             </div>
         </div>
-      `;
+        `;
     };
 
     const setupFilters = () => {

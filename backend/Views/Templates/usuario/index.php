@@ -1,535 +1,383 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
-    /* --- ESTILOS GERAIS --- */
-    body {
-        background-color: var(--bg-main) !important;
-        margin: 0;
-        font-family: 'Inter', sans-serif;
-        color: var(--text-main);
-    }
+  body { background-color: var(--bg-main) !important; margin: 0; font-family: Arial, sans-serif; color: var(--text-main); }
+  .page-wrapper { padding: 0; width: 100%; box-sizing: border-box; min-height: 100vh; }
 
-    .page-wrapper {
-        padding: 20px;
-        width: 100%;
-        box-sizing: border-box;
-        min-height: 100vh;
-    }
+  /* --- HEADER --- */
+  .page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:16px; }
+  .page-header-left h1 { font-size:26px; font-weight:900; color:var(--text-main); text-transform:uppercase; letter-spacing:-1px; margin:0; }
+  .page-header-left p { font-size:13px; color:var(--text-muted); margin:4px 0 0; }
+  .btn-main-action {
+    background:linear-gradient(135deg, #F2C84B, #f0a500); color:#000 !important;
+    padding:13px 24px; border-radius:12px; font-weight:800;
+    text-decoration:none; text-transform:uppercase; font-size:13px;
+    transition:.3s; box-shadow:0 4px 15px rgba(242,200,75,.25);
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn-main-action:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(242,200,75,.4); }
 
-    .page-title {
-        font-size: 26px;
-        font-weight: 800;
-        margin-bottom: 5px;
-        color: var(--text-main);
-        text-transform: uppercase;
-        letter-spacing: -1px;
-    }
+  /* --- STAT CARDS --- */
+  .stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+  @media(max-width:900px){ .stat-grid { grid-template-columns:repeat(2,1fr); } }
+  .stat-card {
+    background:var(--bg-card); border: 2px solid var(--border-color);
+    border-radius:16px; padding:20px; display:flex;
+    align-items:center; justify-content:space-between;
+    transition:.3s; position:relative; overflow:hidden;
+  }
+  .stat-card:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:0 12px 30px rgba(0,0,0,.5), 0 0 0 1px var(--accent-dim); }
+  .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--sc-color,#F2C84B); }
+  .stat-info h3 { margin:0; font-size:28px; font-weight:900; color:var(--text-main); }
+  .stat-info p { margin:0; color:var(--text-muted); text-transform:uppercase; font-size:10px; letter-spacing:1px; font-weight:700; }
+  .stat-icon {
+    font-size:22px; color:var(--sc-color,#F2C84B);
+    background:var(--sc-bg,rgba(242,200,75,.1));
+    width:50px; height:50px; border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+  }
 
-    .header-breadcrumb {
-        color: var(--text-muted);
-        margin-bottom: 25px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid var(--border-color);
-    }
+  /* --- ACTIONS BAR --- */
+  .actions-bar { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+  .search-group { flex:1; max-width:380px; position:relative; }
+  .search-input {
+    width:100%; background:var(--bg-card-flat); border: 2px solid var(--border-color);
+    padding:12px 12px 12px 42px; border-radius:12px; color:var(--text-main);
+    font-size:14px; transition:.3s; outline:none;
+  }
+  .search-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+  .search-group i { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--accent); }
+  .filter-btns { display:flex; gap:8px; flex-wrap:wrap; }
+  .filter-btn {
+    padding:9px 16px; border-radius:10px; font-size:12px; font-weight:700;
+    cursor:pointer; border:1px solid var(--border-color); background:var(--bg-card);
+    color:var(--text-muted); transition:.2s; text-transform:uppercase; letter-spacing:.05em;
+  }
+  .filter-btn.active { background:var(--accent); color:#000; border-color:var(--accent); }
+  .filter-btn:hover:not(.active) { border-color:var(--accent); color:var(--accent); }
 
-    /* --- DASHBOARD CARDS --- */
-    .dashboard-grid {
-        display: flex;
-        gap: 20px;
-        margin-bottom: 30px;
-        flex-wrap: wrap;
-    }
+  /* --- TABLE --- */
+  .table-card { background:var(--bg-card); border: 2px solid var(--border-color); border-radius:16px; overflow:hidden; }
+  .table-head { display:flex; justify-content:space-between; align-items:center; padding:18px 24px; border-bottom:1px solid var(--border-color); gap:12px; flex-wrap:wrap; }
+  .table-title { font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--text-main); }
+  .table-count { font-size:12px; color:var(--text-muted); font-weight:600; }
 
-    .stat-card {
-        flex: 1;
-        min-width: 220px;
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        border-radius: 16px;
-        padding: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        transition: all 0.3s ease;
-        box-shadow: var(--shadow-sm);
-    }
+  .user-table { width:100%; border-collapse:collapse; }
+  .user-table thead th {
+    color: var(--accent) !important;
+    background-color: var(--bg-card-flat) !important;
+    text-transform:uppercase; font-size:10px;
+    padding:14px 20px; font-weight:800; letter-spacing:1px;
+    border-bottom: 2px solid var(--border-color); text-align:left;
+  }
+  .user-table tbody tr { border-bottom:1px solid rgba(255,255,255,.04); transition:.2s; }
+  .user-table tbody tr:last-child { border-bottom:none; }
+  .user-table tbody tr:hover { background: var(--accent-dim) !important; }
+  .user-table tbody tr.tr-inativo { background:rgba(220,53,69,.05); }
+  .user-table tbody tr.tr-inativo td:first-child { border-left:3px solid #dc3545; }
+  .user-table td { padding:14px 20px; color:var(--text-main); vertical-align:middle; }
 
-    .stat-card:hover {
-        border-color: var(--accent);
-        transform: translateY(-5px);
-        box-shadow: var(--shadow-md);
-    }
+  /* User cell */
+  .user-cell { display:flex; align-items:center; gap:14px; }
+  .user-av {
+    width:44px; height:44px; border-radius:50%; object-fit:cover;
+    border:2px solid var(--border-color); flex-shrink:0;
+    background:var(--bg-main); display:flex; align-items:center; justify-content:center;
+    font-size:18px; color:var(--text-muted); overflow:hidden;
+  }
+  .user-av img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+  .user-name { font-size:14px; font-weight:700; color:var(--text-main); display:block; }
+  .user-email { font-size:11px; color:var(--text-muted); display:block; margin-top:1px; }
 
-    .stat-icon {
-        font-size: 28px;
-        color: var(--accent);
-        background: rgba(242, 204, 125, 0.1);
-        width: 52px;
-        height: 52px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 12px;
-    }
+  /* Level badges */
+  .nivel-badge {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:5px 12px; border-radius:20px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.06em;
+  }
+  .nivel-admin   { background:rgba(242,200,75,.15); color:#F2C84B; border:1px solid rgba(242,200,75,.3); }
+  .nivel-vendedor { background:rgba(23,162,184,.15); color:#17a2b8; border:1px solid rgba(23,162,184,.3); }
+  .nivel-cliente { background:rgba(108,117,125,.12); color:#aaa; border:1px solid rgba(108,117,125,.2); }
 
-    .stat-info h3 {
-        margin: 0;
-        font-size: 28px;
-        color: var(--text-main);
-        font-weight: 800;
-    }
+  .badge-status { padding:5px 12px; border-radius:20px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; }
+  .badge-active   { background:rgba(40,167,69,.12); color:#28a745; border:1px solid rgba(40,167,69,.3); }
+  .badge-inactive { background:rgba(220,53,69,.12); color:#dc3545; border:1px solid rgba(220,53,69,.3); }
 
-    .stat-info p {
-        margin: 0;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        font-size: 11px;
-        letter-spacing: 1px;
-        font-weight: 700;
-    }
+  .btn-action {
+    padding:7px 12px; border-radius:8px; font-size:11px; font-weight:700;
+    text-decoration:none; display:inline-flex; align-items:center; gap:5px; transition:.2s;
+  }
+  .btn-edit    { background:var(--bg-main); color:var(--accent); border:1px solid var(--accent); }
+  .btn-edit:hover { background:var(--accent); color:#000; }
+  .btn-toggle  { background:rgba(220,53,69,.1); border:1px solid rgba(220,53,69,.3); color:#dc3545; }
+  .btn-toggle:hover { background:#dc3545; color:#fff; }
+  .btn-activate { background:rgba(40,167,69,.1); border:1px solid rgba(40,167,69,.3); color:#28a745; }
+  .btn-activate:hover { background:#28a745; color:#fff; }
 
-    /* --- ACTIONS & SEARCH --- */
-    .actions-bar {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 20px;
-        margin-bottom: 25px;
-        flex-wrap: wrap;
-    }
+  .id-chip {
+    background:var(--bg-main); border:1px solid var(--border-color); color:var(--text-muted);
+    padding:3px 8px; border-radius:6px; font-size:11px; font-family:monospace; font-weight:700;
+  }
 
-    .btn-main-action {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        background: linear-gradient(135deg, #F2C84B 0%, #F2C84B 100%) !important;
-        color: #000 !important;
-        padding: 12px 24px;
-        border-radius: 10px;
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 13px;
-        text-decoration: none;
-        transition: 0.3s;
-        border: none;
-        box-shadow: 0 4px 15px rgba(197, 160, 45, 0.2);
-    }
+  /* --- PAGINATION --- */
+  .pagination-container { display:flex; justify-content:space-between; align-items:center; padding:16px 24px; border-top:1px solid var(--border-color); }
+  .pagination-buttons { display:flex; gap:6px; }
+  .page-link { padding:8px 14px; background:var(--bg-main); border:1px solid var(--border-color); color:var(--text-main); border-radius:8px; cursor:pointer; font-weight:700; transition:.2s; font-size:12px; }
+  .page-link:hover:not(.disabled) { border-color:var(--accent); color:var(--accent); }
+  .page-link.active { background:var(--accent); color:#000; border-color:var(--accent); }
+  .page-link.disabled { opacity:.3; cursor:not-allowed; }
+  .pagination-dots { color:var(--text-muted); padding:0 4px; font-weight:bold; }
 
-    .btn-main-action:hover {
-        box-shadow: 0 8px 20px rgba(255, 216, 77, 0.5);
-        transform: translateY(-3px);
-    }
-
-    .search-container {
-        position: relative;
-        flex: 1;
-        max-width: 400px;
-    }
-
-    .search-container i {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--accent);
-    }
-
-    .search-input {
-        width: 100%;
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        padding: 12px 15px 12px 45px;
-        border-radius: 10px;
-        color: var(--text-main);
-        outline: none;
-        transition: 0.3s;
-        box-shadow: var(--shadow-sm);
-    }
-
-    .search-input:focus {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(197, 160, 45, 0.1);
-    }
-
-    /* --- TABLE --- */
-    .user-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0 12px;
-        color: var(--text-main);
-    }
-
-    .user-table thead th {
-        color: var(--text-muted) !important;
-        text-transform: uppercase;
-        font-size: 11px;
-        padding: 10px 15px;
-        letter-spacing: 1.5px;
-        font-weight: 800;
-    }
-
-    .user-table tbody tr {
-        background: var(--bg-card);
-        transition: all 0.2s ease;
-        box-shadow: var(--shadow-sm);
-        border: 1px solid var(--border-color);
-    }
-
-    .user-table tbody tr:hover {
-        transform: scale(1.005);
-        box-shadow: var(--shadow-md);
-        border-color: var(--accent);
-    }
-
-    .user-table tbody tr.tr-inativo td {
-        background: rgba(220, 53, 69, 0.08) !important;
-    }
-
-    .user-table tbody tr.tr-inativo td:first-child {
-        border-left: 4px solid #dc3545 !important;
-    }
-
-    .user-table td {
-        padding: 16px 15px !important;
-        border: none;
-        vertical-align: middle;
-    }
-
-    .user-table td:first-child {
-        border-radius: 12px 0 0 12px;
-        border-left: 1px solid var(--border-color);
-    }
-
-    .user-table td:last-child {
-        border-radius: 0 12px 12px 0;
-        border-right: 1px solid var(--border-color);
-    }
-
-    .id-column {
-        font-family: monospace;
-        color: var(--text-muted) !important;
-        font-weight: bold;
-    }
-
-    .badge-status {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 10px;
-        font-weight: 800;
-        text-transform: uppercase;
-    }
-
-    .badge-active {
-        background: rgba(40, 167, 69, 0.1);
-        color: #28a745;
-        border: 1px solid rgba(40, 167, 69, 0.3);
-    }
-
-    .badge-inactive {
-        background: rgba(220, 53, 69, 0.15) !important;
-        color: #dc3545 !important;
-        border: 1px solid rgba(220, 53, 69, 0.4);
-    }
-
-    .btn-action-small {
-        padding: 8px 14px;
-        border-radius: 8px;
-        font-size: 11px;
-        font-weight: 700;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        transition: 0.3s;
-        margin: 0 2px;
-    }
-
-    .btn-edit {
-        background: var(--bg-main);
-        color: var(--accent);
-        border: 1px solid var(--accent);
-    }
-
-    .btn-edit:hover {
-        background: var(--accent);
-        color: #000;
-    }
-
-    .btn-toggle {
-        background: rgba(220, 53, 69, 0.1);
-        border: 1px solid rgba(220, 53, 69, 0.3);
-        color: #dc3545;
-    }
-
-    .btn-toggle:hover {
-        background: #dc3545;
-        color: #fff;
-        transform: scale(1.1);
-        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-    }
-
-    .btn-activate {
-        background: rgba(40, 167, 69, 0.1);
-        border: 1px solid rgba(40, 167, 69, 0.3);
-        color: #28a745;
-    }
-
-    .btn-activate:hover {
-        background: #28a745 !important;
-        color: #fff !important;
-        transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
-    }
-
-    /* --- PAGINAÇÃO (FIXED) --- */
-    .pagination-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 30px;
-        padding: 20px;
-        background: var(--bg-card);
-        border-radius: 12px;
-        border: 1px solid var(--border-color);
-    }
-
-    .pagination-info {
-        color: var(--text-muted);
-        font-size: 13px;
-        font-weight: 600;
-    }
-
-    .pagination-buttons {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .page-link {
-        padding: 8px 16px;
-        background: var(--bg-main);
-        border: 1px solid var(--border-color);
-        color: var(--text-main);
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 700;
-        font-size: 13px;
-        transition: 0.3s;
-    }
-
-    .page-link:hover:not(.disabled) {
-        border-color: var(--accent);
-        color: var(--accent);
-    }
-
-    .page-link.active {
-        background: linear-gradient(135deg, #F2C84B 0%, #F2C84B 100%);
-        color: #000;
-        border-color: var(--accent);
-    }
-
-    .page-link.disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-    }
-
-    .pagination-dots {
-        color: var(--text-muted);
-        padding: 0 5px;
-        font-weight: bold;
-    }
+  .empty-state { text-align:center; padding:60px 24px; }
+  .empty-state i { font-size:48px; color:var(--border-color); display:block; margin-bottom:16px; }
+  .empty-state p { color:var(--text-muted); font-size:14px; }
 </style>
 
 <div class="page-wrapper">
-    <h3 class="page-title"><i class="fas fa-users" style="color: #f2cc7d;"></i> Gerenciar Usuários</h3>
 
-    <header class="header-breadcrumb">
-        <h5><b><i class="fas fa-tachometer-alt"></i> Painel de Controle - Koketsu</b></h5>
-    </header>
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1><i class="fas fa-users" style="color:#F2C84B;"></i> Usuários</h1>
+      <p>Gerencie todos os membros da plataforma Koketsu</p>
+    </div>
+    <a href="/backend/usuario/criar" class="btn-main-action">
+      <i class="fas fa-user-plus"></i> Novo Usuário
+    </a>
+  </div>
 
-    <div class="dashboard-grid">
-        <div class="stat-card" style="border-left: 4px solid #f2cc7d;">
-            <div class="stat-info">
-                <h3><?= $total_admin; ?></h3>
-                <p>Admins</p>
-            </div>
-            <div class="stat-icon"><i class="fas fa-user-shield"></i></div>
+  <!-- STAT CARDS -->
+  <div class="stat-grid">
+    <div class="stat-card" style="--sc-color:#F2C84B; --sc-bg:rgba(242,200,75,.1);">
+      <div class="stat-info">
+        <h3><?= $total_usuarios ?></h3>
+        <p>Total de Usuários</p>
+      </div>
+      <div class="stat-icon"><i class="fas fa-users"></i></div>
+    </div>
+    <div class="stat-card" style="--sc-color:#28a745; --sc-bg:rgba(40,167,69,.1);">
+      <div class="stat-info">
+        <h3><?= $total_ativos ?></h3>
+        <p>Usuários Ativos</p>
+      </div>
+      <div class="stat-icon"><i class="fas fa-signal"></i></div>
+    </div>
+    <div class="stat-card" style="--sc-color:#dc3545; --sc-bg:rgba(220,53,69,.1);">
+      <div class="stat-info">
+        <h3><?= $total_inativos ?></h3>
+        <p>Inativados</p>
+      </div>
+      <div class="stat-icon"><i class="fas fa-user-slash"></i></div>
+    </div>
+    <div class="stat-card" style="--sc-color:#8B5CF6; --sc-bg:rgba(139,92,246,.1);">
+      <div class="stat-info">
+        <h3><?= $total_admin ?></h3>
+        <p>Administradores</p>
+      </div>
+      <div class="stat-icon"><i class="fas fa-user-shield"></i></div>
+    </div>
+  </div>
+
+  <!-- TABLE CARD -->
+  <div class="table-card">
+    <div class="table-head">
+      <span class="table-title"><i class="fas fa-list" style="color:#F2C84B;"></i> Lista de Usuários</span>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+        <div class="search-group">
+          <i class="fas fa-search"></i>
+          <input type="text" id="userInput" class="search-input" placeholder="Buscar por nome ou email...">
         </div>
-        <div class="stat-card" style="border-left: 4px solid #28a745;">
-            <div class="stat-info">
-                <h3><?= $total_ativos; ?></h3>
-                <p>Ativos</p>
-            </div>
-            <div class="stat-icon" style="color:#28a745; background:rgba(40,167,69,0.1);"><i class="fas fa-signal"></i>
-            </div>
+        <div class="filter-btns">
+          <button class="filter-btn active" data-filter="todos">Todos</button>
+          <button class="filter-btn" data-filter="admin">Admin</button>
+          <button class="filter-btn" data-filter="vendedor">Vendedor</button>
+          <button class="filter-btn" data-filter="cliente">Cliente</button>
+          <button class="filter-btn" data-filter="ativo">Ativos</button>
+          <button class="filter-btn" data-filter="inativo">Inativos</button>
         </div>
-        <div class="stat-card" style="border-left: 4px solid #ff4444;">
-            <div class="stat-info">
-                <h3><?= $total_inativos; ?></h3>
-                <p style="color: #ff4444;">Inativos</p>
-            </div>
-            <div class="stat-icon" style="color:#ff4444; background:rgba(255,68,68,0.1);"><i
-                    class="fas fa-exclamation-triangle"></i></div>
-        </div>
-        <div class="stat-card" style="border-left: 4px solid #f2cc7d;">
-            <div class="stat-info">
-                <h3><?= $total_usuarios; ?></h3>
-                <p>Total Geral</p>
-            </div>
-            <div class="stat-icon"><i class="fas fa-users"></i></div>
-        </div>
+        <span class="table-count" id="tableCount"><?= count($usuarios) ?> usuários</span>
+      </div>
     </div>
 
-    <div class="actions-bar">
-        <a href="/backend/usuario/criar" class="btn-main-action"><i class="fas fa-user-plus"></i> Novo Usuário</a>
-        <div class="search-container">
-            <i class="fas fa-search"></i>
-            <input type="text" id="userInput" onkeyup="filterUsers()" placeholder="Buscar usuário por nome ou email..."
-                class="search-input">
-        </div>
+    <div style="overflow-x:auto;">
+      <table class="user-table" id="userTable">
+        <thead>
+          <tr>
+            <th width="50">ID</th>
+            <th>Usuário</th>
+            <th>Nível</th>
+            <th>Cadastro</th>
+            <th style="text-align:center;">Status</th>
+            <th style="text-align:center;">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <?php foreach ($usuarios as $usuario):
+            $is_inativo = !empty($usuario['excluido_em']);
+            $nivel = strtolower($usuario['nivel_acesso'] ?? 'cliente');
+            $nivelClass = match($nivel) {
+              'admin'    => 'nivel-admin',
+              'vendedor' => 'nivel-vendedor',
+              default    => 'nivel-cliente'
+            };
+            $nivelIcon = match($nivel) {
+              'admin'    => 'fa-shield-alt',
+              'vendedor' => 'fa-store',
+              default    => 'fa-user'
+            };
+            $foto = $usuario['foto_usuarios'] ?? null;
+            $fotoUrl = ($foto && !filter_var($foto, FILTER_VALIDATE_URL) && !str_starts_with($foto, '/img/'))
+                       ? '/backend/upload/' . $foto
+                       : ($foto ?: null);
+            $dataCadastro = !empty($usuario['criado_em']) ? date('d/m/Y', strtotime($usuario['criado_em'])) : '—';
+          ?>
+          <tr class="user-row <?= $is_inativo ? 'tr-inativo' : '' ?>"
+              data-status="<?= $is_inativo ? 'inativo' : 'ativo' ?>"
+              data-nivel="<?= $nivel ?>">
+            <td><span class="id-chip">#<?= $usuario['id_usuarios'] ?></span></td>
+            <td>
+              <div class="user-cell">
+                <div class="user-av">
+                  <?php if($fotoUrl): ?>
+                  <img src="<?= htmlspecialchars($fotoUrl) ?>"
+                       alt="<?= htmlspecialchars($usuario['nome_usuarios']) ?>"
+                       onerror="this.style.display='none';this.parentNode.innerHTML='<i class=\'fas fa-user\'></i>'">
+                  <?php else: ?><i class="fas fa-user"></i><?php endif; ?>
+                </div>
+                <div>
+                  <span class="user-name user-name-col"><?= htmlspecialchars($usuario['nome_usuarios']) ?></span>
+                  <span class="user-email email-col"><?= htmlspecialchars($usuario['email_usuarios']) ?></span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="nivel-badge <?= $nivelClass ?>">
+                <i class="fas <?= $nivelIcon ?>"></i>
+                <?= strtoupper($usuario['nivel_acesso']) ?>
+              </span>
+            </td>
+            <td style="color:var(--text-muted);font-size:13px;"><?= $dataCadastro ?></td>
+            <td style="text-align:center;">
+              <span class="badge-status <?= $is_inativo ? 'badge-inactive' : 'badge-active' ?>">
+                <?= $is_inativo ? 'Inativo' : 'Ativo' ?>
+              </span>
+            </td>
+            <td style="text-align:center;">
+              <div style="display:flex;justify-content:center;gap:6px;">
+                <a href="/backend/usuario/editar/<?= $usuario['id_usuarios'] ?>"
+                   class="btn-action btn-edit" title="Editar">
+                  <i class="fas fa-pencil-alt"></i>
+                </a>
+                <?php if ($is_inativo): ?>
+                <a href="/backend/usuario/ativar/<?= $usuario['id_usuarios'] ?>"
+                   class="btn-action btn-activate" title="Ativar">
+                  <i class="fas fa-check"></i>
+                </a>
+                <?php else: ?>
+                <a href="/backend/usuario/excluir/<?= $usuario['id_usuarios'] ?>"
+                   class="btn-action btn-toggle" title="Desativar"
+                   onclick="return confirm('Deseja inativar este usuário?')">
+                  <i class="fas fa-power-off"></i>
+                </a>
+                <?php endif; ?>
+              </div>
+            </td>
+          </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
     </div>
 
-    <main>
-        <table class="user-table" id="userTable">
-            <thead>
-                <tr>
-                    <th style="width: 80px;">ID</th>
-                    <th>Nome</th>
-                    <th>Email</th>
-                    <th>Nível</th>
-                    <th style="text-align: center;">Status</th>
-                    <th style="text-align: center;">Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                <?php foreach ($usuarios as $usuario): ?>
-                    <?php $is_inativo = !empty($usuario['excluido_em']); ?>
-                    <tr class="user-row <?= $is_inativo ? 'tr-inativo' : '' ?>">
-                        <td class="id-column">#<?= $usuario['id_usuarios'] ?></td>
-                        <td class="user-name" style="font-weight: 700; color: var(--text-main);">
-                            <?= htmlspecialchars($usuario['nome_usuarios']) ?></td>
-                        <td class="email-column" style="color: #888;"><?= htmlspecialchars($usuario['email_usuarios']) ?>
-                        </td>
-                        <td><span style="color: #f2cc7d; font-size: 12px; font-weight: 800;"><i class="fas fa-circle"
-                                    style="font-size: 8px;"></i> <?= strtoupper($usuario['nivel_acesso']) ?></span></td>
-                        <td style="text-align: center;">
-                            <span
-                                class="badge-status <?= $is_inativo ? 'badge-inactive' : 'badge-active' ?>"><?= $is_inativo ? 'Inativo' : 'Ativo' ?></span>
-                        </td>
-                        <td style="text-align: center;">
-                            <div style="display: flex; justify-content: center; gap: 5px;">
-                                <a href="/backend/usuario/editar/<?= $usuario['id_usuarios'] ?>"
-                                    class="btn-action-small btn-edit" title="Editar"><i class="fas fa-pencil-alt"></i></a>
-                                <?php if ($is_inativo): ?>
-                                    <a href="/backend/usuario/ativar/<?= $usuario['id_usuarios'] ?>"
-                                        class="btn-action-small btn-activate" title="Ativar"><i class="fas fa-check"></i></a>
-                                <?php else: ?>
-                                    <a href="/backend/usuario/excluir/<?= $usuario['id_usuarios'] ?>"
-                                        class="btn-action-small btn-toggle" title="Desativar"
-                                        onclick="return confirm('Deseja inativar este usuário?')"><i
-                                            class="fas fa-power-off"></i></a>
-                                <?php endif; ?>
-                            </div>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+    <?php if(empty($usuarios)): ?>
+    <div class="empty-state">
+      <i class="fas fa-users"></i>
+      <p>Nenhum usuário cadastrado.</p>
+    </div>
+    <?php endif; ?>
 
-        <div class="pagination-container">
-            <div class="pagination-info" id="paginationInfo">Carregando...</div>
-            <div class="pagination-buttons" id="paginationButtons"></div>
-        </div>
-    </main>
+    <div class="pagination-container">
+      <div class="pagination-info" id="paginationInfo" style="color:var(--text-muted);font-size:13px;font-weight:600;"></div>
+      <div class="pagination-buttons" id="paginationButtons"></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-    const rowsPerPage = 10;
-    let currentPage = 1;
+const rowsPerPage = 10;
+let currentPage = 1;
+let currentFilter = 'todos';
 
-    function displayTable() {
-        const table = document.getElementById("userTable");
-        const allRows = Array.from(table.querySelectorAll(".user-row"));
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    currentFilter = this.dataset.filter;
+    currentPage = 1;
+    applyFilters();
+    displayTable();
+  });
+});
 
-        // Filtro
-        const filteredRows = allRows.filter(row => row.getAttribute('data-filtered') !== 'false');
+function applyFilters() {
+  const search = document.getElementById('userInput').value.toLowerCase();
+  document.querySelectorAll('.user-row').forEach(row => {
+    const name   = row.querySelector('.user-name-col')?.textContent.toLowerCase() || '';
+    const email  = row.querySelector('.email-col')?.textContent.toLowerCase() || '';
+    const status = row.dataset.status;
+    const nivel  = row.dataset.nivel;
 
-        const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
-        if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+    const matchSearch = name.includes(search) || email.includes(search);
+    let matchFilter = true;
+    if (currentFilter === 'ativo')    matchFilter = status === 'ativo';
+    else if (currentFilter === 'inativo')  matchFilter = status === 'inativo';
+    else if (['admin','vendedor','cliente'].includes(currentFilter)) matchFilter = nivel === currentFilter;
 
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
+    row.setAttribute('data-filtered', matchSearch && matchFilter ? 'true' : 'false');
+  });
+}
 
-        allRows.forEach(row => row.style.display = "none");
-        filteredRows.slice(start, end).forEach(row => row.style.display = "");
+function displayTable() {
+  const allRows = Array.from(document.querySelectorAll('.user-row'));
+  const filtered = allRows.filter(r => r.getAttribute('data-filtered') !== 'false');
+  const totalPages = Math.ceil(filtered.length / rowsPerPage);
+  if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+  const start = (currentPage - 1) * rowsPerPage;
 
-        updatePaginationButtons(totalPages, filteredRows.length);
+  allRows.forEach(r => r.style.display = 'none');
+  filtered.slice(start, start + rowsPerPage).forEach(r => r.style.display = '');
+
+  const end = Math.min(start + rowsPerPage, filtered.length);
+  document.getElementById('tableCount').textContent = `${filtered.length} usuário${filtered.length !== 1 ? 's' : ''}`;
+  renderPagination(totalPages, filtered.length, start, end);
+}
+
+function renderPagination(totalPages, total, start, end) {
+  const container = document.getElementById('paginationButtons');
+  const info = document.getElementById('paginationInfo');
+  container.innerHTML = '';
+  info.textContent = total === 0 ? 'Nenhum resultado' : `Exibindo ${start+1}–${end} de ${total} usuários`;
+  if (totalPages <= 1) return;
+
+  const mk = (html, page, active=false, disabled=false) => {
+    const btn = document.createElement('button');
+    btn.innerHTML = html; btn.className = `page-link ${active?'active':''} ${disabled?'disabled':''}`;
+    if (!disabled) btn.onclick = () => { currentPage = page; displayTable(); };
+    return btn;
+  };
+  container.appendChild(mk('<i class="fas fa-chevron-left"></i>', currentPage-1, false, currentPage===1));
+  for (let i=1; i<=totalPages; i++) {
+    if (i===1 || i===totalPages || (i>=currentPage-1 && i<=currentPage+1)) {
+      if (i===currentPage-1 && i>2) { const d=document.createElement('span'); d.className='pagination-dots'; d.textContent='...'; container.appendChild(d); }
+      container.appendChild(mk(i, i, i===currentPage));
+      if (i===currentPage+1 && i<totalPages-1) { const d=document.createElement('span'); d.className='pagination-dots'; d.textContent='...'; container.appendChild(d); }
     }
+  }
+  container.appendChild(mk('<i class="fas fa-chevron-right"></i>', currentPage+1, false, currentPage===totalPages));
+}
 
-    function updatePaginationButtons(totalPages, totalActive) {
-        const container = document.getElementById("paginationButtons");
-        const info = document.getElementById("paginationInfo");
-        container.innerHTML = "";
+document.getElementById('userInput').addEventListener('input', () => {
+  currentPage = 1; applyFilters(); displayTable();
+});
 
-        info.innerText = `Mostrando página ${currentPage} de ${totalPages || 1} (${totalActive} usuários)`;
-
-        if (totalPages <= 1) return;
-
-        // Função auxiliar para criar botões
-        const createBtn = (text, page, isActive = false, isDisabled = false) => {
-            const btn = document.createElement("button");
-            btn.innerHTML = text;
-            btn.className = `page-link ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`;
-            if (!isDisabled) btn.onclick = () => { currentPage = page; displayTable(); };
-            return btn;
-        };
-
-        // Anterior
-        container.appendChild(createBtn('<i class="fas fa-chevron-left"></i>', currentPage - 1, false, currentPage === 1));
-
-        // Lógica Inteligente: Página 1 sempre aparece
-        const range = 1; // Quantidade ao redor da atual
-
-        for (let i = 1; i <= totalPages; i++) {
-            if (i === 1 || i === totalPages || (i >= currentPage - range && i <= currentPage + range)) {
-
-                // Reticências à esquerda
-                if (i === currentPage - range && i > 2) {
-                    const dots = document.createElement("span");
-                    dots.className = "pagination-dots";
-                    dots.innerText = "...";
-                    container.appendChild(dots);
-                }
-
-                container.appendChild(createBtn(i, i, i === currentPage));
-
-                // Reticências à direita
-                if (i === currentPage + range && i < totalPages - 1) {
-                    const dots = document.createElement("span");
-                    dots.className = "pagination-dots";
-                    dots.innerText = "...";
-                    container.appendChild(dots);
-                }
-            }
-        }
-
-        // Próximo
-        container.appendChild(createBtn('<i class="fas fa-chevron-right"></i>', currentPage + 1, false, currentPage === totalPages));
-    }
-
-    function filterUsers() {
-        const filter = document.getElementById("userInput").value.toUpperCase();
-        const rows = document.querySelectorAll(".user-row");
-
-        rows.forEach(row => {
-            const name = row.querySelector(".user-name").textContent.toUpperCase();
-            const email = row.querySelector(".email-column").textContent.toUpperCase();
-            row.setAttribute('data-filtered', (name.includes(filter) || email.includes(filter)) ? 'true' : 'false');
-        });
-
-        currentPage = 1;
-        displayTable();
-    }
-
-    document.addEventListener("DOMContentLoaded", displayTable);
+document.addEventListener('DOMContentLoaded', () => { applyFilters(); displayTable(); });
 </script>

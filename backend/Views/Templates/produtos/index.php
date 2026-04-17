@@ -1,493 +1,411 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
-    /* --- ESTILOS GERAIS (KOKETSU UI) --- */
-    body {
-        background-color: var(--bg-main) !important;
-        margin: 0;
-        font-family: 'Inter', sans-serif;
-        color: var(--text-main);
-    }
+  body { background-color: var(--bg-main) !important; margin: 0; font-family: Arial, sans-serif; color: var(--text-main); }
+  .page-wrapper { padding: 0; width: 100%; box-sizing: border-box; min-height: 100vh; }
 
-    .page-wrapper {
-        padding: 20px;
-        width: 100%;
-        box-sizing: border-box;
-        min-height: 100vh;
-    }
+  /* --- HEADER --- */
+  .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
+  .page-header-left h1 { font-size: 26px; font-weight: 900; color: var(--text-main); text-transform: uppercase; letter-spacing: -1px; margin: 0; }
+  .page-header-left p { font-size: 13px; color: var(--text-muted); margin: 4px 0 0; }
+  .btn-main-action {
+    background: linear-gradient(135deg, #F2C84B, #f0a500); color: #000 !important;
+    padding: 13px 24px; border-radius: 12px; font-weight: 800;
+    text-decoration: none; text-transform: uppercase; font-size: 13px;
+    transition: .3s; box-shadow: 0 4px 15px rgba(242,200,75,.25);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-main-action:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(242,200,75,.4); }
 
-    .page-title {
-        font-size: 28px;
-        font-weight: 800;
-        color: var(--text-main);
-        text-transform: uppercase;
-        margin-bottom: 5px;
-    }
+  /* --- STAT CARDS --- */
+  .stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
+  @media(max-width:900px){ .stat-grid { grid-template-columns: repeat(2,1fr); } }
+  .stat-card {
+    background: var(--bg-card); border: 2px solid var(--border-color);
+    border-radius: 16px; padding: 20px; display: flex;
+    align-items: center; justify-content: space-between;
+    transition: .3s; position: relative; overflow: hidden;
+  }
+  .stat-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.5), 0 0 0 1px var(--accent-dim); }
+  .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background: var(--sc-color,#F2C84B); }
+  .stat-info h3 { margin:0; font-size:28px; font-weight:900; color:var(--text-main); }
+  .stat-info p { margin:0; color:var(--text-muted); text-transform:uppercase; font-size:10px; letter-spacing:1px; font-weight:700; }
+  .stat-icon {
+    font-size:22px; color:var(--sc-color,#F2C84B);
+    background:var(--sc-bg,rgba(242,200,75,.1));
+    width:50px; height:50px; border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+  }
 
-    .header-breadcrumb {
-        color: var(--text-muted);
-        margin-bottom: 25px;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 10px;
-    }
+  /* --- ACTIONS BAR --- */
+  .actions-bar { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:24px; flex-wrap:wrap; }
+  .search-group { flex:1; max-width:480px; position:relative; }
+  .search-input {
+    width:100%; background:var(--bg-card-flat); border: 2px solid var(--border-color);
+    padding:12px 12px 12px 44px; border-radius:12px; color:var(--text-main);
+    font-size:14px; transition:.3s; outline:none;
+  }
+  .search-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+  .search-group i { position:absolute; left:15px; top:50%; transform:translateY(-50%); color:var(--accent); }
+  .filter-btns { display:flex; gap:8px; }
+  .filter-btn {
+    padding:10px 16px; border-radius:10px; font-size:12px; font-weight:700;
+    cursor:pointer; border:1px solid var(--border-color); background:var(--bg-card);
+    color:var(--text-muted); transition:.2s; text-transform:uppercase; letter-spacing:.05em;
+  }
+  .filter-btn.active { background:var(--accent); color:#000; border-color:var(--accent); }
+  .filter-btn:hover:not(.active) { border-color:var(--accent); color:var(--accent); }
 
-    /* --- CARD DO GRÁFICO --- */
-    .chart-container-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        border-radius: 16px;
-        padding: 25px;
-        margin-bottom: 35px;
-        box-shadow: var(--shadow-md);
-    }
+  /* --- GRÁFICO --- */
+  .chart-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:16px; padding:24px; margin-bottom:28px; }
+  .chart-card h4 { color:var(--accent); margin:0 0 16px; font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+  .chart-wrap { height:240px; }
 
-    /* --- BARRA DE AÇÕES --- */
-    .actions-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 20px;
-        margin-bottom: 30px;
-    }
+  /* --- TABELA --- */
+  .table-card { background:var(--bg-card); border: 2px solid var(--border-color); border-radius:16px; overflow:hidden; }
+  .table-head { display:flex; justify-content:space-between; align-items:center; padding:18px 24px; border-bottom:1px solid var(--border-color); }
+  .table-title { font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--text-main); }
+  .table-count { font-size:12px; color:var(--text-muted); font-weight:600; }
 
-    .search-group {
-        flex: 1;
-        max-width: 500px;
-        position: relative;
-    }
+  .custom-table { width:100%; border-collapse:collapse; }
+  .custom-table thead th {
+    color: var(--accent) !important;
+    background-color: var(--bg-card-flat) !important;
+    text-transform:uppercase; font-size:10px;
+    padding:14px 20px; font-weight:800; letter-spacing:1px;
+    border-bottom: 2px solid var(--border-color); text-align:left;
+  }
+  .custom-table tbody tr { border-bottom:1px solid rgba(255,255,255,.04); transition:.2s; }
+  .custom-table tbody tr:hover { background: var(--accent-dim) !important; }
+  .custom-table tbody tr.tr-inativo { background:rgba(220,53,69,.05); }
+  .custom-table tbody tr.tr-inativo td:first-child { border-left:3px solid #dc3545; }
+  .custom-table td { padding:16px 20px; color:var(--text-main); vertical-align:middle; }
 
-    .search-input {
-        width: 100%;
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        padding: 15px 15px 15px 45px;
-        border-radius: 12px;
-        color: var(--text-main);
-        font-size: 16px;
-        transition: 0.3s;
-    }
+  .prod-img { width:64px; height:64px; object-fit:cover; border-radius:12px; border:1px solid var(--border-color); }
+  .prod-name { font-weight:700; color:var(--text-main); font-size:14px; display:block; margin-bottom:2px; }
+  .prod-id { font-size:11px; color:var(--text-muted); font-family:monospace; }
+  .prod-price { font-weight:800; font-size:15px; color:var(--accent); }
+  .prod-installment { font-size:10px; color:var(--text-muted); margin-top:2px; }
 
-    .search-input:focus {
-        border-color: var(--accent);
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(197, 160, 45, 0.1);
-    }
+  .stock-bar { width:80px; }
+  .stock-num { font-size:16px; font-weight:900; }
+  .stock-progress { height:4px; border-radius:2px; background:var(--border-color); margin-top:6px; overflow:hidden; }
+  .stock-fill { height:100%; border-radius:2px; }
 
-    .search-group i {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--accent);
-    }
+  .badge-status { padding:5px 12px; border-radius:20px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; }
+  .status-ativo   { background:rgba(40,167,69,.12); color:#28a745; border:1px solid rgba(40,167,69,.3); }
+  .status-inativo { background:rgba(220,53,69,.12); color:#dc3545; border:1px solid rgba(220,53,69,.3); }
 
-    .btn-main-action {
-        background: linear-gradient(135deg, #F2C84B 0%, #F2C84B 100%);
-        color: #000 !important;
-        padding: 15px 25px;
-        border-radius: 12px;
-        font-weight: 800;
-        text-decoration: none;
-        text-transform: uppercase;
-        font-size: 14px;
-        transition: 0.3s;
-        box-shadow: 0 4px 15px rgba(197, 160, 45, 0.2);
-    }
+  .btn-edit {
+    background:var(--bg-main); color:var(--accent); border:1px solid var(--accent);
+    padding:7px 14px; border-radius:8px; text-decoration:none;
+    font-weight:700; font-size:12px; transition:.2s; display:inline-flex; align-items:center; gap:5px;
+  }
+  .btn-edit:hover { background:var(--accent); color:#000; }
+  .btn-delete {
+    background:rgba(220,53,69,.1); color:#dc3545; border:1px solid rgba(220,53,69,.3);
+    padding:7px 14px; border-radius:8px; text-decoration:none;
+    font-weight:700; font-size:12px; transition:.2s; display:inline-flex; align-items:center; gap:5px;
+  }
+  .btn-delete:hover { background:#dc3545; color:#fff; border-color:#dc3545; }
+  .btn-activate {
+    background:rgba(40,167,69,.1); border:1px solid rgba(40,167,69,.3); color:#28a745;
+    padding:7px 14px; border-radius:8px; text-decoration:none;
+    font-weight:700; font-size:12px; transition:.2s; display:inline-flex; align-items:center; gap:5px;
+  }
+  .btn-activate:hover { background:#28a745; color:#fff; }
 
-    .btn-main-action:hover {
-        box-shadow: 0 8px 20px rgba(255, 216, 77, 0.5);
-        transform: translateY(-3px);
-    }
+  /* --- PAGINAÇÃO --- */
+  .pagination-container {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:16px 24px; border-top:1px solid var(--border-color);
+  }
+  .pagination-buttons { display:flex; gap:6px; }
+  .page-link {
+    padding:8px 14px; background:var(--bg-main); border:1px solid var(--border-color);
+    color:var(--text-main); border-radius:8px; cursor:pointer;
+    font-weight:700; transition:.2s; font-size:12px;
+  }
+  .page-link:hover:not(.disabled) { border-color:var(--accent); color:var(--accent); }
+  .page-link.active { background:var(--accent); color:#000; border-color:var(--accent); }
+  .page-link.disabled { opacity:.3; cursor:not-allowed; }
+  .pagination-dots { color:var(--text-muted); padding:0 4px; font-weight:bold; }
 
-    /* --- TABELA DE PRODUTOS --- */
-    .custom-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0 15px;
-    }
-
-    .custom-table thead th {
-        color: var(--text-muted);
-        text-transform: uppercase;
-        font-size: 11px;
-        padding: 10px 20px;
-        font-weight: 800;
-    }
-
-    .custom-table tbody tr {
-        background: var(--bg-card);
-        transition: all 0.3s ease;
-        border: 1px solid var(--border-color);
-    }
-
-    .custom-table tbody tr:hover {
-        transform: scale(1.01);
-        border-color: var(--accent);
-    }
-
-    .custom-table td {
-        padding: 15px 20px !important;
-        color: var(--text-main);
-        vertical-align: middle;
-        border-top: 1px solid var(--border-color);
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .custom-table td:first-child {
-        border-radius: 15px 0 0 15px;
-        border-left: 1px solid var(--border-color);
-    }
-
-    .custom-table td:last-child {
-        border-radius: 0 15px 15px 0;
-        border-right: 1px solid var(--border-color);
-    }
-
-    .prod-img {
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-        border-radius: 12px;
-        border: 2px solid var(--border-color);
-    }
-
-    .prod-name {
-        font-weight: 700;
-        color: var(--text-main);
-        font-size: 17px;
-        display: block;
-    }
-
-    /* --- STATUS E BOTÕES --- */
-    .badge-status {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 10px;
-        font-weight: 800;
-        text-transform: uppercase;
-    }
-
-    .status-ativo {
-        background: rgba(40, 167, 69, 0.1);
-        color: #28a745;
-        border: 1px solid rgba(40, 167, 69, 0.3);
-    }
-
-    .status-inativo {
-        background: rgba(220, 53, 69, 0.1);
-        color: #dc3545;
-        border: 1px solid rgba(220, 53, 69, 0.3);
-    }
-
-    .btn-edit {
-        background: var(--bg-main);
-        color: var(--accent);
-        border: 1px solid var(--accent);
-        padding: 8px 16px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 700;
-        font-size: 13px;
-        transition: 0.3s;
-    }
-
-    .btn-edit:hover {
-        background: var(--accent);
-        color: #000;
-    }
-
-    .btn-delete {
-        background: rgba(220, 53, 69, 0.1);
-        color: #dc3545;
-        border: 1px solid rgba(220, 53, 69, 0.3);
-        padding: 8px 16px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 700;
-        font-size: 13px;
-        transition: 0.3s;
-    }
-
-    .btn-delete:hover {
-        background: linear-gradient(135deg, #ff6b6b 0%, #ff3b3b 100%);
-        color: #fff;
-        transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
-        border-color: transparent;
-    }
-
-    .btn-activate {
-        background: rgba(40, 167, 69, 0.1);
-        border: 1px solid rgba(40, 167, 69, 0.3);
-        color: #28a745;
-        padding: 8px 16px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 700;
-        font-size: 13px;
-        transition: 0.3s;
-    }
-
-    .btn-activate:hover {
-        background: #28a745 !important;
-        color: #fff !important;
-        transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
-    }
-
-    /* --- PAGINAÇÃO (FIXED) --- */
-    .pagination-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 20px;
-        padding: 20px;
-        background: var(--bg-card);
-        border-radius: 12px;
-        border: 1px solid var(--border-color);
-    }
-
-    .pagination-buttons {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .page-link {
-        padding: 8px 16px;
-        background: var(--bg-main);
-        border: 1px solid var(--border-color);
-        color: var(--text-main);
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 700;
-        transition: 0.3s;
-        font-size: 13px;
-    }
-
-    .page-link:hover:not(.disabled) {
-        border-color: var(--accent);
-        color: var(--accent);
-    }
-
-    .page-link.active {
-        background: linear-gradient(135deg, #F2C84B 0%, #F2C84B 100%);
-        color: #000;
-        border-color: var(--accent);
-    }
-
-    .page-link.disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-    }
-
-    .pagination-dots {
-        color: var(--text-muted);
-        padding: 0 5px;
-        font-weight: bold;
-    }
-
-    .tr-inativo td {
-        background: rgba(220, 53, 69, 0.08) !important;
-    }
-
-    .tr-inativo td:first-child {
-        border-left: 4px solid #dc3545 !important;
-    }
+  /* Empty State */
+  .empty-state { text-align:center; padding:60px 24px; }
+  .empty-state i { font-size:48px; color:var(--border-color); display:block; margin-bottom:16px; }
+  .empty-state p { color:var(--text-muted); font-size:14px; }
 </style>
 
+<?php
+$totalAtivos   = count(array_filter($produtos, fn($p) => empty($p['excluido_em'])));
+$totalInativos = count(array_filter($produtos, fn($p) => !empty($p['excluido_em'])));
+$valorInventario = array_sum(array_map(fn($p) => (float)$p['preco_produtos'] * (int)$p['estoque_produtos'], array_filter($produtos, fn($p) => empty($p['excluido_em']))));
+$estoqueTotal    = array_sum(array_map(fn($p) => (int)$p['estoque_produtos'], array_filter($produtos, fn($p) => empty($p['excluido_em']))));
+?>
+
 <div class="page-wrapper">
-    <h3 class="page-title"><i class="fas fa-cubes" style="color: #f2cc7d;"></i> Gerenciar Produtos</h3>
-    <header class="header-breadcrumb">
-        <h5><b><i class="fas fa-tachometer-alt"></i> Painel de produtos - Koketsu</b></h5>
-    </header>
 
-    <div class="chart-container-card">
-        <h4 style="color: #f2cc7d; margin-top: 0; font-weight: 700;"><i class="fas fa-chart-bar"></i> Estoque por
-            Categoria</h4>
-        <div style="height: 300px;">
-            <canvas id="vendasChart"></canvas>
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1><i class="fas fa-boxes" style="color:#F2C84B;"></i> Produtos</h1>
+      <p>Gerencie o catálogo completo da Koketsu Grife</p>
+    </div>
+    <a href="/backend/produtos/criar" class="btn-main-action">
+      <i class="fas fa-plus-circle"></i> Novo Produto
+    </a>
+  </div>
+
+  <!-- STATS -->
+  <div class="stat-grid">
+    <div class="stat-card" style="--sc-color:#F2C84B; --sc-bg:rgba(242,200,75,.1);">
+      <div class="stat-info">
+        <h3><?= $totalAtivos ?></h3>
+        <p>Produtos Ativos</p>
+      </div>
+      <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+    </div>
+    <div class="stat-card" style="--sc-color:#dc3545; --sc-bg:rgba(220,53,69,.1);">
+      <div class="stat-info">
+        <h3><?= $totalInativos ?></h3>
+        <p>Inativados</p>
+      </div>
+      <div class="stat-icon"><i class="fas fa-ban"></i></div>
+    </div>
+    <div class="stat-card" style="--sc-color:#4E9EBF; --sc-bg:rgba(78,158,191,.1);">
+      <div class="stat-info">
+        <h3><?= number_format($estoqueTotal, 0, ',', '.') ?></h3>
+        <p>Unidades em Estoque</p>
+      </div>
+      <div class="stat-icon"><i class="fas fa-warehouse"></i></div>
+    </div>
+    <div class="stat-card" style="--sc-color:#C47A3A; --sc-bg:rgba(196,122,58,.1);">
+      <div class="stat-info">
+        <h3>R$ <?= number_format($valorInventario, 0, ',', '.') ?></h3>
+        <p>Valor do Inventário</p>
+      </div>
+      <div class="stat-icon"><i class="fas fa-chart-pie"></i></div>
+    </div>
+  </div>
+
+  <!-- GRÁFICO -->
+  <?php if (!empty($produto)): ?>
+  <div class="chart-card">
+    <h4><i class="fas fa-chart-bar"></i> Estoque por Categoria</h4>
+    <div class="chart-wrap">
+      <canvas id="vendasChart"></canvas>
+    </div>
+  </div>
+  <?php endif; ?>
+
+  <!-- TABELA -->
+  <div class="table-card">
+    <div class="table-head">
+      <span class="table-title"><i class="fas fa-list" style="color:#F2C84B;"></i> Lista de Produtos</span>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+        <div class="search-group" style="max-width:320px;">
+          <i class="fas fa-search"></i>
+          <input type="text" id="inputBusca" class="search-input" placeholder="Buscar por nome...">
         </div>
+        <div class="filter-btns">
+          <button class="filter-btn active" data-filter="todos">Todos</button>
+          <button class="filter-btn" data-filter="ativo">Ativos</button>
+          <button class="filter-btn" data-filter="inativo">Inativos</button>
+        </div>
+        <span class="table-count" id="tableCount"><?= count($produtos) ?> produtos</span>
+      </div>
     </div>
 
-    <div class="actions-bar">
-        <div class="search-group">
-            <i class="fas fa-search"></i>
-            <input type="text" id="inputBusca" class="search-input" placeholder="Buscar produto por nome...">
-        </div>
-        <a href="/backend/produtos/criar" class="btn-main-action"><i class="fas fa-plus-circle"></i> Novo Produto</a>
+    <div style="overflow-x:auto;">
+      <table class="custom-table" id="tabelaProdutos">
+        <thead>
+          <tr>
+            <th width="80">Foto</th>
+            <th>Produto</th>
+            <th>Descrição</th>
+            <th>Preço</th>
+            <th>Estoque</th>
+            <th style="text-align:center;">Status</th>
+            <th style="text-align:center;">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($produtos as $p):
+            $is_inativo = !empty($p['excluido_em']);
+            $estoqueNum = (int)$p['estoque_produtos'];
+            $stockPct   = min(100, $estoqueNum / 2); // max visual ~200 unidades
+            $stockColor = $estoqueNum <= 5 ? '#dc3545' : ($estoqueNum <= 20 ? '#ffc107' : '#28a745');
+            $parcs = number_format($p['preco_produtos'] / 6, 2, ',', '.');
+          ?>
+          <tr class="item-produto <?= $is_inativo ? 'tr-inativo' : '' ?>"
+              data-status="<?= $is_inativo ? 'inativo' : 'ativo' ?>">
+            <td>
+              <img src="/backend/upload/<?= htmlspecialchars($p['imagem_produtos']) ?>"
+                   class="prod-img"
+                   onerror="this.src='https://placehold.co/64x64?text=📦'">
+            </td>
+            <td>
+              <span class="prod-name nome-produto"><?= htmlspecialchars($p['nome_produtos']) ?></span>
+              <span class="prod-id">#<?= $p['id_produto'] ?></span>
+            </td>
+            <td style="max-width:220px; color:var(--text-muted); font-size:13px;">
+              <?= htmlspecialchars(mb_strimwidth($p['descricao_produtos'] ?? '', 0, 80, '...')) ?>
+            </td>
+            <td>
+              <div class="prod-price">R$ <?= number_format((float)$p['preco_produtos'],2,',','.') ?></div>
+              <div class="prod-installment">6x de R$ <?= $parcs ?></div>
+            </td>
+            <td>
+              <div class="stock-bar">
+                <div class="stock-num" style="color:<?= $stockColor ?>"><?= $estoqueNum ?></div>
+                <div class="stock-progress">
+                  <div class="stock-fill" style="width:<?= $stockPct ?>%;background:<?= $stockColor ?>;"></div>
+                </div>
+              </div>
+            </td>
+            <td style="text-align:center;">
+              <span class="badge-status <?= $is_inativo ? 'status-inativo' : 'status-ativo' ?>">
+                <?= $is_inativo ? 'Inativo' : 'Ativo' ?>
+              </span>
+            </td>
+            <td style="text-align:center;">
+              <div style="display:flex;gap:6px;justify-content:center;">
+                <a href="/backend/produtos/editar/<?= $p['id_produto'] ?>" class="btn-edit" title="Editar">
+                  <i class="fas fa-pencil-alt"></i>
+                </a>
+                <?php if ($is_inativo): ?>
+                <a href="/backend/produtos/ativar/<?= $p['id_produto'] ?>" class="btn-activate" title="Ativar">
+                  <i class="fas fa-check"></i>
+                </a>
+                <?php else: ?>
+                <a href="/backend/produtos/excluir/<?= $p['id_produto'] ?>" class="btn-delete"
+                   title="Inativar" onclick="return confirm('Deseja inativar este produto?')">
+                  <i class="fas fa-trash-alt"></i>
+                </a>
+                <?php endif; ?>
+              </div>
+            </td>
+          </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
     </div>
 
-    <main>
-        <table class="custom-table" id="tabelaProdutos">
-            <thead>
-                <tr>
-                    <th>Foto</th>
-                    <th>Informações</th>
-                    <th>Descrição</th>
-                    <th style="text-align: center;">Status</th>
-                    <th style="text-align: center;">Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($produtos as $p):
-                    $is_inativo = !empty($p['excluido_em']);
-                    ?>
-                    <tr class="item-produto <?= $is_inativo ? 'tr-inativo' : '' ?>">
-                        <td width="100">
-                            <img src="/backend/upload/<?= htmlspecialchars($p['imagem_produtos']); ?>" class="prod-img"
-                                onerror="this.src='https://placehold.co/100x100?text=Sem+Foto'">
-                        </td>
-                        <td>
-                            <span class="prod-name nome-produto"><?= htmlspecialchars($p['nome_produtos']); ?></span>
-                            <small style="color: #666;">ID: #<?= $p['id_produto'] ?></small>
-                        </td>
-                        <td style="max-width: 300px; color: #aaa; font-size: 14px;">
-                            <?= htmlspecialchars($p['descricao_produtos']); ?>
-                        </td>
-                        <td style="text-align: center;">
-                            <span class="badge-status <?= $is_inativo ? 'status-inativo' : 'status-ativo' ?>">
-                                <?= $is_inativo ? 'Inativo' : 'Ativo' ?>
-                            </span>
-                        </td>
-                        <td style="text-align: center;">
-                            <div style="display: flex; gap: 8px; justify-content: center;">
-                                <a href="/backend/produtos/editar/<?= $p['id_produto']; ?>" class="btn-edit"
-                                    title="Editar"><i class="fas fa-pencil-alt"></i></a>
-                                <?php if ($is_inativo): ?>
-                                    <a href="/backend/produtos/ativar/<?= $p['id_produto'] ?>" class="btn-activate"
-                                        title="Ativar"><i class="fas fa-check"></i></a>
-                                <?php else: ?>
-                                    <a href="/backend/produtos/excluir/<?= $p['id_produto'] ?>" class="btn-delete"
-                                        title="Inativar" onclick="return confirm('Deseja inativar este produto?')"><i
-                                            class="fas fa-trash-alt"></i></a>
-                                <?php endif; ?>
-                            </div>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+    <?php if(empty($produtos)): ?>
+    <div class="empty-state">
+      <i class="fas fa-box-open"></i>
+      <p>Nenhum produto cadastrado ainda.</p>
+      <a href="/backend/produtos/criar" class="btn-main-action" style="display:inline-flex;margin-top:16px;">
+        <i class="fas fa-plus"></i> Cadastrar Produto
+      </a>
+    </div>
+    <?php endif; ?>
 
-        <div class="pagination-container">
-            <div id="paginationInfo" style="color: var(--text-muted); font-weight: 600;"></div>
-            <div class="pagination-buttons" id="paginationButtons"></div>
-        </div>
-    </main>
+    <div class="pagination-container">
+      <div id="paginationInfo" style="color:var(--text-muted);font-weight:600;font-size:13px;"></div>
+      <div class="pagination-buttons" id="paginationButtons"></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-    const rowsPerPage = 10;
-    let currentPage = 1;
+const rowsPerPage = 12;
+let currentPage = 1;
+let currentFilter = 'todos';
 
-    function displayTable() {
-        const table = document.getElementById("tabelaProdutos");
-        const allRows = Array.from(table.querySelectorAll("tbody .item-produto"));
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    currentFilter = this.dataset.filter;
+    currentPage = 1;
+    applyFilters();
+    displayTable();
+  });
+});
 
-        const filteredRows = allRows.filter(row => row.getAttribute('data-filtered') !== 'false');
+function applyFilters() {
+  const busca = document.getElementById('inputBusca').value.toLowerCase();
+  document.querySelectorAll('.item-produto').forEach(row => {
+    const nome   = row.querySelector('.nome-produto')?.textContent.toLowerCase() || '';
+    const status = row.dataset.status;
+    const matchSearch = nome.includes(busca);
+    const matchFilter = currentFilter === 'todos' || status === currentFilter;
+    row.setAttribute('data-filtered', matchSearch && matchFilter ? 'true' : 'false');
+  });
+}
 
-        const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
-        if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+function displayTable() {
+  const allRows = Array.from(document.querySelectorAll('.item-produto'));
+  const filtered = allRows.filter(r => r.getAttribute('data-filtered') !== 'false');
+  const totalPages = Math.ceil(filtered.length / rowsPerPage);
+  if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+  const start = (currentPage - 1) * rowsPerPage;
 
-        const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
+  allRows.forEach(r => r.style.display = 'none');
+  filtered.slice(start, start + rowsPerPage).forEach(r => r.style.display = '');
 
-        allRows.forEach(row => row.style.display = "none");
-        filteredRows.slice(start, end).forEach(row => row.style.display = "");
+  document.getElementById('tableCount').textContent = `${filtered.length} produto${filtered.length !== 1 ? 's' : ''}`;
+  renderPagination(totalPages, filtered.length, start);
+}
 
-        renderButtons(totalPages, filteredRows.length);
+function renderPagination(totalPages, total, start) {
+  const container = document.getElementById('paginationButtons');
+  const info = document.getElementById('paginationInfo');
+  container.innerHTML = '';
+  const end = Math.min(start + rowsPerPage, total);
+  info.textContent = total === 0 ? 'Nenhum resultado' : `Exibindo ${start+1}–${end} de ${total} produtos`;
+  if (totalPages <= 1) return;
+
+  const mk = (html, page, active=false, disabled=false) => {
+    const btn = document.createElement('button');
+    btn.innerHTML = html; btn.className = `page-link ${active?'active':''} ${disabled?'disabled':''}`;
+    if (!disabled) btn.onclick = () => { currentPage = page; displayTable(); };
+    return btn;
+  };
+  container.appendChild(mk('<i class="fas fa-chevron-left"></i>', currentPage-1, false, currentPage===1));
+  for (let i=1; i<=totalPages; i++) {
+    if (i===1 || i===totalPages || (i>=currentPage-1 && i<=currentPage+1)) {
+      if (i===currentPage-1 && i>2) { const d=document.createElement('span'); d.className='pagination-dots'; d.textContent='...'; container.appendChild(d); }
+      container.appendChild(mk(i, i, i===currentPage));
+      if (i===currentPage+1 && i<totalPages-1) { const d=document.createElement('span'); d.className='pagination-dots'; d.textContent='...'; container.appendChild(d); }
     }
+  }
+  container.appendChild(mk('<i class="fas fa-chevron-right"></i>', currentPage+1, false, currentPage===totalPages));
+}
 
-    function renderButtons(totalPages, totalItems) {
-        const container = document.getElementById("paginationButtons");
-        const info = document.getElementById("paginationInfo");
-        container.innerHTML = "";
+document.getElementById('inputBusca').addEventListener('input', () => {
+  currentPage = 1; applyFilters(); displayTable();
+});
 
-        info.innerText = `Mostrando ${totalItems} produtos (Página ${currentPage} de ${totalPages || 1})`;
-
-        if (totalPages <= 1) return;
-
-        const createBtn = (content, targetPage, active = false, disabled = false) => {
-            const btn = document.createElement("button");
-            btn.innerHTML = content;
-            btn.className = `page-link ${active ? 'active' : ''} ${disabled ? 'disabled' : ''}`;
-            if (!disabled) btn.onclick = () => { currentPage = targetPage; displayTable(); };
-            return btn;
-        };
-
-        // Botão Anterior
-        container.appendChild(createBtn('<i class="fas fa-chevron-left"></i>', currentPage - 1, false, currentPage === 1));
-
-        const range = 1; // Quantidade de páginas adjacentes para exibir
-
-        for (let i = 1; i <= totalPages; i++) {
-            // Lógica para mostrar: Primeira, Última, e as que rodeiam a atual
-            if (i === 1 || i === totalPages || (i >= currentPage - range && i <= currentPage + range)) {
-
-                // Adiciona reticências à esquerda
-                if (i === currentPage - range && i > 2) {
-                    const dots = document.createElement("span");
-                    dots.className = "pagination-dots";
-                    dots.innerText = "...";
-                    container.appendChild(dots);
-                }
-
-                container.appendChild(createBtn(i, i, i === currentPage));
-
-                // Adiciona reticências à direita
-                if (i === currentPage + range && i < totalPages - 1) {
-                    const dots = document.createElement("span");
-                    dots.className = "pagination-dots";
-                    dots.innerText = "...";
-                    container.appendChild(dots);
-                }
-            }
-        }
-
-        // Botão Próximo
-        container.appendChild(createBtn('<i class="fas fa-chevron-right"></i>', currentPage + 1, false, currentPage === totalPages));
+// Gráfico
+const dadosGrafico = <?= json_encode($produto ?? []) ?>;
+if (dadosGrafico && dadosGrafico.length > 0) {
+  new Chart(document.getElementById('vendasChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: dadosGrafico.map(d => d.categoria),
+      datasets: [{
+        label: 'Estoque',
+        data: dadosGrafico.map(d => d.total),
+        backgroundColor: dadosGrafico.map((_, i) => i % 2 === 0 ? '#F2C84B' : 'rgba(242,200,75,.5)'),
+        borderRadius: 8, borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#888', font: { size: 11 } } },
+        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#888', font: { size: 11 } } }
+      }
     }
+  });
+}
 
-    document.getElementById('inputBusca').addEventListener('keyup', function () {
-        const busca = this.value.toLowerCase();
-        const rows = document.querySelectorAll('.item-produto');
-
-        rows.forEach(row => {
-            const nome = row.querySelector('.nome-produto').textContent.toLowerCase();
-            row.setAttribute('data-filtered', nome.includes(busca) ? 'true' : 'false');
-        });
-
-        currentPage = 1;
-        displayTable();
-    });
-
-    // Gráfico - Mantido conforme original
-    const dadosGrafico = <?php echo json_encode($produto); ?>;
-    if (dadosGrafico && dadosGrafico.length > 0) {
-        const style = getComputedStyle(document.body);
-        new Chart(document.getElementById('vendasChart'), {
-            type: 'bar',
-            data: {
-                labels: dadosGrafico.map(item => item.categoria),
-                datasets: [{
-                    label: 'Estoque',
-                    data: dadosGrafico.map(item => item.total),
-                    backgroundColor: style.getPropertyValue('--accent').trim() || '#f2cc7d',
-                    borderRadius: 8
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { ticks: { color: '#888' }, grid: { display: false } },
-                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888' } }
-                }
-            }
-        });
-    }
-
-    document.addEventListener("DOMContentLoaded", displayTable);
+document.addEventListener('DOMContentLoaded', () => { applyFilters(); displayTable(); });
 </script>

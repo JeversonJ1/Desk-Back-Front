@@ -54,15 +54,28 @@ const SearchManager = (() => {
             container.innerHTML = '<p class="text-white-50 small">Nenhum resultado encontrado.</p>';
             return;
         }
-        container.innerHTML = products.map(p => `
-            <a href="/pages/produto.html?id=${p.id}" class="d-flex align-items-center gap-3 text-decoration-none bg-dark p-3 rounded-3 border border-secondary transition-all" style="border-color: rgba(255,255,255,0.1) !important;" onmouseover="this.style.borderColor='var(--brand-yellow)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
-                <img src="${p.img}" alt="${p.nome}" class="rounded shadow-sm" style="width: 64px; height: 64px; object-fit: cover;">
-                <div class="grow">
-                    <div class="text-white small fw-bold text-uppercase" style="letter-spacing: 0.1em; transition: color 0.3s;" onmouseover="this.style.color='var(--brand-yellow)'" onmouseout="this.style.color='white'">${p.nome}</div>
-                    <div class="text-warning small fw-bolder mt-1">R$ ${p.preco.toFixed(2).replace('.', ',')}</div>
+        container.innerHTML = products.map(prod => `
+            <div class="group relative flex flex-col h-full bg-[#050505] rounded-2xl overflow-hidden border border-white/5 transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(242,200,75,0.15)] hover:border-[#F2C84B]/30 cursor-pointer" onclick="window.location.href='produto.html?id=${prod.id}'">
+                
+                <!-- Imagem -->
+                <div class="relative aspect-[3/4] overflow-hidden bg-[#111]">
+                    <img src="${prod.img}" alt="${prod.nome}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100" loading="lazy">
+                    <!-- Overlay sutil -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60 pointer-events-none"></div>
                 </div>
-                <i class="bi bi-arrow-right-short text-white-50 fs-4 transition-all" onmouseover="this.style.color='var(--brand-yellow)'" onmouseout="this.style.color='rgba(255,255,255,0.5)'"></i>
-            </a>
+
+                <!-- Conteúdo -->
+                <div class="p-6 flex flex-col items-center text-center flex-1 relative z-10">
+                    <p class="text-[9px] text-[#F2C84B] font-bold uppercase tracking-widest mb-2">${prod.category || 'Geral'}</p>
+                    <h5 class="text-white font-bold text-sm uppercase tracking-[0.1em] mb-4 group-hover:text-[#F2C84B] transition-colors leading-snug">${prod.nome}</h5>
+                    
+                    <div class="mt-auto flex flex-col items-center w-full">
+                        <div class="flex items-center justify-center gap-2 mb-1">
+                            <span class="text-white font-black text-xl tracking-tighter group-hover:text-[#F2C84B] transition-colors">R$ ${prod.preco.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         `).join('');
     };
 

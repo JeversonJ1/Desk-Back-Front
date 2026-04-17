@@ -148,8 +148,8 @@
         padding: 40px 20px;
         width: 100%;
         min-height: 100vh;
-        background-color: #0c0c0c;
-        font-family: 'Segoe UI', sans-serif;
+        background-color: var(--bg-main);
+        font-family: Arial, sans-serif;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -168,9 +168,9 @@
     }
 
     .header-breadcrumb {
-        color: #888;
+        color: var(--text-muted);
         margin-bottom: 25px;
-        border-bottom: 1px solid #222;
+        border-bottom: 1px solid var(--border-color);
         padding-bottom: 15px;
         text-align: center;
         width: 100%;
@@ -179,13 +179,13 @@
 
     /* Card Expandido para acomodar duas colunas */
     .form-card {
-        background: #111;
-        padding: 30px;
-        border-radius: 15px;
+        background: linear-gradient(135deg, #1a1a1a, #0f0f0f);
+        padding: 32px;
+        border-radius: 16px;
         width: 100%;
         max-width: 850px;
         box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        border: 1px solid #333;
+        border: 2px solid var(--border-color);
     }
 
     .form-grid {
@@ -203,27 +203,33 @@
 
     .form-group label {
         margin-bottom: 8px;
-        font-size: 13px;
-        font-weight: 700;
-        color: #f2cc7d;
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--accent);
         text-transform: uppercase;
+        letter-spacing: 1px;
     }
 
     .form-group input, .form-group textarea, .form-group select {
-        background: #1a1a1a;
-        border: 1px solid #333;
-        padding: 12px;
-        border-radius: 8px;
-        color: #fff;
+        background: var(--input-bg);
+        border: 2px solid var(--border-color);
+        padding: 12px 14px;
+        border-radius: var(--radius-md);
+        color: var(--text-main);
         font-size: 14px;
-        transition: 0.3s;
+        font-family: Arial, sans-serif;
+        transition: border-color .2s, box-shadow .2s;
+        outline: none;
     }
 
-    .form-group input:focus { border-color: #f2cc7d; outline: none; background: #222; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+    }
 
     /* Área de Upload Estilizada */
     .upload-area {
-        border: 2px dashed #444;
+        border: 2px dashed var(--border-hover);
         border-radius: 12px;
         height: 250px;
         display: flex;
@@ -233,11 +239,11 @@
         cursor: pointer;
         position: relative;
         overflow: hidden;
-        transition: 0.3s;
-        background: #151515;
+        transition: .3s;
+        background: var(--input-bg);
     }
 
-    .upload-area:hover { border-color: #f2cc7d; background: #1a1a1a; }
+    .upload-area:hover { border-color: var(--accent); background: #1a1a1a; }
     .upload-area input { display: none; }
 
     .upload-placeholder { text-align: center; color: #666; }
@@ -255,11 +261,11 @@
     .image-meta {
         margin-top: 15px;
         padding: 12px;
-        background: #1a1a1a;
-        border-radius: 8px;
+        background: var(--bg-card-flat);
+        border-radius: var(--radius-sm);
         font-size: 12px;
-        color: #999;
-        border-left: 3px solid #f2cc7d;
+        color: var(--text-muted);
+        border-left: 3px solid var(--accent);
     }
 
     /* Esconde os detalhes técnicos para manter a beleza, mas mantém funcional */
@@ -274,22 +280,24 @@
     }
 
     .btn-save {
-        background: #f2cc7d;
+        background: linear-gradient(135deg, #F2C84B, #d4a800);
         color: #000;
         padding: 15px;
         border: none;
         font-weight: 800;
         text-transform: uppercase;
-        border-radius: 10px;
+        letter-spacing: .5px;
+        border-radius: var(--radius-md);
         cursor: pointer;
-        transition: 0.3s;
+        transition: transform .2s, box-shadow .2s;
+        box-shadow: 0 4px 12px rgba(242,200,75,.3);
     }
 
-    .btn-save:hover { background: #fff; transform: translateY(-2px); }
+    .btn-save:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(242,200,75,.45); }
 
     .btn-cancelar {
         text-align: center;
-        color: #888;
+        color: var(--text-muted);
         text-decoration: none;
         font-size: 13px;
         padding: 10px;

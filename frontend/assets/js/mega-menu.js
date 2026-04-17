@@ -199,19 +199,26 @@ const MegaMenu = (() => {
       else if (p.url_imagem) imgSrc = p.url_imagem;
 
       return `
-        <a href="/pages/produto.html?id=${id}" class="menu-product-card" onclick="MegaMenu.close()">
-          <div class="menu-product-img-wrapper">
-            <img src="${imgSrc}" alt="${nome}" loading="lazy" onerror="this.src='/assets/img/logo2026.png'">
+        <a href="/pages/produto.html?id=${id}" class="group relative flex flex-col h-full bg-[#050505] rounded-xl overflow-hidden border border-white/5 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_15px_30px_rgba(242,200,75,0.15)] hover:border-[#F2C84B]/30 cursor-pointer" onclick="MegaMenu.close()">
+          <!-- Imagem -->
+          <div class="relative aspect-square overflow-hidden bg-[#111]">
+            <img src="${imgSrc}" alt="${nome}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100" loading="lazy" onerror="this.src='/assets/img/logo2026.png'">
+            <!-- Overlay sutil -->
+            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60 pointer-events-none"></div>
           </div>
-          <div class="menu-product-info">
-            <div class="menu-product-name">${nome}</div>
-            <div class="menu-product-stars">
+          
+          <!-- Conteúdo -->
+          <div class="p-3 flex flex-col items-center text-center flex-1 relative z-10 bg-gradient-to-b from-[#111] to-[#050505]">
+            <div class="text-white font-bold text-[10px] uppercase tracking-[0.05em] mb-2 group-hover:text-[#F2C84B] transition-colors leading-tight line-clamp-2">${nome}</div>
+            
+            <div class="menu-product-stars mb-2 scale-90 origin-center flex justify-center">
               ${stars}
-              ${avaliacoes > 0 ? `<span class="star-count">(${avaliacoes})</span>` : ''}
+              ${avaliacoes > 0 ? `<span class="star-count text-[9px] text-gray-500 ml-1">(${avaliacoes})</span>` : ''}
             </div>
-            <div class="menu-product-price">
-              ${precoFormatted}
-              <span class="pix-badge">3% PIX</span>
+            
+            <div class="mt-auto flex flex-col items-center justify-center gap-1 w-full">
+              <span class="text-[#F2C84B] font-bold text-xs tracking-tight">${precoFormatted}</span>
+              <span class="bg-[#F2C84B] text-black text-[8px] font-black px-1.5 py-0.5 rounded-sm tracking-wider uppercase">3% PIX</span>
             </div>
           </div>
         </a>

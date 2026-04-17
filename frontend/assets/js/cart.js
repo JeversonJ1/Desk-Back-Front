@@ -192,17 +192,18 @@ const CartManager = (() => {
       const itemSubtotal = item.preco * item.quantidade;
       subtotal += itemSubtotal;
       return `
-        <div class="flex gap-4 mb-6 relative group">
-          <div class="w-[80px] h-[100px] shrink-0 rounded-md overflow-hidden border border-white/5 bg-[#f5f5f5] flex items-center justify-center">
-            <img src="${item.img}" alt="${item.nome}" class="w-full h-auto object-cover max-h-[100px]">
+        <div class="flex gap-4 p-3 mb-4 relative group bg-[#050505] rounded-xl border border-white/5 transition-all duration-300 hover:border-[#F2C84B]/30 hover:bg-[#111] hover:shadow-[0_10px_20px_rgba(242,200,75,0.1)]">
+          <div class="w-[80px] h-[100px] shrink-0 rounded-md overflow-hidden bg-[#111] relative">
+            <img src="${item.img}" alt="${item.nome}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-90 group-hover:opacity-100">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60 pointer-events-none"></div>
           </div>
-          <div class="flex-1 flex flex-col justify-center">
-            <h6 class="text-white text-xs font-bold mb-1 uppercase tracking-wider pr-6 leading-tight">${item.nome}</h6>
-            <p class="text-gray-400 text-[10px] mb-2 uppercase tracking-wide">Tam: ${item.size} ${item.color ? `| Cor: ${item.color}` : ''} | Qtd: ${item.quantidade}</p>
+          <div class="flex-1 flex flex-col py-1">
+            <h6 class="text-white text-xs font-bold mb-1 uppercase tracking-wider pr-6 leading-tight group-hover:text-[#F2C84B] transition-colors">${item.nome}</h6>
+            <p class="text-gray-500 text-[10px] mb-2 uppercase tracking-widest font-bold">Tam: <span class="text-white">${item.size}</span> ${item.color ? `<span class="mx-1">|</span> Cor: <span class="text-white">${item.color}</span>` : ''} <span class="mx-1">|</span> Qtd: <span class="text-white">${item.quantidade}</span></p>
             <div class="flex justify-between items-center mt-auto">
-              <span class="text-(--brand-yellow) text-sm font-bold">R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
+              <span class="text-[#F2C84B] text-sm font-black tracking-wider">R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
             </div>
-            <button class="absolute top-0 right-0 text-gray-500 hover:text-red-500 transition p-1 opacity-50 group-hover:opacity-100" onclick="CartManager.removeFromCart('${item.cartItemId}')">
+            <button class="absolute top-3 right-3 text-white/30 hover:text-red-500 transition p-1 group-hover:text-red-500/70" onclick="CartManager.removeFromCart('${item.cartItemId}')">
               <i class="bi bi-trash"></i>
             </button>
           </div>

@@ -44,45 +44,46 @@
 
 <style>
     .page-wrapper {
-        padding: 20px;
+        padding: 40px 20px;
         width: 100%;
         box-sizing: border-box;
-        background-color: #0c0c0c; /* Fundo padrão do dashboard */
+        background-color: var(--bg-main);
         min-height: 100vh;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .page-title {
-        font-size: 28px;
+        font-size: 26px;
         font-weight: 800;
-        color: #ffffff;
+        color: var(--text-main);
         text-transform: uppercase;
         margin-bottom: 5px;
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
+        text-align: center;
+        width: 100%;
+        max-width: 520px;
     }
 
     .header-breadcrumb {
-        color: #888;
-        margin-bottom: 25px;
-        border-bottom: 1px solid #222;
-        padding-bottom: 10px;
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
+        color: var(--text-muted);
+        margin-bottom: 28px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 14px;
+        text-align: center;
+        width: 100%;
+        max-width: 520px;
     }
 
     .form-card {
-        background: #111;
-        padding: 35px;
-        border-radius: 15px;
+        background: linear-gradient(135deg, #1a1a1a, #0f0f0f);
+        padding: 36px;
+        border-radius: 16px;
         width: 100%;
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        border: 1px solid #333;
+        max-width: 520px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        border: 2px solid var(--border-color);
     }
 
     .form-group {
@@ -93,55 +94,57 @@
 
     .form-group label {
         margin-bottom: 8px;
-        font-size: 14px;
-        font-weight: 700;
-        color: #f2cc7d; /* Dourado padrão */
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--accent);
         text-transform: uppercase;
+        letter-spacing: 1px;
     }
 
     .form-group input,
     .form-group select {
-        background: #1a1a1a;
-        border: 1px solid #444;
-        padding: 15px;
-        border-radius: 12px;
-        color: #fff;
-        font-size: 16px;
-        transition: 0.3s;
+        background: var(--input-bg);
+        border: 2px solid var(--border-color);
+        padding: 14px 16px;
+        border-radius: var(--radius-md);
+        color: var(--text-main);
+        font-size: 15px;
+        font-family: Arial, sans-serif;
+        transition: border-color .2s, box-shadow .2s;
+        outline: none;
     }
 
     .form-group input:focus,
     .form-group select:focus {
-        border-color: #f2cc7d;
-        outline: none;
-        box-shadow: 0 0 10px rgba(242, 204, 125, 0.1);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-glow);
     }
 
     .actions-container {
         display: flex;
         flex-direction: column;
-        gap: 15px;
-        margin-top: 10px;
+        gap: 12px;
+        margin-top: 16px;
     }
 
     .btn-save {
         width: 100%;
-        background: #f2cc7d;
+        background: linear-gradient(135deg, #F2C84B, #d4a800);
         padding: 15px;
         color: #000;
         border: none;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 800;
         text-transform: uppercase;
-        border-radius: 12px;
+        letter-spacing: .5px;
+        border-radius: var(--radius-md);
         cursor: pointer;
-        transition: 0.3s;
-        box-shadow: 0 4px 15px rgba(242, 204, 125, 0.2);
+        transition: transform .2s, box-shadow .2s;
+        box-shadow: 0 4px 12px rgba(242,200,75,.3);
     }
-
     .btn-save:hover {
-        background: #fff;
-        transform: translateY(-2px);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(242,200,75,.45);
     }
 
     .btn-cancelar {
@@ -150,19 +153,18 @@
         text-align: center;
         background: transparent;
         padding: 12px;
-        color: #888;
-        font-size: 14px;
+        color: var(--text-muted);
+        font-size: 13px;
         font-weight: 600;
-        border-radius: 12px;
-        transition: 0.3s;
+        border-radius: var(--radius-md);
+        transition: .25s;
         text-decoration: none;
-        border: 1px solid #333;
+        border: 2px solid var(--border-color);
         box-sizing: border-box;
     }
-
     .btn-cancelar:hover {
-        background: #222;
-        color: #fff;
-        border-color: #444;
+        background: var(--border-color);
+        color: var(--text-main);
+        border-color: var(--border-hover);
     }
 </style>

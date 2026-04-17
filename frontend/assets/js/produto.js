@@ -230,21 +230,26 @@ const ProductDetailManager = (() => {
         const precoOriginal = (prod.preco * 1.25).toFixed(2).replace('.', ',');
 
         return `
-            <div class="product-card">
-                <a href="produto.html?id=${prod.id}" class="card-link">
-                    <div class="card-img-container">
-                        <img src="${prod.img}" class="card-main-img" alt="${prod.nome}" loading="lazy">
-                    </div>
-                    <div class="card-body">
-                        <p class="card-category text-uppercase small opacity-50 mb-1">${prod.categoriaOrigem || 'Geral'}</p>
-                        <h5 class="card-title">${prod.nome}</h5>
-                        <div class="price-info">
-                            <p class="original-price">R$ ${precoOriginal}</p>
-                            <p class="main-price gold-text">R$ ${precoFormatado}</p>
-                        </div>
-                    </div>
-                </a>
+        <div class="group relative flex flex-col h-full bg-[#050505] rounded-2xl overflow-hidden border border-white/5 transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(242,200,75,0.15)] hover:border-[#F2C84B]/30 cursor-pointer" onclick="window.location.href='produto.html?id=${prod.id}'">
+            <!-- Imagem -->
+            <div class="relative aspect-[3/4] overflow-hidden bg-[#111]">
+                <img src="${prod.img}" alt="${prod.nome}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100" loading="lazy">
+                <!-- Overlay sutil -->
+                <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60 pointer-events-none"></div>
             </div>
+
+            <!-- Conteúdo -->
+            <div class="p-6 flex flex-col items-center text-center flex-1 relative z-10">
+                <p class="text-[9px] text-[#F2C84B] font-bold uppercase tracking-widest mb-2">${prod.categoriaOrigem || 'Geral'}</p>
+                <h5 class="text-white font-bold text-sm uppercase tracking-[0.1em] mb-4 group-hover:text-[#F2C84B] transition-colors leading-snug">${prod.nome}</h5>
+                
+                <div class="mt-auto flex flex-col items-center w-full">
+                    <div class="flex items-center justify-center gap-2 mb-1">
+                        <span class="text-white font-black text-xl tracking-tighter group-hover:text-[#F2C84B] transition-colors">R$ ${precoFormatado}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
         `;
     };
 
