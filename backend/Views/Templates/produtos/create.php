@@ -34,8 +34,13 @@
 
                 <div class="form-group">
 
-                    <label for="id_categoria">ID da Categoria:</label>
-                    <input type="number" id="id_categoria" name="id_categoria" required>
+                    <label for="id_categoria">Categoria:</label>
+                    <select id="id_categoria" name="id_categoria" required>
+                        <option value="">Selecione uma Categoria...</option>
+                        <?php foreach($categorias as $c): ?>
+                            <option value="<?= $c['id_categorias'] ?>"><?= htmlspecialchars($c['nome_categorias']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
             </div>
 
@@ -62,6 +67,19 @@
                         <img id="previewOriginal" />
                         <p id="infoOriginal"></p>
                     </div>
+                </div>
+
+                <!-- Galeria Adicional -->
+                <div class="form-group" style="margin-top:20px;">
+                    <label>Galeria de Mídias Extras (Imagens e Vídeos MP4):</label>
+                    <label class="upload-area" for="galeria_produtos" style="height:120px; border-style:dashed;">
+                        <div class="upload-placeholder">
+                            <i class="fa fa-images"></i>
+                            <span>Clique para adicionar mais fotos ou vídeos</span>
+                        </div>
+                        <input id="galeria_produtos" name="galeria_produtos[]" type="file" accept="image/*,video/mp4" multiple>
+                    </label>
+                    <div id="galeria-preview" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;"></div>
                 </div>
             </div>
         </div>
@@ -344,6 +362,54 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Erro ao processar imagem.");
         }
     });
+
+    // Lógica da Galeria Adicional
+    const galeriaInput = document.getElementById('galeria_produtos');
+    const galeriaPreview = document.getElementById('galeria-preview');
+    let galeriaArquivos = []; // manter o controle de arquivos da galeria
+
+    galeriaInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files);
+        if (!files.length) return;
+
+        files.forEach(file => {
+            galeriaArquivos.push(file);
+            const isVideo = file.type.startsWith('video');
+            const url = URL.createObjectURL(file);
+            
+            const div = document.createElement('div');
+            div.className = 'galeria-item';
+            div.style.cssText = 'position:relative; width:80px; height:80px; border-radius:8px; overflow:hidden; border:1px solid #555;';
+
+            if (isVideo) {
+                div.innerHTML = `<video src="${url}" style="width:100%; height:100%; object-fit:cover;" muted></video>
+                                 <i class="fa fa-play" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#fff; text-shadow:0 0 5px #000;"></i>`;
+            } else {
+                div.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover;">`;
+            }
+
+            const removeBtn = document.createElement('button');
+            removeBtn.innerHTML = '<i class="fa fa-times"></i>';
+            removeBtn.style.cssText = 'position:absolute; top:2px; right:2px; background:rgba(255,0,0,0.8); color:white; border:none; border-radius:50%; width:20px; height:20px; font-size:10px; cursor:pointer;';
+            removeBtn.onclick = (ev) => {
+                ev.preventDefault();
+                galeriaArquivos = galeriaArquivos.filter(f => f !== file);
+                div.remove();
+                atualizarGaleriaInput();
+            };
+
+            div.appendChild(removeBtn);
+            galeriaPreview.appendChild(div);
+        });
+
+        atualizarGaleriaInput();
+    });
+
+    function atualizarGaleriaInput() {
+        const dt = new DataTransfer();
+        galeriaArquivos.forEach(f => dt.items.add(f));
+        galeriaInput.files = dt.files;
+    }
 });
 
 function addCor() {

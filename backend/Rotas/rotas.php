@@ -315,6 +315,8 @@ class Rotas
             '/backend/adminlogin' => 'AuthController@authenticaradmin',
             '/api/newsletter/inscrever' => 'NewsletterController@inscrever',
             '/admin/newsletter/enviar' => 'NewsletterController@enviarFila',
+            '/configuracoes/whatsapp' => 'ConfiguracoesController@salvarWhatsapp',
+            '/backend/configuracoes/whatsapp' => 'ConfiguracoesController@salvarWhatsapp',
          ]
       ];
    }

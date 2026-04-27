@@ -80,14 +80,19 @@ function buscarCoresInativos() {
   function inserirCor($id_produto, 
   $cor, 
   $quantidade) {
-    $sql = "INSERT INTO tbl_cores (id_produto, cor_cores, quantidade_cores) 
-            VALUES (:id_produto, :cor, :quantidade)";
+    // Buscar próximo ID caso AUTO_INCREMENT não esteja configurado
+    $stmtId = $this->db->query("SELECT MAX(id_cores) FROM tbl_cores");
+    $nextId = (int)$stmtId->fetchColumn() + 1;
+
+    $sql = "INSERT INTO tbl_cores (id_cores, id_produto, cor_cores, quantidade_cores) 
+            VALUES (:id_cores, :id_produto, :cor, :quantidade)";
     $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(':id_cores', $nextId);
     $stmt->bindParam(':id_produto', $id_produto);
     $stmt->bindParam(':cor', $cor);
     $stmt->bindParam(':quantidade', $quantidade);
     if ($stmt->execute()) {
-      return $this->db->lastInsertId();
+      return $nextId;
     } else {
       return false;
     }

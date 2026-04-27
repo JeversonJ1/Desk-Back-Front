@@ -32,8 +32,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="id_categoria">ID DA CATEGORIA:</label>
-                    <input type="number" id="id_categoria" name="id_categoria" value="<?= $produtos['id_categoria']; ?>" required>
+                    <label for="id_categoria">CATEGORIA:</label>
+                    <select id="id_categoria" name="id_categoria" required>
+                        <option value="">Selecione uma Categoria...</option>
+                        <?php foreach($categorias as $c): ?>
+                            <option value="<?= $c['id_categorias'] ?>" <?= $produtos['id_categoria'] == $c['id_categorias'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($c['nome_categorias']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <!-- Cores -->
@@ -86,16 +93,59 @@
             <div class="form-upload-section">
                 <div class="image-preview-container" onclick="document.getElementById('imagem_produtos').click();">
                     <?php 
-                        $fotoAtual = !empty($produtos['imagem_produtos']) ? $produtos['imagem_produtos'] : '/img/placeholder-produto.png';
+                        $fotoRaw = $produtos['imagem_produtos'] ?? '';
+                        if (!empty($fotoRaw)) {
+                            $fotoAtual = (str_starts_with($fotoRaw, 'http') || str_starts_with($fotoRaw, '/')) ? $fotoRaw : '/backend/upload/' . $fotoRaw;
+                        } else {
+                            $fotoAtual = 'https://placehold.co/400x400?text=Capa';
+                        }
                     ?>
                     <img id="imgPreview" src="<?= $fotoAtual; ?>" alt="Preview">
                     <div class="upload-overlay">
                         <i class="fa fa-camera"></i>
-                        <span>Alterar Foto</span>
+                        <span>Alterar Capa</span>
                     </div>
                 </div>
                 <input type="file" id="imagem_produtos" name="imagem_produtos" hidden accept="image/*" onchange="previewImage(this);">
-                <small class="upload-tip">JPG, PNG ou WebP</small>
+                <small class="upload-tip" style="text-align:center; display:block; margin-top:5px;">JPG, PNG ou WebP</small>
+                
+                <!-- Galeria Adicional -->
+                <div class="form-group" style="margin-top:30px;">
+                    <label>Galeria de Mídias (Imagens e Vídeos):</label>
+                    <div id="galeria-preview" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+                        <?php if(!empty($galeria)): ?>
+                            <?php foreach($galeria as $midia): ?>
+                                <?php 
+                                    $caminhoMidia = $midia['caminho_imagem'];
+                                    if (!str_starts_with($caminhoMidia, 'http') && !str_starts_with($caminhoMidia, '/')) {
+                                        $caminhoMidia = '/backend/upload/' . $caminhoMidia;
+                                    }
+                                    $isVid = preg_match('/\.mp4$/i', $caminhoMidia); 
+                                ?>
+                                <div class="galeria-item" style="position:relative; width:80px; height:80px; border-radius:8px; overflow:hidden; border:1px solid #555;">
+                                    <?php if($isVid): ?>
+                                        <video src="<?= htmlspecialchars($caminhoMidia) ?>" style="width:100%; height:100%; object-fit:cover;" muted></video>
+                                        <i class="fa fa-play" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#fff; text-shadow:0 0 5px #000; pointer-events:none;"></i>
+                                    <?php else: ?>
+                                        <img src="<?= htmlspecialchars($caminhoMidia) ?>" style="width:100%; height:100%; object-fit:cover;">
+                                    <?php endif; ?>
+                                    
+                                    <!-- Botão de Remover Mídia -->
+                                    <button type="button" 
+                                            title="Remover"
+                                            style="position:absolute; top:2px; right:2px; background:rgba(255,0,0,0.8); color:#fff; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center; z-index:10;"
+                                            onclick="removerMidia(this, <?= $midia['id_imagem'] ?>)">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                    <label class="btn-add" style="display:block; text-align:center; cursor:pointer;" for="galeria_produtos">
+                        <i class="fa fa-plus"></i> Adicionar Mais Mídias
+                    </label>
+                    <input id="galeria_produtos" name="galeria_produtos[]" type="file" accept="image/*,video/mp4" multiple style="display:none;" onchange="previewGaleria(this);">
+                </div>
             </div>
         </div>
 
@@ -124,6 +174,28 @@ function previewImage(input) {
     }
 }
 
+// Preview da Galeria
+function previewGaleria(input) {
+    const previewContainer = document.getElementById('galeria-preview');
+    if (input.files) {
+        Array.from(input.files).forEach(file => {
+            const url = URL.createObjectURL(file);
+            const isVideo = file.type.startsWith('video');
+            const div = document.createElement('div');
+            div.className = 'galeria-item';
+            div.style.cssText = 'position:relative; width:80px; height:80px; border-radius:8px; overflow:hidden; border:1px solid #555;';
+
+            if (isVideo) {
+                div.innerHTML = `<video src="${url}" style="width:100%; height:100%; object-fit:cover;" muted></video>
+                                 <i class="fa fa-play" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#fff; text-shadow:0 0 5px #000;"></i>`;
+            } else {
+                div.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover;">`;
+            }
+            previewContainer.appendChild(div);
+        });
+    }
+}
+
 function addCor() {
     const container = document.getElementById('cores-container');
     const row = document.createElement('div');
@@ -147,6 +219,21 @@ function addTamanho() {
     `;
     container.appendChild(row);
 }
+</script>
+<script>
+    function removerMidia(btn, id) {
+        if(!confirm('Tem certeza que deseja remover esta mídia? Ela será excluída ao salvar.')) return;
+        
+        // Adiciona id no form
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'remover_imagens[]';
+        input.value = id;
+        btn.closest('form').appendChild(input);
+        
+        // Remove da tela
+        btn.parentElement.remove();
+    }
 </script>
 
 <style>

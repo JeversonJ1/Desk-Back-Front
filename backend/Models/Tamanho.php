@@ -88,14 +88,19 @@ public function paginacao(int $pagina = 1, int $porPagina = 50){
 
   // Método para inserir um novo tamanho
   function inserirTamanho($id_produto, $tamanho, $quantidade) {
-    $sql = "INSERT INTO tbl_tamanhos (id_produto, tamanho_tamanhos, quantidade_tamanhos) 
-            VALUES (:id_produto, :tamanho, :quantidade)";
+    // Buscar próximo ID caso AUTO_INCREMENT não esteja configurado
+    $stmtId = $this->db->query("SELECT MAX(id_tamanhos) FROM tbl_tamanhos");
+    $nextId = (int)$stmtId->fetchColumn() + 1;
+
+    $sql = "INSERT INTO tbl_tamanhos (id_tamanhos, id_produto, tamanho_tamanhos, quantidade_tamanhos) 
+            VALUES (:id_tamanhos, :id_produto, :tamanho, :quantidade)";
     $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(':id_tamanhos', $nextId);
     $stmt->bindParam(':id_produto', $id_produto);
     $stmt->bindParam(':tamanho', $tamanho);
     $stmt->bindParam(':quantidade', $quantidade);
     if ($stmt->execute()) {
-      return $this->db->lastInsertId();
+      return $nextId;
     } else {
       return false;
     }

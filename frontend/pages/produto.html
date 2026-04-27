@@ -14,10 +14,10 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/global/variables.css">
   <link rel="stylesheet" href="../assets/css/global/main.css">
-    <link rel="stylesheet" href="../assets/css/components/menu-modal.css">
+  <link rel="stylesheet" href="../assets/css/components/menu-modal.css">
   <link rel="stylesheet" href="../assets/css/global/footer.css">
   <link rel="stylesheet" href="../assets/css/components/produto.css">
   <link rel="stylesheet" href="../assets/css/components/reviews.css">
@@ -26,100 +26,120 @@
   <style>
     .fade-in { animation: fadeIn 0.8s ease forwards; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    
+    /* Scrollbar oculta para as thumbs */
+    .custom-scrollbar-hidden::-webkit-scrollbar { display: none; }
+    .custom-scrollbar-hidden { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 
-<body class="bg-[var(--brand-dark)] text-white">
+<body class="bg-[var(--brand-dark)] text-white font-['Inter']">
   <header></header>
 
-  <main class="pt-8 pb-16">
-    <div class="container mx-auto px-4 lg:px-12">
+  <main class="pt-6 pb-16">
+    <div class="container mx-auto px-4 lg:px-8 max-w-[1400px]">
 
       <!-- Breadcrumb -->
-      <nav aria-label="breadcrumb" class="mb-8">
-        <ol class="flex text-sm text-gray-500 space-x-2" id="product-breadcrumb">
-          <li><a href="/" class="hover:text-white transition uppercase tracking-wider text-[10px] font-bold">Home</a> <span class="mx-2">/</span></li>
-          <li><a href="catalogo.html" class="hover:text-white transition uppercase tracking-wider text-[10px] font-bold">Loja</a> <span class="mx-2">/</span></li>
-          <li class="text-[var(--brand-yellow)] uppercase tracking-wider text-[10px] font-bold" aria-current="page" id="breadcrumb-current">Carregando...</li>
+      <nav aria-label="breadcrumb" class="mb-6 flex justify-center text-[10px] text-gray-500 uppercase tracking-widest font-bold">
+        <ol class="flex space-x-2" id="product-breadcrumb">
+          <li><a href="/" class="hover:text-white transition">Home</a> <span class="mx-2">/</span></li>
+          <li><a href="catalogo.html" class="hover:text-white transition" id="breadcrumb-cat">Loja</a> <span class="mx-2">/</span></li>
+          <li class="text-[var(--brand-yellow)]" aria-current="page" id="breadcrumb-current">Carregando...</li>
         </ol>
       </nav>
 
-      <div class="flex flex-col lg:flex-row gap-8 lg:gap-16">
-        <!-- Galeria de Imagens -->
-        <div class="w-full lg:w-1/2">
-          <div class="product-gallery">
-            <div class="main-image-container fade-in rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative aspect-[4/5] bg-[#111]">
-              <img id="main-product-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="w-full h-full object-cover" alt="Produto">
+      <div class="bg-[#111] border border-white/5 p-4 lg:p-8 shadow-2xl rounded-2xl">
+        <div class="flex flex-col lg:flex-row gap-8">
+          
+          <!-- Coluna 1: Miniaturas Verticais (escondido no mobile) -->
+          <div class="hidden lg:flex flex-col gap-3 w-24 shrink-0 relative">
+            <button class="text-gray-500 hover:text-white mx-auto transition"><i class="bi bi-chevron-up"></i></button>
+            <div id="product-gallery-thumbnails" class="flex flex-col gap-3 overflow-y-auto max-h-[600px] custom-scrollbar-hidden items-center w-full">
+                <!-- Thumbs loaded by JS -->
             </div>
           </div>
-        </div>
 
-        <!-- Informações do Produto -->
-        <div class="w-full lg:w-1/2">
-          <div class="fade-in pt-4">
-            <span class="text-[var(--brand-yellow)] text-xs font-bold uppercase tracking-[0.2em] mb-2 block" id="product-category">GERAL</span>
-            <h1 class="font-['Outfit'] text-3xl md:text-5xl font-extrabold uppercase mb-4" id="product-name">Buscando produto...</h1>
+          <!-- Coluna 2: Imagens Principais (Grid 1 grande) -->
+          <div class="w-full lg:flex-1 grid grid-cols-1 gap-4 product-gallery main-image-container-wrapper">
+             <div class="aspect-[4/5] lg:aspect-[3/4] bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden main-image-container relative flex items-center justify-center">
+                <img id="main-product-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="w-full h-full object-cover fade-in" alt="Produto">
+             </div>
+          </div>
 
-            <div class="flex items-center gap-4 mb-6">
-              <div class="flex text-[var(--brand-yellow)] text-xl" id="product-rating-stars">
-                <i class="bi bi-star"></i>
-                <i class="bi bi-star"></i>
-                <i class="bi bi-star"></i>
-                <i class="bi bi-star"></i>
-                <i class="bi bi-star"></i>
+          <!-- Coluna 3: Informações do Produto -->
+          <div class="w-full lg:w-[380px] shrink-0 pt-2">
+            <div class="fade-in">
+              <h1 class="font-['Outfit'] text-2xl font-black uppercase mb-2 text-white" id="product-name">Buscando produto...</h1>
+
+              <div class="flex items-center gap-2 mb-6 text-[11px] font-bold text-gray-400">
+                <div class="flex text-[var(--brand-yellow)] text-sm" id="product-rating-stars">
+                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+                </div>
+                <a href="#tab-reviews" class="hover:text-white transition" id="product-rating-count-text">(0) - Faça uma avaliação</a>
               </div>
-              <a href="#tab-reviews" class="text-sm text-gray-400 hover:text-white transition" id="product-rating-count-text">(0 avaliações)</a>
-            </div>
-            
-            <p id="product-short-desc" class="text-gray-400 text-[0.95rem] leading-relaxed line-clamp-4 mb-8"></p>
-
-            <div class="mb-8 p-6 bg-[#111] rounded-2xl border border-white/5">
-
-              <p class="text-4xl font-bold text-white mb-2" id="price-current">R$ 00,00</p>
-              <p class="text-xs text-[var(--brand-yellow)] font-bold tracking-[0.1em] uppercase" id="price-installments">em até 6x de R$ 0,00 sem juros</p>
-            </div>
-
-            <!-- Seletores -->
-            <div class="mb-6">
-              <span class="block text-xs font-bold text-gray-400 uppercase tracking-[0.1em] mb-3">Selecione o Tamanho</span>
-              <div class="flex gap-3">
-                <input type="radio" name="size" id="size-p" class="hidden peer/p"><label for="size-p"
-                  class="w-12 h-12 flex items-center justify-center border border-gray-700 rounded-lg cursor-pointer text-sm font-bold peer-checked/p:bg-[var(--brand-yellow)] peer-checked/p:text-black peer-checked/p:border-[var(--brand-yellow)] hover:border-gray-500 transition">P</label>
-                <input type="radio" name="size" id="size-m" class="hidden peer/m" checked><label for="size-m"
-                  class="w-12 h-12 flex items-center justify-center border border-gray-700 rounded-lg cursor-pointer text-sm font-bold peer-checked/m:bg-[var(--brand-yellow)] peer-checked/m:text-black peer-checked/m:border-[var(--brand-yellow)] hover:border-gray-500 transition">M</label>
-                <input type="radio" name="size" id="size-g" class="hidden peer/g"><label for="size-g"
-                  class="w-12 h-12 flex items-center justify-center border border-gray-700 rounded-lg cursor-pointer text-sm font-bold peer-checked/g:bg-[var(--brand-yellow)] peer-checked/g:text-black peer-checked/g:border-[var(--brand-yellow)] hover:border-gray-500 transition">G</label>
-                <input type="radio" name="size" id="size-gg" class="hidden peer/gg"><label for="size-gg"
-                  class="w-12 h-12 flex items-center justify-center border border-gray-700 rounded-lg cursor-pointer text-sm font-bold peer-checked/gg:bg-[var(--brand-yellow)] peer-checked/gg:text-black peer-checked/gg:border-[var(--brand-yellow)] hover:border-gray-500 transition">GG</label>
-                <input type="radio" name="size" id="size-xg" class="hidden peer/xg"><label for="size-xg"
-                  class="w-12 h-12 flex items-center justify-center border border-gray-700 rounded-lg cursor-pointer text-sm font-bold peer-checked/xg:bg-[var(--brand-yellow)] peer-checked/xg:text-black peer-checked/xg:border-[var(--brand-yellow)] hover:border-gray-500 transition">XG</label>
+              
+              <p id="product-short-desc" class="hidden"></p>
+              
+              <!-- Preços -->
+              <div class="mb-6 bg-[#0a0a0a] border border-white/5 p-4 rounded-xl">
+                <p class="text-[11px] text-gray-500 line-through mb-1" id="price-old-label">de <span id="price-old">R$ 00,00</span> por</p>
+                <div class="flex items-end gap-2 flex-wrap">
+                    <p class="text-3xl font-black text-white" id="price-current">R$ 00,00</p>
+                    <p class="text-[11px] text-gray-400 mb-1 hidden" id="price-discount-container">OU <span class="text-[var(--brand-yellow)] font-bold text-lg" id="price-discount">R$ 00,00</span> na compra de 3 ou mais peças</p>
+                </div>
+                <p class="text-[11px] text-[var(--brand-yellow)] font-bold tracking-widest uppercase mt-2" id="price-installments">Ou 6x de R$ 0,00</p>
               </div>
-            </div>
 
-            <div class="mb-8">
-              <span class="block text-xs font-bold text-gray-400 uppercase tracking-[0.1em] mb-3">Selecione a Cor</span>
-              <div class="color-selector flex gap-3">
-                <!-- Carregado via JS -->
+              <!-- Cor -->
+              <div class="mb-6">
+                <span class="block text-[13px] font-bold text-gray-300 uppercase tracking-widest mb-3">Cor:</span>
+                <div class="color-selector flex gap-3 flex-wrap">
+                  <!-- Carregado via JS -->
+                </div>
               </div>
-            </div>
 
-            <!-- Ações -->
-            <div class="flex flex-col sm:flex-row gap-4">
-              <div class="flex items-center border border-gray-700 rounded-xl bg-black">
-                <button class="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-white transition" onclick="adjustQty(-1)"><i class="bi bi-dash text-xl"></i></button>
-                <input type="number" value="1" min="1" class="w-12 h-12 bg-transparent text-center text-white border-none focus:ring-0 font-bold p-0 m-0 [&::-webkit-inner-spin-button]:appearance-none" id="buy-qty" readonly>
-                <button class="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-white transition" onclick="adjustQty(1)"><i class="bi bi-plus text-xl"></i></button>
+              <!-- Tamanho -->
+              <div class="mb-6 relative">
+                <span class="block text-[13px] font-bold text-gray-300 uppercase tracking-widest mb-3">Tamanho:</span>
+                <div class="flex gap-2 flex-wrap size-selector" id="size-selector-container">
+                  <input type="radio" name="size" id="size-p" class="hidden peer/p"><label for="size-p"
+                    class="w-12 h-12 flex items-center justify-center border border-gray-700 bg-black rounded-lg cursor-pointer text-sm font-bold text-gray-400 peer-checked/p:border-[var(--brand-yellow)] peer-checked/p:text-black peer-checked/p:bg-[var(--brand-yellow)] hover:border-gray-500 transition shadow-[0_0_15px_rgba(248,211,70,0)] peer-checked/p:shadow-[0_0_15px_rgba(248,211,70,0.3)]">P</label>
+                  <input type="radio" name="size" id="size-m" class="hidden peer/m" checked><label for="size-m"
+                    class="w-12 h-12 flex items-center justify-center border border-gray-700 bg-black rounded-lg cursor-pointer text-sm font-bold text-gray-400 peer-checked/m:border-[var(--brand-yellow)] peer-checked/m:text-black peer-checked/m:bg-[var(--brand-yellow)] hover:border-gray-500 transition shadow-[0_0_15px_rgba(248,211,70,0)] peer-checked/m:shadow-[0_0_15px_rgba(248,211,70,0.3)]">M</label>
+                  <input type="radio" name="size" id="size-g" class="hidden peer/g"><label for="size-g"
+                    class="w-12 h-12 flex items-center justify-center border border-gray-700 bg-black rounded-lg cursor-pointer text-sm font-bold text-gray-400 peer-checked/g:border-[var(--brand-yellow)] peer-checked/g:text-black peer-checked/g:bg-[var(--brand-yellow)] hover:border-gray-500 transition shadow-[0_0_15px_rgba(248,211,70,0)] peer-checked/g:shadow-[0_0_15px_rgba(248,211,70,0.3)]">G</label>
+                  <input type="radio" name="size" id="size-gg" class="hidden peer/gg"><label for="size-gg"
+                    class="w-12 h-12 flex items-center justify-center border border-gray-700 bg-black rounded-lg cursor-pointer text-sm font-bold text-gray-400 peer-checked/gg:border-[var(--brand-yellow)] peer-checked/gg:text-black peer-checked/gg:bg-[var(--brand-yellow)] hover:border-gray-500 transition shadow-[0_0_15px_rgba(248,211,70,0)] peer-checked/gg:shadow-[0_0_15px_rgba(248,211,70,0.3)]">GG</label>
+                  <input type="radio" name="size" id="size-xg" class="hidden peer/xg"><label for="size-xg"
+                    class="w-12 h-12 flex items-center justify-center border border-gray-700 bg-black rounded-lg cursor-pointer text-sm font-bold text-gray-400 peer-checked/xg:border-[var(--brand-yellow)] peer-checked/xg:text-black peer-checked/xg:bg-[var(--brand-yellow)] hover:border-gray-500 transition shadow-[0_0_15px_rgba(248,211,70,0)] peer-checked/xg:shadow-[0_0_15px_rgba(248,211,70,0.3)]">XG</label>
+                </div>
               </div>
-              <button class="flex-1 bg-[var(--brand-yellow)] text-black font-bold uppercase tracking-[0.1em] rounded-xl hover:brightness-110 shadow-lg shadow-yellow-500/20 py-4 px-6 flex items-center justify-center gap-2 transition" id="btn-add-to-cart">
-                <i class="bi bi-bag-plus text-xl"></i> ADICIONAR AO CARRINHO
-              </button>
+
+              <!-- Cashback banner -->
+              <div class="bg-[#1a1a1a] border border-white/5 p-4 mb-6 flex flex-col justify-center rounded-xl">
+                  <span class="text-[11px] text-gray-400">Ganhe até</span>
+                  <span class="text-sm font-bold text-[var(--brand-yellow)]">R$ 6,70 de Cashback</span>
+              </div>
+
+              <!-- Botão Adicionar -->
+              <div class="mb-8 flex flex-col sm:flex-row gap-4">
+                  <div class="flex items-center border border-gray-700 rounded-xl bg-black px-2">
+                    <button class="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-[var(--brand-yellow)] transition" onclick="adjustQty(-1)"><i class="bi bi-dash text-xl"></i></button>
+                    <input type="number" value="1" min="1" class="w-12 h-12 bg-transparent text-center text-white border-none focus:ring-0 font-bold p-0 m-0 [&::-webkit-inner-spin-button]:appearance-none" id="buy-qty" readonly>
+                    <button class="w-12 h-12 flex items-center justify-center text-gray-400 hover:text-[var(--brand-yellow)] transition" onclick="adjustQty(1)"><i class="bi bi-plus text-xl"></i></button>
+                  </div>
+                  <button class="flex-1 bg-[var(--brand-yellow)] text-black font-black text-sm py-4 rounded-xl hover:brightness-110 transition uppercase tracking-[0.1em] shadow-[0_10px_20px_rgba(248,211,70,0.2)] flex items-center justify-center gap-2" id="btn-add-to-cart">
+                    <i class="bi bi-bag-plus text-lg"></i> ADICIONAR AO CARRINHO
+                  </button>
+              </div>
+
             </div>
           </div>
         </div>
       </div>
 
       <!-- Tabs de Informações -->
-      <section class="mt-20">
+      <section class="mt-16 bg-[#111] border border-white/5 p-8 rounded-2xl shadow-2xl">
         <div class="flex border-b border-gray-800 mb-8" id="productTabs" role="tablist">
             <button class="px-8 py-4 border-b-2 border-[var(--brand-yellow)] text-[var(--brand-yellow)] font-bold uppercase text-sm tracking-wider" id="tab-btn-description" onclick="switchProductTab('description')">
               Descrição
@@ -141,13 +161,13 @@
               </div>
             </div>
 
-            <!-- Form de Avaliação (visível apenas para compradores) -->
-            <div id="review-form-container" class="mt-8 p-8 bg-[#111] border border-white/5 rounded-2xl hidden shadow-2xl">
+            <!-- Form de Avaliação -->
+            <div id="review-form-container" class="mt-8 p-8 bg-[#0a0a0a] border border-white/5 rounded-2xl hidden shadow-2xl">
               <h4 class="text-white text-xl font-bold mb-6 font-['Outfit'] tracking-[0.1em] uppercase">Sua Avaliação</h4>
               <form id="product-review-form">
                 <div class="mb-6">
                   <label class="block text-gray-400 text-xs font-bold tracking-[0.1em] uppercase mb-3">Sua Nota</label>
-                  <div class="flex text-3xl text-gray-600 gap-2 cursor-pointer transition-colors" id="star-rating-container">
+                  <div class="flex text-3xl text-gray-700 gap-2 cursor-pointer transition-colors" id="star-rating-container">
                     <i class="bi bi-star rating-star hover:text-[var(--brand-yellow)] transition" data-value="1"></i>
                     <i class="bi bi-star rating-star hover:text-[var(--brand-yellow)] transition" data-value="2"></i>
                     <i class="bi bi-star rating-star hover:text-[var(--brand-yellow)] transition" data-value="3"></i>
@@ -161,7 +181,7 @@
                   <textarea class="w-full bg-black text-white border border-gray-800 rounded-xl p-4 focus:border-[var(--brand-yellow)] focus:ring-1 focus:ring-[var(--brand-yellow)] transition outline-none" id="review-comment" rows="4"
                     required></textarea>
                 </div>
-                <button type="submit" class="bg-[var(--brand-yellow)] text-black font-bold tracking-[0.1em] uppercase px-8 py-3 rounded-lg hover:brightness-110 transition shadow-lg shadow-yellow-500/20">ENVIAR AVALIAÇÃO</button>
+                <button type="submit" class="bg-[var(--brand-yellow)] text-black font-bold tracking-[0.1em] uppercase px-8 py-3 rounded-lg hover:brightness-110 transition shadow-[0_5px_15px_rgba(248,211,70,0.2)]">ENVIAR AVALIAÇÃO</button>
               </form>
             </div>
           </div>
@@ -169,9 +189,9 @@
       </section>
 
       <!-- Produtos Relacionados -->
-      <section class="mt-24 pb-12">
+      <section class="mt-16 pb-12">
         <div class="text-center mb-12">
-          <h2 class="font-['Outfit'] text-3xl font-extrabold text-white tracking-[0.2em] uppercase">QUEM VIU, TAMBÉM VIU</h2>
+          <h2 class="font-['Outfit'] text-2xl font-black text-white tracking-[0.2em] uppercase">QUEM VIU, TAMBÉM VIU</h2>
           <div class="w-16 h-1 bg-[var(--brand-yellow)] mx-auto mt-4 rounded-full"></div>
         </div>
         <div id="related-products-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -252,6 +272,3 @@
   <script src="../assets/js/categorias.js"></script>
 </body>
 </html>
-
-
-

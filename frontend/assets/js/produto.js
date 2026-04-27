@@ -88,11 +88,35 @@ const ProductDetailManager = (() => {
         const prodShortDesc = document.getElementById('product-short-desc');
         if (prodShortDesc) prodShortDesc.textContent = product.descricao || 'Nenhuma descrição disponível para este produto.';
 
-        // Imagem
+        // Imagem Principal
         const mainImg = document.getElementById('main-product-img');
         if (mainImg) {
             mainImg.src = product.img;
             mainImg.alt = product.nome;
+        }
+
+        // Galeria de Miniaturas
+        const galleryContainer = document.getElementById('product-gallery-thumbnails');
+        if (galleryContainer) {
+            let allMedia = [product.img];
+            if (product.galeria && product.galeria.length > 0) {
+                allMedia = [...allMedia, ...product.galeria];
+            }
+            
+            galleryContainer.innerHTML = allMedia.map((mediaUrl, idx) => {
+                const isVideo = !!mediaUrl.match(/\.mp4$/i);
+                const mediaHtml = isVideo ? 
+                    `<video src="${mediaUrl}" class="w-full h-full object-cover"></video><div class="absolute inset-0 flex items-center justify-center bg-black/30"><i class="bi bi-play-fill text-white text-xl"></i></div>` : 
+                    `<img src="${mediaUrl}" class="w-full h-full object-cover" alt="Thumb ${idx}">`;
+                    
+                return `
+                <div class="relative w-full aspect-[3/4] shrink-0 rounded-lg overflow-hidden cursor-pointer border-2 ${idx === 0 ? 'border-[var(--brand-yellow)]' : 'border-transparent hover:border-gray-500'} transition" 
+                     onclick="changeMainMedia(this, '${mediaUrl}', ${isVideo})">
+                    ${mediaHtml}
+                </div>`;
+            }).join('');
+            
+            // Renderiza apenas uma imagem grande na view principal (removida lógica de 2ª imagem)
         }
 
         // Preços
@@ -142,8 +166,8 @@ const ProductDetailManager = (() => {
                     const sizeLabel = item.tamanho_tamanhos.toUpperCase();
                     const sizeId = `size-${sizeLabel.toLowerCase()}`;
                     return `
-                        <input type="radio" name="size" id="${sizeId}" class="size-option" ${index === 0 ? 'checked' : ''}>
-                        <label for="${sizeId}" class="size-label">${sizeLabel}</label>
+                        <input type="radio" name="size" id="${sizeId}" class="hidden peer/${sizeId}" ${index === 0 ? 'checked' : ''}>
+                        <label for="${sizeId}" class="w-12 h-12 flex items-center justify-center border border-gray-700 bg-black rounded-lg cursor-pointer text-sm font-bold text-gray-400 peer-checked/${sizeId}:border-[var(--brand-yellow)] peer-checked/${sizeId}:text-black peer-checked/${sizeId}:bg-[var(--brand-yellow)] hover:border-gray-500 transition shadow-[0_0_15px_rgba(248,211,70,0)] peer-checked/${sizeId}:shadow-[0_0_15px_rgba(248,211,70,0.3)]">${sizeLabel}</label>
                     `;
                 }).join('');
             } else {
@@ -152,8 +176,8 @@ const ProductDetailManager = (() => {
                 sizeContainer.innerHTML = defaultSizes.map((size, index) => {
                     const sizeId = `size-${size.toLowerCase()}`;
                     return `
-                        <input type="radio" name="size" id="${sizeId}" class="size-option" ${index === 1 ? 'checked' : ''}>
-                        <label for="${sizeId}" class="size-label">${size}</label>
+                        <input type="radio" name="size" id="${sizeId}" class="hidden peer/${sizeId}" ${index === 1 ? 'checked' : ''}>
+                        <label for="${sizeId}" class="w-12 h-12 flex items-center justify-center border border-gray-700 bg-black rounded-lg cursor-pointer text-sm font-bold text-gray-400 peer-checked/${sizeId}:border-[var(--brand-yellow)] peer-checked/${sizeId}:text-black peer-checked/${sizeId}:bg-[var(--brand-yellow)] hover:border-gray-500 transition shadow-[0_0_15px_rgba(248,211,70,0)] peer-checked/${sizeId}:shadow-[0_0_15px_rgba(248,211,70,0.3)]">${size}</label>
                     `;
                 }).join('');
             }
@@ -174,10 +198,12 @@ const ProductDetailManager = (() => {
             const data = await response.json();
 
             let productColors = [];
+            let mainProductThumb = '';
             for (const cat of data) {
                 const p = cat.itens.find(i => i.id === productId);
                 if (p && p.cores) {
                     productColors = p.cores;
+                    mainProductThumb = p.img;
                     break;
                 }
             }
@@ -186,12 +212,14 @@ const ProductDetailManager = (() => {
                 colorContainer.innerHTML = productColors.map((cor, index) => {
                     const colorId = `color-${cor.toLowerCase().replace(/\s+/g, '-')}`;
                     return `
-                        <input type="radio" name="color" id="${colorId}" class="color-option" ${index === 0 ? 'checked' : ''}>
-                        <label for="${colorId}" class="color-label" title="${cor}">${cor}</label>
+                        <input type="radio" name="color" id="${colorId}" class="hidden peer/${colorId}" ${index === 0 ? 'checked' : ''}>
+                        <label for="${colorId}" class="w-12 h-12 rounded-full cursor-pointer flex items-center justify-center border-2 border-transparent peer-checked/${colorId}:border-[var(--brand-yellow)] hover:border-gray-500 transition p-0.5" title="${cor}">
+                           <span class="w-full h-full rounded-full bg-cover bg-center border border-white/10" style="background-image: url('${mainProductThumb}')"></span>
+                        </label>
                     `;
                 }).join('');
             } else {
-                colorContainer.innerHTML = '<p class="small text-secondary m-0">Única cor disponível</p>';
+                colorContainer.innerHTML = '<p class="text-[11px] text-gray-500 m-0">Única cor disponível</p>';
             }
         } catch (e) {
             console.error('Erro ao carregar cores:', e);
@@ -307,6 +335,29 @@ function adjustQty(amount) {
     if (val < 1) val = 1;
     input.value = val;
 }
+
+/**
+ * Função global para alterar a mídia principal (imagem/vídeo)
+ */
+window.changeMainMedia = function(thumbElement, url, isVideo) {
+    const container = document.querySelector('.main-image-container');
+    if (!container) return;
+    
+    // Atualiza bordas das miniaturas
+    document.querySelectorAll('#product-gallery-thumbnails > div').forEach(el => {
+        el.classList.remove('border-[var(--brand-yellow)]');
+        el.classList.add('border-transparent');
+    });
+    thumbElement.classList.remove('border-transparent');
+    thumbElement.classList.add('border-[var(--brand-yellow)]');
+
+    // Troca o conteúdo principal da primeira div
+    if (isVideo) {
+        container.innerHTML = `<video src="${url}" class="w-full h-full object-cover" autoplay loop muted controls></video>`;
+    } else {
+        container.innerHTML = `<img id="main-product-img" src="${url}" class="w-full h-full object-cover fade-in" alt="Produto">`;
+    }
+};
 
 // Inicializa
 document.addEventListener('DOMContentLoaded', ProductDetailManager.init);

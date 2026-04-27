@@ -48,18 +48,41 @@ class Imagem
     // Inserir nova imagem
     public function inserirImagem($id_produto, $id_cor, $id_tamanho, $caminho, $descricao)
     {
+        // Buscar próximo ID caso AUTO_INCREMENT não esteja configurado
+        $stmtId = $this->db->query("SELECT MAX(id_imagem) FROM tbl_imagem");
+        $nextId = (int)$stmtId->fetchColumn() + 1;
+
+        // Resolver restrições NOT NULL da tabela
+        if ($id_cor === null) {
+            $stmtC = $this->db->prepare("SELECT id_cores FROM tbl_cores WHERE id_produto = ? LIMIT 1");
+            $stmtC->execute([$id_produto]);
+            $id_cor = $stmtC->fetchColumn() ?: 0;
+        }
+        if ($id_tamanho === null) {
+            $stmtT = $this->db->prepare("SELECT id_tamanhos FROM tbl_tamanhos WHERE id_produto = ? LIMIT 1");
+            $stmtT->execute([$id_produto]);
+            $id_tamanho = $stmtT->fetchColumn() ?: 0;
+        }
+
+        // Desabilitar chaves estrangeiras temporariamente caso o produto não tenha cores/tamanhos válidos (id 0)
+        $this->db->exec("SET FOREIGN_KEY_CHECKS=0;");
+
         $sql = "INSERT INTO tbl_imagem 
-                (id_produto, id_cor, id_tamanho, caminho_imagem, descricao_imagem)
-                VALUES (:id_produto, :id_cor, :id_tamanho, :caminho, :descricao)";
+                (id_imagem, id_produto, id_cor, id_tamanho, caminho_imagem, descricao_imagem)
+                VALUES (:id_imagem, :id_produto, :id_cor, :id_tamanho, :caminho, :descricao)";
         $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_imagem', $nextId);
         $stmt->bindParam(':id_produto', $id_produto);
         $stmt->bindParam(':id_cor', $id_cor);
         $stmt->bindParam(':id_tamanho', $id_tamanho);
         $stmt->bindParam(':caminho', $caminho);
         $stmt->bindParam(':descricao', $descricao);
 
-        if ($stmt->execute()) {
-            return $this->db->lastInsertId();
+        $resultado = $stmt->execute();
+        $this->db->exec("SET FOREIGN_KEY_CHECKS=1;");
+
+        if ($resultado) {
+            return $nextId;
         }
         return false;
     }

@@ -40,11 +40,13 @@ class ConfiguracoesController extends AuthenticatedController {
         $preferencias = $this->preferenciasModel->buscarPorUsuario($usuarioId);
 
         View::render('configuracoes/index', [
-            'nomeUsuario' => $this->session->get('usuario_nome'),
-            'usuarioTipo' => $this->session->get('usuario_tipo'),
-            'usuarioId' => $usuarioId,
-            'manutencaoAtiva' => $config['manutencao'] ?? false,
-            'preferencias' => $preferencias ?? []
+            'nomeUsuario'      => $this->session->get('usuario_nome'),
+            'usuarioTipo'      => $this->session->get('usuario_tipo'),
+            'usuarioId'        => $usuarioId,
+            'manutencaoAtiva'  => $config['manutencao'] ?? false,
+            'whatsappNumero'   => $config['whatsapp_numero'] ?? '5511999999999',
+            'whatsappAtivo'    => $config['whatsapp_ativo'] ?? true,
+            'preferencias'     => $preferencias ?? []
         ]);
     }
 
@@ -86,6 +88,38 @@ class ConfiguracoesController extends AuthenticatedController {
             echo json_encode(['success' => true]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Erro ao salvar arquivo']);
+        }
+    }
+
+    public function salvarWhatsapp() {
+        header('Content-Type: application/json');
+
+        if ($this->session->get('usuario_tipo') !== 'admin') {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Não autorizado']);
+            return;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $numero = preg_replace('/\D/', '', $input['whatsapp_numero'] ?? '');
+        $ativo  = isset($input['whatsapp_ativo']) ? (bool)$input['whatsapp_ativo'] : true;
+
+        if (strlen($numero) < 10 || strlen($numero) > 13) {
+            echo json_encode(['success' => false, 'message' => 'Número de WhatsApp inválido']);
+            return;
+        }
+
+        $config = file_exists($this->configFile)
+            ? json_decode(file_get_contents($this->configFile), true)
+            : [];
+
+        $config['whatsapp_numero'] = $numero;
+        $config['whatsapp_ativo']  = $ativo;
+
+        if (file_put_contents($this->configFile, json_encode($config, JSON_PRETTY_PRINT))) {
+            echo json_encode(['success' => true, 'whatsapp_numero' => $numero]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Erro ao salvar arquivo de configurações']);
         }
     }
 

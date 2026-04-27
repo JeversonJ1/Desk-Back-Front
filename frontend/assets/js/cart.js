@@ -1,6 +1,47 @@
 const CartManager = (() => {
   const CART_STORAGE_KEY = 'koketsu_cart';
 
+  // ─── Config de WhatsApp (carregado da API) ───────────────────────────────
+  let _wppConfig = { numero: '5511985477260', ativo: true };
+
+  const fetchWhatsappConfig = async () => {
+    try {
+      const res = await fetch('/api/config.php');
+      const data = await res.json();
+      if (data.success) {
+        _wppConfig.numero = data.whatsapp_numero || '5511985477260';
+        _wppConfig.ativo  = data.whatsapp_ativo !== false;
+      }
+    } catch (e) {
+      console.warn('[CartManager] Não foi possível carregar config de WhatsApp. Usando padrão.');
+    }
+  };
+
+  /**
+   * Monta a mensagem e abre o WhatsApp
+   */
+  const sendToWhatsapp = (cart) => {
+    const linhas = cart.map(item => {
+      const subtotal = (item.preco * item.quantidade).toFixed(2).replace('.', ',');
+      const tam = item.size ? ` | Tam: ${item.size}` : '';
+      return `▸ *${item.nome}*${tam} × ${item.quantidade} — R$ ${subtotal}`;
+    });
+    const total = cart
+      .reduce((acc, i) => acc + i.preco * i.quantidade, 0)
+      .toFixed(2).replace('.', ',');
+    const texto = [
+      '🛒 *Pedido Koketsu Grife*',
+      '',
+      ...linhas,
+      '',
+      `*Total: R$ ${total}*`,
+      '',
+      `📅 ${new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' })}`
+    ].join('\n');
+    const url = `https://wa.me/${_wppConfig.numero}?text=${encodeURIComponent(texto)}`;
+    window.open(url, '_blank');
+  };
+
   /**
    * Obtém e migra o carrinho do localStorage
    */
@@ -167,7 +208,7 @@ const CartManager = (() => {
           </div>
           <a href="/pages/carrinho.html" class="block w-full py-3 px-4 border border-white/20 text-white text-center rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition mb-3">VER CARRINHO</a>
           <button id="btn-finalizar-pedido" class="w-full py-3 px-4 bg-(--brand-yellow) text-black rounded-lg text-xs font-bold uppercase tracking-widest hover:brightness-110 transition flex items-center justify-center gap-2 shadow-lg shadow-yellow-500/20">
-            <i class="bi bi-check-circle-fill"></i> FINALIZAR PEDIDO
+            <i class="bi bi-whatsapp"></i> FINALIZAR PEDIDO
           </button>
         </div>
       </div>
@@ -415,7 +456,37 @@ const CartManager = (() => {
       return;
     }
 
-    // Marcar como processando
+    // ── Verificar auth primeiro; se não logado → WhatsApp ─────────────────
+    const checkAuthQuick = async () => {
+      try {
+        const r = await fetch('/api/check_auth.php', { credentials: 'same-origin' });
+        if (!r.ok) return { authenticated: false };
+        return await r.json();
+      } catch { return { authenticated: false }; }
+    };
+    const auth = await checkAuthQuick();
+
+    if (!auth.authenticated) {
+      // Usuário não logado → fallback para WhatsApp direto
+      if (_wppConfig.ativo) {
+        showToast('Abrindo WhatsApp... 📲');
+        // Salvar pedido no histórico para exibir na página de sucesso
+        localStorage.setItem('koketsu_last_order', JSON.stringify(cart));
+        localStorage.removeItem(CART_STORAGE_KEY);
+        updateCartBadge();
+        setTimeout(() => {
+          sendToWhatsapp(cart);
+          window.location.href = '/pages/sucesso.html';
+        }, 800);
+      } else {
+        showToast('Faça login para finalizar seu pedido.');
+        setTimeout(() => window.location.href = '/pages/login.html', 1500);
+      }
+      return;
+    }
+
+
+    // Marcar como processando (fluxo autenticado)
     isProcessingCheckout = true;
 
     // Desabilitar botão e mostrar feedback visual
@@ -523,15 +594,21 @@ const CartManager = (() => {
       }
 
       // Sucesso: Limpar Carrinho e Redirecionar
+      // Salvar cópia para exibir na página de sucesso
+      localStorage.setItem('koketsu_last_order', JSON.stringify(cart));
       localStorage.removeItem(CART_STORAGE_KEY);
       updateCartBadge(); // Zera badge visualmente
 
-      showToast('Pedido realizado com sucesso! Redirecionando...');
+      showToast('Pedido salvo! Redirecionando para confirmar via WhatsApp... 📲');
 
-      // Redireciona para lista de pedidos do cliente (SEM WHATSAPP)
+      // Se WhatsApp ativo, abre a janela e depois redireciona para pedidos
+      if (_wppConfig.ativo) {
+        sendToWhatsapp(cart);
+      }
+
       setTimeout(() => {
         window.location.href = '/backend/cliente/pedidos';
-      }, 2000); // 2s delay para ler o toast
+      }, 2000);
 
     } catch (error) {
       console.error('Erro inesperado no checkout:', error);
@@ -552,6 +629,7 @@ const CartManager = (() => {
     injectMiniCartHTML();
     initAddToCartButtons();
     updateCartBadge();
+    fetchWhatsappConfig(); // Carrega número de WhatsApp da API
 
     // Listener para botão checkout
     document.body.addEventListener('click', (e) => {

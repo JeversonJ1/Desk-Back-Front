@@ -128,7 +128,7 @@ class PublicApiController
             $resultado = [];
 
             // 1. MAIS VENDIDOS (Top 8 baseado em quantidade vendida)
-            $sqlBest = "SELECT p.id_produto, p.nome_produtos, p.preco_produtos, p.imagem_produtos, SUM(ip.quantidade) as total_vendas
+            $sqlBest = "SELECT p.id_produto, p.nome_produtos, p.preco_produtos, p.imagem_produtos, p.descricao_produtos, SUM(ip.quantidade) as total_vendas
                         FROM tbl_produtos p
                         JOIN tbl_itens_pedidos ip ON p.id_produto = ip.id_produto
                         WHERE p.excluido_em IS NULL
@@ -164,7 +164,7 @@ class PublicApiController
                 $catId = $stmtCat->fetchColumn();
 
                 if ($catId) {
-                    $sqlProd = "SELECT id_produto, nome_produtos, preco_produtos, imagem_produtos 
+                    $sqlProd = "SELECT id_produto, nome_produtos, preco_produtos, imagem_produtos, descricao_produtos 
                                 FROM tbl_produtos 
                                 WHERE id_categoria = ? AND excluido_em IS NULL AND estoque_produtos > 0
                                 LIMIT 12";
@@ -192,12 +192,32 @@ class PublicApiController
 
     private function formatarProdutoVitrine($prod)
     {
-        // Buscar Tamanhos e Cores (Simplificado para a vitrine rápida)
+        // Buscar galeria
+        $galeriaUrls = [];
+        $stmtGaleria = $this->db->prepare("SELECT caminho_imagem FROM tbl_imagem WHERE id_produto = ?");
+        $stmtGaleria->execute([$prod['id_produto']]);
+        $imagens = $stmtGaleria->fetchAll(\PDO::FETCH_ASSOC);
+        foreach ($imagens as $img) {
+            $caminho = $img['caminho_imagem'];
+            if (!str_starts_with($caminho, 'http') && !str_starts_with($caminho, '/')) {
+                $caminho = '/backend/upload/' . $caminho;
+            }
+            $galeriaUrls[] = $caminho;
+        }
+
+        // Determinar imagem principal correta
+        $imgPrincipal = $prod['imagem_produtos'];
+        if (!str_starts_with($imgPrincipal, 'http') && !str_starts_with($imgPrincipal, '/')) {
+            $imgPrincipal = '/backend/upload/' . $imgPrincipal;
+        }
+
         return [
             'id' => (int) $prod['id_produto'],
             'nome' => $prod['nome_produtos'],
+            'descricao' => $prod['descricao_produtos'] ?? '',
             'preco' => (float) $prod['preco_produtos'],
-            'img' => $this->converterParaBase64('backend/upload/' . $prod['imagem_produtos']),
+            'img' => $imgPrincipal, // Não usar base64 para evitar peso excessivo, URLs funcionam
+            'galeria' => $galeriaUrls,
             'oferta' => null,
             'desconto' => null
         ];

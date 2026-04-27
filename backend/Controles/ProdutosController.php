@@ -16,6 +16,7 @@ public $corModel;
 public $tamanhoModel;
 public $db;
  public $gerenciarImagem;
+ public $imagemModel;
 
 
 public function __construct() {
@@ -30,6 +31,7 @@ public function __construct() {
     $this->produtos = new Produtos($this->db);
     $this->corModel = new Cor($this->db);
     $this->tamanhoModel = new Tamanho($this->db);
+    $this->imagemModel = new \App\Koketsu\Models\Imagem($this->db);
     $this->gerenciarImagem = new FileManager(__DIR__ . '/../../backend/upload');
 }
 // index
@@ -74,7 +76,8 @@ public function viewProdutoUnico(int $id_produto) {
     }
     
 public function viewCriarProduto(){
- view::render("produtos/create");
+    $categorias = (new \App\Koketsu\Models\Categoria($this->db))->buscarCategorias();
+    View::render("produtos/create", ['categorias' => $categorias]);
 }
 
 
@@ -101,7 +104,9 @@ public function atualizarProdutos() {
     $id_produto = (int)$_POST['id_produto'];
     $nome = $_POST['nome_produtos'];
     $descricao = $_POST['descricao_produtos'];
-    $preco = $_POST['preco_produtos'];
+    $precoRaw = $_POST['preco_produtos'];
+    $preco = str_replace(['R$', '.', ' '], '', $precoRaw);
+    $preco = str_replace(',', '.', $preco);
     $estoque = $_POST['estoque_produtos'];
     $id_categoria = $_POST['id_categoria'];
     $imagem = null;
@@ -119,12 +124,12 @@ public function atualizarProdutos() {
                 if (!empty($corNome)) {
                     $qtd = $_POST['quantidade_cores'][$index] ?? 0;
                     
-                    // Verificar se já existe (para reativar e manter o ID vinculado a imagens)
+                    // Verificar se já existe (mesmo inativo) para reativar
                     $stmt = $this->db->prepare("SELECT id_cores FROM tbl_cores WHERE id_produto = ? AND cor_cores = ? LIMIT 1");
                     $stmt->execute([$id_produto, $corNome]);
-                    $existente = $stmt->fetch();
+                    $existente = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-                    if ($existente) {
+                    if (is_array($existente) && isset($existente['id_cores'])) {
                         $this->db->prepare("UPDATE tbl_cores SET quantidade_cores = ?, excluido_em = NULL, atualizado_em = NOW() WHERE id_cores = ?")
                                  ->execute([$qtd, $existente['id_cores']]);
                     } else {
@@ -141,16 +146,46 @@ public function atualizarProdutos() {
                 if (!empty($tamNome)) {
                     $qtd = $_POST['quantidade_tamanhos'][$index] ?? 0;
                     
-                    // Verificar se já existe
+                    // Verificar se já existe (mesmo inativo) para reativar
                     $stmt = $this->db->prepare("SELECT id_tamanhos FROM tbl_tamanhos WHERE id_produto = ? AND tamanho_tamanhos = ? LIMIT 1");
                     $stmt->execute([$id_produto, $tamNome]);
-                    $existente = $stmt->fetch();
+                    $existente = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-                    if ($existente) {
+                    if (is_array($existente) && isset($existente['id_tamanhos'])) {
                         $this->db->prepare("UPDATE tbl_tamanhos SET quantidade_tamanhos = ?, excluido_em = NULL, atualizado_em = NOW() WHERE id_tamanhos = ?")
                                  ->execute([$qtd, $existente['id_tamanhos']]);
                     } else {
                         $this->tamanhoModel->inserirTamanho($id_produto, $tamNome, $qtd);
+                    }
+                }
+            }
+        }
+
+        // Remover imagens da galeria solicitadas
+        if (!empty($_POST['remover_imagens']) && is_array($_POST['remover_imagens'])) {
+            foreach ($_POST['remover_imagens'] as $idImgRemover) {
+                $imgData = $this->imagemModel->buscarPorId($idImgRemover);
+                if ($imgData) {
+                    $this->gerenciarImagem->delete($imgData['caminho_imagem']);
+                    $this->imagemModel->excluirImagem($idImgRemover);
+                }
+            }
+        }
+
+        // Salvar Galeria Adicional
+        if (!empty($_FILES['galeria_produtos']['name'][0])) {
+            foreach ($_FILES['galeria_produtos']['name'] as $key => $name) {
+                if ($_FILES['galeria_produtos']['error'][$key] == 0) {
+                    $fileArray = [
+                        'name' => $_FILES['galeria_produtos']['name'][$key],
+                        'type' => $_FILES['galeria_produtos']['type'][$key],
+                        'tmp_name' => $_FILES['galeria_produtos']['tmp_name'][$key],
+                        'error' => $_FILES['galeria_produtos']['error'][$key],
+                        'size' => $_FILES['galeria_produtos']['size'][$key]
+                    ];
+                    $caminho = $this->gerenciarImagem->salvarArquivo($fileArray, 'produtos/galeria', ['image/jpeg', 'image/png', 'image/webp', 'video/mp4'], 52428800);
+                    if ($caminho) {
+                        $this->imagemModel->inserirImagem($id_produto, null, null, $caminho, 'Galeria');
                     }
                 }
             }
@@ -210,6 +245,25 @@ if (empty($_POST["nome_produtos"]) || empty($_FILES['imagem_produtos']['name']))
                 }
             }
 
+            // Salvar Galeria Adicional
+            if (!empty($_FILES['galeria_produtos']['name'][0])) {
+                foreach ($_FILES['galeria_produtos']['name'] as $key => $name) {
+                    if ($_FILES['galeria_produtos']['error'][$key] == 0) {
+                        $fileArray = [
+                            'name' => $_FILES['galeria_produtos']['name'][$key],
+                            'type' => $_FILES['galeria_produtos']['type'][$key],
+                            'tmp_name' => $_FILES['galeria_produtos']['tmp_name'][$key],
+                            'error' => $_FILES['galeria_produtos']['error'][$key],
+                            'size' => $_FILES['galeria_produtos']['size'][$key]
+                        ];
+                        $caminho = $this->gerenciarImagem->salvarArquivo($fileArray, 'produtos/galeria', ['image/jpeg', 'image/png', 'image/webp', 'video/mp4'], 52428800);
+                        if ($caminho) {
+                            $this->imagemModel->inserirImagem($id_produto, null, null, $caminho, 'Galeria');
+                        }
+                    }
+                }
+            }
+
             Redirect::redirecionarComMensagem("/produtos/listar", "success", "Produtos cadastrado com sucesso!");
         } else {
             Redirect::redirecionarComMensagem("/produtos/criar", "error", "Erro ao cadastrar produtos.");
@@ -224,11 +278,15 @@ if (empty($_POST["nome_produtos"]) || empty($_FILES['imagem_produtos']['name']))
         
         $cores = $this->corModel->buscarCoresPorIdProduto($id);
         $tamanhos = $this->tamanhoModel->buscarTamanhosPorIdProduto($id);
+        $categorias = (new \App\Koketsu\Models\Categoria($this->db))->buscarCategorias();
+        $galeria = $this->imagemModel->buscarPorProduto($id);
         
         View::render("produtos/edit", [
             "produtos" => $produtos,
             "cores" => $cores,
-            "tamanhos" => $tamanhos
+            "tamanhos" => $tamanhos,
+            "categorias" => $categorias,
+            "galeria" => $galeria
         ]);
     }
 }

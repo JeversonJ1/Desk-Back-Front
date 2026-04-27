@@ -109,18 +109,28 @@ const ReviewManager = (() => {
             if (authData.authenticated && authData.user) {
                 currentUser = authData.user;
 
-                // Now check if they bought it via backend (using the POST endpoint logic or similar)
-                // For now, we'll try to submit a partial check or rely on the backend validation during POST
-                // But to SHOW the form, we can do a quick check if it's possible
-                // We'll just show the form if logged in, and handle '403 Forbidden' if they haven't bought it when they submit
-                // This is simpler and doesn't require a dedicated "check_buyer" endpoint yet.
+                // Show form (supports both Tailwind 'hidden' and Bootstrap 'd-none')
                 formContainer.classList.remove('d-none');
+                formContainer.classList.remove('hidden');
                 setupForm(productId);
+            } else {
+                // Show login prompt
+                formContainer.classList.remove('d-none');
+                formContainer.classList.remove('hidden');
+                formContainer.innerHTML = `
+                <div class="text-center py-6">
+                    <i class="bi bi-lock-fill text-[var(--brand-yellow)] text-2xl mb-3 block"></i>
+                    <p class="text-gray-400 text-sm mb-4">Faça login para deixar uma avaliação.</p>
+                    <a href="/pages/login.html" class="inline-block bg-[var(--brand-yellow)] text-black font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-xl hover:brightness-110 transition">
+                        FAZER LOGIN
+                    </a>
+                </div>`;
             }
         } catch (e) {
             console.warn('[Review] Error checking user ability:', e);
         }
     };
+
 
     const setupForm = (productId) => {
         const form = document.getElementById('product-review-form');

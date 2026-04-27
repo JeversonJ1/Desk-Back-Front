@@ -1,4 +1,5 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
@@ -57,10 +58,19 @@
   .filter-btn.active { background:var(--accent); color:#000; border-color:var(--accent); }
   .filter-btn:hover:not(.active) { border-color:var(--accent); color:var(--accent); }
 
-  /* --- GRÁFICO --- */
-  .chart-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:16px; padding:24px; margin-bottom:28px; }
-  .chart-card h4 { color:var(--accent); margin:0 0 16px; font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
-  .chart-wrap { height:240px; }
+  /* --- GRÁFICOS --- */
+  .charts-row { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:28px; }
+  @media(max-width:900px){ .charts-row { grid-template-columns:1fr; } }
+  .chart-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:16px; padding:24px; position:relative; overflow:hidden; }
+  .chart-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#F2C84B,#C47A3A); }
+  .chart-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
+  .chart-card-header h4 { color:var(--accent); margin:0; font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+  .chart-filter-btns { display:flex; gap:6px; }
+  .chart-filter-btn { padding:5px 12px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; border:1px solid var(--border-color); background:transparent; color:var(--text-muted); transition:.2s; text-transform:uppercase; }
+  .chart-filter-btn.active { background:var(--accent); color:#000; border-color:var(--accent); }
+  .chart-filter-btn:hover:not(.active) { border-color:var(--accent); color:var(--accent); }
+  .chart-wrap { height:260px; position:relative; }
+  .chart-wrap-donut { height:260px; }
 
   /* --- TABELA --- */
   .table-card { background:var(--bg-card); border: 2px solid var(--border-color); border-radius:16px; overflow:hidden; }
@@ -82,7 +92,9 @@
   .custom-table tbody tr.tr-inativo td:first-child { border-left:3px solid #dc3545; }
   .custom-table td { padding:16px 20px; color:var(--text-main); vertical-align:middle; }
 
-  .prod-img { width:64px; height:64px; object-fit:cover; border-radius:12px; border:1px solid var(--border-color); }
+  .prod-img { width:160px; height:160px; object-fit:cover; border-radius:14px; border:2px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,.4); transition:.2s; position:relative; z-index:1; }
+  .prod-img:hover { transform:scale(1.25); border-color:var(--accent); box-shadow:0 8px 30px rgba(242,200,75,.4); z-index:10; }
+
   .prod-name { font-weight:700; color:var(--text-main); font-size:14px; display:block; margin-bottom:2px; }
   .prod-id { font-size:11px; color:var(--text-muted); font-family:monospace; }
   .prod-price { font-weight:800; font-size:15px; color:var(--accent); }
@@ -190,12 +202,29 @@ $estoqueTotal    = array_sum(array_map(fn($p) => (int)$p['estoque_produtos'], ar
     </div>
   </div>
 
-  <!-- GRÁFICO -->
+  <!-- GRÁFICOS -->
   <?php if (!empty($produto)): ?>
-  <div class="chart-card">
-    <h4><i class="fas fa-chart-bar"></i> Estoque por Categoria</h4>
-    <div class="chart-wrap">
-      <canvas id="vendasChart"></canvas>
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <h4><i class="fas fa-chart-bar"></i> <span id="barChartTitle">Estoque por Categoria</span></h4>
+        <div class="chart-filter-btns">
+          <button class="chart-filter-btn active" data-metric="estoque" onclick="switchMetric(this,'estoque')">Estoque</button>
+          <button class="chart-filter-btn" data-metric="valor" onclick="switchMetric(this,'valor')">Valor (R$)</button>
+          <button class="chart-filter-btn" data-metric="produtos" onclick="switchMetric(this,'produtos')">Qtd. Produtos</button>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <h4><i class="fas fa-chart-pie"></i> Distribuição</h4>
+      </div>
+      <div class="chart-wrap-donut">
+        <canvas id="donutChart"></canvas>
+      </div>
     </div>
   </div>
   <?php endif; ?>
@@ -218,11 +247,11 @@ $estoqueTotal    = array_sum(array_map(fn($p) => (int)$p['estoque_produtos'], ar
       </div>
     </div>
 
-    <div style="overflow-x:auto;">
+    <div style="overflow-x:auto;" id="tabelaWrapper">
       <table class="custom-table" id="tabelaProdutos">
         <thead>
           <tr>
-            <th width="80">Foto</th>
+            <th width="110">Foto</th>
             <th>Produto</th>
             <th>Descrição</th>
             <th>Preço</th>
@@ -242,13 +271,22 @@ $estoqueTotal    = array_sum(array_map(fn($p) => (int)$p['estoque_produtos'], ar
           <tr class="item-produto <?= $is_inativo ? 'tr-inativo' : '' ?>"
               data-status="<?= $is_inativo ? 'inativo' : 'ativo' ?>">
             <td>
-              <img src="/backend/upload/<?= htmlspecialchars($p['imagem_produtos']) ?>"
+              <?php 
+                $imgRaw = $p['imagem_produtos'] ?? '';
+                if (empty($imgRaw)) {
+                    $imgSrc = 'https://placehold.co/160x160?text=📦';
+                } else if (str_starts_with($imgRaw, 'http') || str_starts_with($imgRaw, '/')) {
+                    $imgSrc = $imgRaw;
+                } else {
+                    $imgSrc = '/backend/upload/' . $imgRaw;
+                }
+              ?>
+              <img src="<?= htmlspecialchars($imgSrc) ?>"
                    class="prod-img"
-                   onerror="this.src='https://placehold.co/64x64?text=📦'">
+                   onerror="this.src='https://placehold.co/160x160?text=📦'">
             </td>
             <td>
               <span class="prod-name nome-produto"><?= htmlspecialchars($p['nome_produtos']) ?></span>
-              <span class="prod-id">#<?= $p['id_produto'] ?></span>
             </td>
             <td style="max-width:220px; color:var(--text-muted); font-size:13px;">
               <?= htmlspecialchars(mb_strimwidth($p['descricao_produtos'] ?? '', 0, 80, '...')) ?>
@@ -382,29 +420,148 @@ document.getElementById('inputBusca').addEventListener('input', () => {
   currentPage = 1; applyFilters(); displayTable();
 });
 
-// Gráfico
+// ── Gráficos ─────────────────────────────────────────────────────
 const dadosGrafico = <?= json_encode($produto ?? []) ?>;
-if (dadosGrafico && dadosGrafico.length > 0) {
-  new Chart(document.getElementById('vendasChart').getContext('2d'), {
+const allProdutos  = <?= json_encode($produtos ?? []) ?>;
+
+const PALETTE = ['#F2C84B','#C47A3A','#4E9EBF','#7B5EA7','#3AA87B','#E05252','#5B8FF9','#F58E2E','#A0D45E','#E07BB5'];
+
+let barChartInstance = null;
+let donutInstance    = null;
+
+function getBarData(metric) {
+  if (!dadosGrafico || !dadosGrafico.length) return null;
+  const labels = dadosGrafico.map(d => d.categoria);
+  let data, label;
+  if (metric === 'estoque') {
+    data  = dadosGrafico.map(d => Number(d.total));
+    label = 'Estoque';
+  } else if (metric === 'valor') {
+    // Calcula valor de inventário por categoria usando allProdutos
+    const map = {};
+    dadosGrafico.forEach(d => map[d.categoria] = 0);
+    allProdutos.forEach(p => {
+      if (!p.excluido_em && p.categoria && map[p.categoria] !== undefined)
+        map[p.categoria] += parseFloat(p.preco_produtos||0) * parseInt(p.estoque_produtos||0);
+    });
+    data  = dadosGrafico.map(d => Math.round(map[d.categoria] || 0));
+    label = 'Valor (R$)';
+  } else {
+    // contagem de produtos por categoria
+    const map = {};
+    dadosGrafico.forEach(d => map[d.categoria] = 0);
+    allProdutos.forEach(p => { if (!p.excluido_em && p.categoria && map[p.categoria]!==undefined) map[p.categoria]++; });
+    data  = dadosGrafico.map(d => map[d.categoria] || 0);
+    label = 'Qtd. Produtos';
+  }
+  return { labels, data, label };
+}
+
+function buildGradients(ctx, count) {
+  return Array.from({length: count}, (_, i) => {
+    const g = ctx.createLinearGradient(0, 0, 0, 260);
+    const base = PALETTE[i % PALETTE.length];
+    g.addColorStop(0, base);
+    g.addColorStop(1, base + '55');
+    return g;
+  });
+}
+
+function renderBarChart(metric) {
+  const d = getBarData(metric);
+  if (!d) return;
+  const ctx = document.getElementById('barChart').getContext('2d');
+  const grads = buildGradients(ctx, d.labels.length);
+  if (barChartInstance) barChartInstance.destroy();
+  barChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: dadosGrafico.map(d => d.categoria),
+      labels: d.labels,
       datasets: [{
-        label: 'Estoque',
-        data: dadosGrafico.map(d => d.total),
-        backgroundColor: dadosGrafico.map((_, i) => i % 2 === 0 ? '#F2C84B' : 'rgba(242,200,75,.5)'),
-        borderRadius: 8, borderSkipped: false
+        label: d.label,
+        data: d.data,
+        backgroundColor: grads,
+        borderRadius: 10,
+        borderSkipped: false,
+        borderWidth: 0
       }]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      animation: { duration: 600, easing: 'easeOutQuart' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1a1a1a',
+          borderColor: '#F2C84B',
+          borderWidth: 1,
+          titleColor: '#F2C84B',
+          bodyColor: '#ccc',
+          callbacks: {
+            label: ctx => metric === 'valor'
+              ? ` R$ ${ctx.raw.toLocaleString('pt-BR')}`
+              : ` ${ctx.raw.toLocaleString('pt-BR')}`
+          }
+        }
+      },
       scales: {
-        x: { grid: { display: false }, ticks: { color: '#888', font: { size: 11 } } },
-        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#888', font: { size: 11 } } }
+        x: { grid: { display: false }, ticks: { color: '#888', font: { size: 11 } }, border: { display: false } },
+        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#888', font: { size: 11 } }, border: { display: false } }
       }
     }
   });
+}
+
+function renderDonut() {
+  if (!dadosGrafico || !dadosGrafico.length) return;
+  const ctx = document.getElementById('donutChart').getContext('2d');
+  const labels = dadosGrafico.map(d => d.categoria);
+  const data   = dadosGrafico.map(d => Number(d.total));
+  if (donutInstance) donutInstance.destroy();
+  donutInstance = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: PALETTE.slice(0, labels.length),
+        borderColor: '#111',
+        borderWidth: 3,
+        hoverOffset: 10
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '68%',
+      animation: { duration: 800, easing: 'easeOutQuart' },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { color: '#aaa', font: { size: 10 }, padding: 12, boxWidth: 12 }
+        },
+        tooltip: {
+          backgroundColor: '#1a1a1a',
+          borderColor: '#F2C84B',
+          borderWidth: 1,
+          titleColor: '#F2C84B',
+          bodyColor: '#ccc'
+        }
+      }
+    }
+  });
+}
+
+function switchMetric(btn, metric) {
+  document.querySelectorAll('.chart-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const titles = { estoque:'Estoque por Categoria', valor:'Valor por Categoria (R$)', produtos:'Produtos por Categoria' };
+  document.getElementById('barChartTitle').textContent = titles[metric];
+  renderBarChart(metric);
+}
+
+if (dadosGrafico && dadosGrafico.length > 0) {
+  renderBarChart('estoque');
+  renderDonut();
 }
 
 document.addEventListener('DOMContentLoaded', () => { applyFilters(); displayTable(); });
