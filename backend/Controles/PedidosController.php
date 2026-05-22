@@ -16,15 +16,44 @@ class PedidosController extends AdminController {
     public $db;
     public $gerenciarImagem;
 
-public function __construct() {
+    public function __construct() {
         parent::__construct();
         $this->db = Database::getInstance();
         $this->pedidos = new Pedidos($this->db);
         $this->itenspedidos = new ItensPedidos($this->db); 
         $this->gerenciarImagem = new FileManager(__DIR__ . '/../../backend/upload');
+
+        // Se a requisição enviar JSON, parseia para $_POST
+        if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
+            $json = file_get_contents('php://input');
+            $data = json_decode($json, true);
+            if (is_array($data)) {
+                $_POST = array_merge($_POST, $data);
+            }
+        }
     }
 
-    public function index(){
+    private function sendResponse($success, $message, $extra = [], $fallbackUrl = "/pedido/listar", $errorType = "error") {
+        $isAjax = isset($_GET['json']) || 
+                  (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) ||
+                  (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) ||
+                  (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
+                  
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode(array_merge([
+                'success' => $success,
+                'message' => $message
+            ], $extra));
+            exit;
+        }
+        
+        $msgType = $success ? "success" : $errorType;
+        Redirect::redirecionarComMensagem($fallbackUrl, $msgType, $message);
+        exit;
+    }
+
+public function index(){
      $this->viewListarPedido();
 }   
 
@@ -33,11 +62,14 @@ public function viewAtivarPedido(int $id){
          View::render("pedidos/ativar",["pedido" => $dados]);
     }
     public function ativarPedido(){
-        $id = (int)$_POST['id_pedido'];
+        $id = (int)($_POST['id_pedido'] ?? 0);
+        if (!$id) {
+            $this->sendResponse(false, "ID do pedido inválido.");
+        }
         if ($this->pedidos->ativarPedido($id)) {
-            Redirect::redirecionarComMensagem("/pedido/listar", "success", "Pedido ativado com sucesso!");
+            $this->sendResponse(true, "Pedido ativado com sucesso!");
         } else {
-            Redirect::redirecionarComMensagem("/pedido/listar", "error", "Erro ao ativar pedido.");
+            $this->sendResponse(false, "Erro ao ativar pedido.");
         }
     }
 
@@ -50,14 +82,19 @@ public function viewAtivarPedido(int $id){
         $itens_pedido = $this->itenspedidos->buscarItensPorPedido($id_pedido);
         
         if ($pedido) {
+            $isAjax = isset($_GET['json']) || 
+                      (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) ||
+                      (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
+            if ($isAjax) {
+                $this->sendResponse(true, "Pedido encontrado", ['pedido' => $pedido, 'itens' => $itens_pedido]);
+            }
             // Se o pedido for encontrado, exibe a view com os dados
             View::render('pedidos/detalhes', [
                 'pedido' => $pedido,
                 'itens' => $itens_pedido
             ]);
         } else {
-            // Se não encontrar, redireciona com mensagem de erro
-            Redirect::redirecionarComMensagem("/pedido/listar", "error", "Pedido não encontrado.");
+            $this->sendResponse(false, "Pedido não encontrado.", [], "/pedido/listar");
         }
     }
     
@@ -73,6 +110,17 @@ public function viewAtivarPedido(int $id){
         $total = $this->pedidos->totalDePedidos(); 
 
         $total_pedidos = (int) $total;
+
+        $isAjax = isset($_GET['json']) || 
+                  (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) ||
+                  (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
+        
+        if ($isAjax) {
+            $this->sendResponse(true, "Lista de pedidos obtida com sucesso.", [
+                'pedidos' => $dados['data'] ?? [],
+                'total_pedidos' => $total_pedidos
+            ]);
+        }
 
         View::render("pedidos/index", [
             "pedidos" => $dados['data'] ?? [],
@@ -92,7 +140,7 @@ public function viewAtivarPedido(int $id){
 
         if (!$pedido) {
         
-            Redirect::redirecionarComMensagem("/pedido/listar", "error", "Pedido não encontrado.");
+            $this->sendResponse(false, "Pedido não encontrado.", [], "/pedido/listar");
             return;
         }
 
@@ -113,7 +161,7 @@ public function viewAtivarPedido(int $id){
         $dados = $this->pedidos->buscarPedidoPorId($id);
 
         if (!$dados) {
-            Redirect::redirecionarComMensagem("/pedido/listar", "error", "Pedido não encontrado.");
+            $this->sendResponse(false, "Pedido não encontrado.", [], "/pedido/listar");
             return;
         }
 
@@ -135,9 +183,31 @@ public function viewAtivarPedido(int $id){
         
     
         if ($this->pedidos->atualizarPedido($id_pedido, $total_pedido, $data_pedido, $status_pedido, $imagem)) { 
-            Redirect::redirecionarComMensagem("/pedido/listar", "success", "pedido atualizado com sucesso!");
+            $this->sendResponse(true, "Pedido atualizado com sucesso!");
         } else {
-            Redirect::redirecionarComMensagem("/pedido/editar/" . $id_pedido, "error", "Erro ao atualizar pedido!");
+            $this->sendResponse(false, "Erro ao atualizar pedido!", [], "/pedido/editar/" . $id_pedido);
+        }
+    }
+
+    // Método para atualizar rapidamente o status de um pedido na lista
+    public function mudarStatusRapido() {
+        $id_pedido = filter_input(INPUT_POST, 'id_pedido', FILTER_VALIDATE_INT);
+        $novo_status = $_POST['status'] ?? '';
+
+        if (!$id_pedido || !$novo_status) {
+            $this->sendResponse(false, "Dados inválidos para alterar o status.");
+        }
+
+        $pedido = $this->pedidos->buscarPedidoPorId($id_pedido);
+        if (!$pedido) {
+            $this->sendResponse(false, "Pedido não encontrado.");
+        }
+
+        // Usa os mesmos dados do pedido e apenas altera o status
+        if ($this->pedidos->atualizarPedido($id_pedido, $pedido['total_pedido'], $pedido['data_pedido'], $novo_status, $pedido['imagem_pedidos'] ?? null)) {
+            $this->sendResponse(true, "Status alterado para " . ucfirst($novo_status) . "!");
+        } else {
+            $this->sendResponse(false, "Erro ao alterar o status do pedido.");
         }
     }
 
@@ -160,8 +230,7 @@ public function viewAtivarPedido(int $id){
 
         // 2. Validação
         if (empty($id_perfil) || empty($data_pedido) || $total_pedido <= 0 || empty($itens_pedido)) {
-            Redirect::redirecionarComMensagem("/pedido/criar", "error", "Preencha o Perfil, a Data, o Total e adicione pelo menos um Item.");
-            return;
+            $this->sendResponse(false, "Preencha o Perfil, a Data, o Total e adicione pelo menos um Item.", [], "/pedido/criar");
         }
 
 
@@ -206,15 +275,15 @@ public function viewAtivarPedido(int $id){
             
             // 5. Finalização
             if ($todos_itens_salvos) {
-                Redirect::redirecionarComMensagem("/pedido/listar", "success", "Pedido e Itens cadastrados com sucesso! ID: " . $novo_id_pedido);
+                $this->sendResponse(true, "Pedido e Itens cadastrados com sucesso! ID: " . $novo_id_pedido, ['id_pedido' => $novo_id_pedido]);
             } else {
                 // Reverter ou deletar o pedido principal aqui seria o ideal
-                Redirect::redirecionarComMensagem("/pedido/criar", "error", "Pedido principal salvo, mas erro ao cadastrar os Itens.");
+                $this->sendResponse(false, "Pedido principal salvo, mas erro ao cadastrar os Itens.", [], "/pedido/criar");
             }
 
         } else {
             // Falha no Model ao salvar o Pedido Principal
-            Redirect::redirecionarComMensagem("/pedido/criar", "error", "Erro ao cadastrar pedido principal. Verifique se o ID do Perfil existe no banco.");
+            $this->sendResponse(false, "Erro ao cadastrar pedido principal. Verifique se o ID do Perfil existe no banco.", [], "/pedido/criar");
         }
     }
 
@@ -226,11 +295,14 @@ public function viewAtivarPedido(int $id){
 
     // Método para processar a exclusão/ativação (soft delete toggle) via POST
     public function deletarPedido() {
-        $id = (int)$_POST['id_pedido'];
+        $id = (int)($_POST['id_pedido'] ?? 0);
+        if (!$id) {
+            $this->sendResponse(false, "ID do pedido inválido.");
+        }
         if ($this->pedidos->deletarPedido($id)) {
-            Redirect::redirecionarComMensagem("/pedido/listar", "success", "Status do pedido alterado com sucesso!");
+            $this->sendResponse(true, "Status do pedido alterado com sucesso!");
         } else {
-            Redirect::redirecionarComMensagem("/pedido/listar", "error", "Erro ao alterar status do pedido.");
+            $this->sendResponse(false, "Erro ao alterar status do pedido.");
         }
     }
 
@@ -238,9 +310,9 @@ public function viewAtivarPedido(int $id){
     // Método para excluir (soft delete) um pedido - DEPRECATED - usar deletarPedido
     public function excluirPedido(int $id_pedido) {
         if ($this->pedidos->excluirPedido($id_pedido)) {
-            Redirect::redirecionarComMensagem("/pedido/listar", "success", "Pedido #" . $id_pedido . " excluído com sucesso (soft delete).");
+            $this->sendResponse(true, "Pedido #" . $id_pedido . " excluído com sucesso (soft delete).");
         } else {
-            Redirect::redirecionarComMensagem("/pedido/listar", "error", "Erro ao excluir o Pedido #" . $id_pedido . ".");
+            $this->sendResponse(false, "Erro ao excluir o Pedido #" . $id_pedido . ".");
         }
     }
 
@@ -292,7 +364,7 @@ public function viewAtivarPedido(int $id){
 
         } else {
         
-            Redirect::redirecionarComMensagem("/backend/pedido/listar", "warning", "ID de Pedido inválido ou vazio. Por favor, digite um número.");
+            $this->sendResponse(false, "ID de Pedido inválido ou vazio. Por favor, digite um número.", [], "/backend/pedido/listar", "warning");
         }
     }
     

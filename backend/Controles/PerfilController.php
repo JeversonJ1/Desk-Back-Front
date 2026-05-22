@@ -64,6 +64,8 @@ class PerfilController {
         }
     }
     public function atualizarPerfil($id) {
+        $redirectTo = $_POST["redirect_to"] ?? "/perfil/listar";
+        $errorRedirectTo = $_POST["redirect_to"] ?? "/perfil/editar/$id";
         if($this->perfil->atualizarPerfil(
             $id,
             $_POST["telefone_perfil"],
@@ -71,9 +73,9 @@ class PerfilController {
             $_POST["data_cadastro"],
             $_POST["id_usuarios"]
         )){
-            Redirect::redirecionarComMensagem("/perfil/listar", "success", "Perfil atualizado com sucesso!");
+            Redirect::redirecionarComMensagem($redirectTo, "success", "Perfil atualizado com sucesso!");
         }else{
-            Redirect::redirecionarComMensagem("/perfil/editar/$id", "error", "Erro ao atualizar perfil.");
+            Redirect::redirecionarComMensagem($errorRedirectTo, "error", "Erro ao atualizar perfil.");
         }
     }
 

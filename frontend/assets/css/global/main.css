@@ -15,18 +15,22 @@ html {
 }
 
 :root {
+  /* Brand aliases — usados pelas classes Tailwind inline */
   --brand-yellow: #F2C84B;
   --brand-dark: #000000;
   --brand-grey: #151515;
+  /* Sync com variables.css — cor primaria unificada em #F2C84B */
   --color-primary: #F2C84B;
   --color-dark: #000000;
   --color-dark-secondary: #0f0f0f;
   --color-dark-border: rgba(255, 255, 255, 0.05);
   --font-primary: 'Montserrat', sans-serif;
   --font-heading: 'Oswald', sans-serif;
+  /* Transicoes com easing premium */
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 
 body {
   background-color: var(--brand-dark);

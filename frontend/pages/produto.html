@@ -37,10 +37,10 @@
   <header></header>
 
   <main class="pt-6 pb-16">
-    <div class="container mx-auto px-4 lg:px-8 max-w-[1400px]">
+    <div class="container mx-auto px-4 lg:px-6 max-w-[1100px]">
 
       <!-- Breadcrumb -->
-      <nav aria-label="breadcrumb" class="mb-6 flex justify-center text-[10px] text-gray-500 uppercase tracking-widest font-bold">
+      <nav aria-label="breadcrumb" class="mb-6 text-[10px] text-gray-500 uppercase tracking-widest font-bold">
         <ol class="flex space-x-2" id="product-breadcrumb">
           <li><a href="/" class="hover:text-white transition">Home</a> <span class="mx-2">/</span></li>
           <li><a href="catalogo.html" class="hover:text-white transition" id="breadcrumb-cat">Loja</a> <span class="mx-2">/</span></li>
@@ -48,26 +48,31 @@
         </ol>
       </nav>
 
-      <div class="bg-[#111] border border-white/5 p-4 lg:p-8 shadow-2xl rounded-2xl">
-        <div class="flex flex-col lg:flex-row gap-8">
+      <div class="bg-[#111] border border-white/5 p-4 lg:p-5 shadow-2xl rounded-2xl">
+        <div class="flex flex-col lg:flex-row gap-5">
           
           <!-- Coluna 1: Miniaturas Verticais (escondido no mobile) -->
-          <div class="hidden lg:flex flex-col gap-3 w-24 shrink-0 relative">
+          <div class="hidden lg:flex flex-col gap-2 w-16 shrink-0 relative">
             <button class="text-gray-500 hover:text-white mx-auto transition"><i class="bi bi-chevron-up"></i></button>
-            <div id="product-gallery-thumbnails" class="flex flex-col gap-3 overflow-y-auto max-h-[600px] custom-scrollbar-hidden items-center w-full">
+            <div id="product-gallery-thumbnails" class="flex flex-col gap-2 overflow-y-auto max-h-[480px] custom-scrollbar-hidden items-center w-full">
                 <!-- Thumbs loaded by JS -->
             </div>
           </div>
 
-          <!-- Coluna 2: Imagens Principais (Grid 1 grande) -->
-          <div class="w-full lg:flex-1 grid grid-cols-1 gap-4 product-gallery main-image-container-wrapper">
-             <div class="aspect-[4/5] lg:aspect-[3/4] bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden main-image-container relative flex items-center justify-center">
-                <img id="main-product-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="w-full h-full object-cover fade-in" alt="Produto">
+          <!-- Coluna 2: Imagem Principal + Galeria Mobile -->
+          <div class="w-full lg:flex-1 flex flex-col gap-3 product-gallery main-image-container-wrapper">
+             <!-- Imagem principal -->
+             <div class="aspect-[4/5] lg:aspect-[4/5] bg-[#0a0a0a] border border-white/5 rounded-xl overflow-hidden main-image-container relative flex items-center justify-center">
+                <img id="main-product-img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="w-full h-full object-cover fade-in" alt="Produto" style="cursor:zoom-in;">
+             </div>
+             <!-- Miniaturas Horizontais (visível apenas no mobile) -->
+             <div id="product-gallery-mobile" class="flex lg:hidden gap-2 overflow-x-auto custom-scrollbar-hidden py-1">
+               <!-- Thumbs carregados pelo JS -->
              </div>
           </div>
 
           <!-- Coluna 3: Informações do Produto -->
-          <div class="w-full lg:w-[380px] shrink-0 pt-2">
+          <div class="w-full lg:w-[320px] shrink-0 pt-1">
             <div class="fade-in">
               <h1 class="font-['Outfit'] text-2xl font-black uppercase mb-2 text-white" id="product-name">Buscando produto...</h1>
 
@@ -82,12 +87,10 @@
               
               <!-- Preços -->
               <div class="mb-6 bg-[#0a0a0a] border border-white/5 p-4 rounded-xl">
-                <p class="text-[11px] text-gray-500 line-through mb-1" id="price-old-label">de <span id="price-old">R$ 00,00</span> por</p>
                 <div class="flex items-end gap-2 flex-wrap">
-                    <p class="text-3xl font-black text-white" id="price-current">R$ 00,00</p>
+                    <p class="text-3xl font-black text-[var(--brand-yellow)]" id="price-current">R$ 00,00</p>
                     <p class="text-[11px] text-gray-400 mb-1 hidden" id="price-discount-container">OU <span class="text-[var(--brand-yellow)] font-bold text-lg" id="price-discount">R$ 00,00</span> na compra de 3 ou mais peças</p>
                 </div>
-                <p class="text-[11px] text-[var(--brand-yellow)] font-bold tracking-widest uppercase mt-2" id="price-installments">Ou 6x de R$ 0,00</p>
               </div>
 
               <!-- Cor -->
@@ -115,11 +118,7 @@
                 </div>
               </div>
 
-              <!-- Cashback banner -->
-              <div class="bg-[#1a1a1a] border border-white/5 p-4 mb-6 flex flex-col justify-center rounded-xl">
-                  <span class="text-[11px] text-gray-400">Ganhe até</span>
-                  <span class="text-sm font-bold text-[var(--brand-yellow)]">R$ 6,70 de Cashback</span>
-              </div>
+
 
               <!-- Botão Adicionar -->
               <div class="mb-8 flex flex-col sm:flex-row gap-4">
@@ -251,22 +250,14 @@
         }
     });
 
-    // Make adjustQty available to onclick
-    function adjustQty(change) {
-       const input = document.getElementById('buy-qty');
-       let current = parseInt(input.value) || 1;
-       current += change;
-       if(current < 1) current = 1;
-       if(current > 99) current = 99;
-       input.value = current;
-    }
+    // adjustQty é definida no produto.js — não duplicar aqui
   </script>
   <script src="../assets/js/navbar.js?v=1.1"></script>
   <script src="../assets/js/mega-menu.js?v=1.0"></script>
   <script src="../assets/js/search.js?v=1.1"></script>
   <script src="../assets/js/accordion.js?v=1.1"></script>
   <script src="../assets/js/cart.js?v=1.1"></script>
-  <script src="../assets/js/produto.js?v=1.1"></script>
+  <script src="../assets/js/produto.js?v=2.0"></script>
   <script src="../assets/js/reviews.js?v=1.1"></script>
   <script src="../assets/js/auth.js?v=1.1"></script>
   <script src="../assets/js/categorias.js"></script>

@@ -146,6 +146,36 @@ class Avaliacao {
         ];
     }
 
+    // Verificar se o cliente já avaliou este produto
+    public function verificarAvaliacaoExistente($id_produto, $id_cliente) {
+        $sql = "SELECT id_avaliacoes FROM tbl_avaliacoes 
+                WHERE id_produto = :id_produto AND id_cliente = :id_cliente AND excluido_em IS NULL 
+                LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_produto', $id_produto);
+        $stmt->bindParam(':id_cliente', $id_cliente);
+        $stmt->execute();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    // Verificar se o cliente comprou o produto (pedido pago ou concluido)
+    public function verificarCompraConfirmada($id_produto, $id_perfil) {
+        $sql = "SELECT ped.id_pedido 
+                FROM tbl_pedidos ped
+                INNER JOIN tbl_itens_pedidos ip ON ped.id_pedido = ip.id_pedido
+                WHERE ped.id_perfil = :id_perfil 
+                AND ip.id_produto = :id_produto 
+                AND ped.status_pedido IN ('pago', 'concluido')
+                AND ped.excluido_em IS NULL
+                AND ip.excluido_em IS NULL
+                LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id_perfil', $id_perfil, \PDO::PARAM_INT);
+        $stmt->bindParam(':id_produto', $id_produto, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
     // Buscar avaliação por ID
     public function buscarPorId($id) {
         $sql = "SELECT a.*, p.nome_produtos as nome_produto, u.nome_usuarios as nome_cliente 

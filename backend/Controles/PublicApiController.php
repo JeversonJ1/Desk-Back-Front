@@ -291,7 +291,6 @@ class PublicApiController
 
         $id_perfil = $data['id_perfil'] ?? null;
         $data_pedido = $data['data_pedido'] ?? date('Y-m-d H:i:s');
-        $total_pedido = $data['total_pedido'] ?? 0;
         $status_pedido = $data['status_pedido'] ?? 'pendente';
         $itens = $data['itens'] ?? [];
 
@@ -301,17 +300,45 @@ class PublicApiController
             exit;
         }
 
+        // ==========================================
+        // SECURITY FIX: Calculate true total from DB
+        // ==========================================
+        $total_pedido = 0;
+        $produtosModel = new \App\Koketsu\Models\Produtos($this->db);
+        $itensValidados = [];
+
+        if (!empty($itens) && is_array($itens)) {
+            foreach ($itens as $item) {
+                $id_produto = $item['id_produto'];
+                $quantidade = (int) $item['quantidade'];
+                
+                $produtoDB = $produtosModel->buscarProdutoPorId($id_produto);
+                
+                if ($produtoDB) {
+                    $preco_real = (float) $produtoDB['preco_produtos'];
+                    $total_pedido += ($preco_real * $quantidade);
+                    
+                    // Store validated item to insert later
+                    $itensValidados[] = [
+                        'id_produto' => $id_produto,
+                        'quantidade' => $quantidade,
+                        'preco_unitario' => $preco_real
+                    ];
+                }
+            }
+        }
+
         $id_pedido = $this->pedidosModel->inserirPedido($id_perfil, $data_pedido, $total_pedido, $status_pedido);
 
         if ($id_pedido) {
-            if (!empty($itens) && is_array($itens)) {
+            if (!empty($itensValidados)) {
                 $itensModel = new ItensPedidos($this->db);
-                foreach ($itens as $item) {
+                foreach ($itensValidados as $itemVal) {
                     $itensModel->inserirItemPedido(
                         $id_pedido,
-                        $item['id_produto'],
-                        $item['quantidade'],
-                        $item['preco_unitario']
+                        $itemVal['id_produto'],
+                        $itemVal['quantidade'],
+                        $itemVal['preco_unitario']
                     );
                 }
             }
@@ -854,13 +881,22 @@ class PublicApiController
 
         if (!$data || !isset($data['id_produto']) || !isset($data['id_usuarios']) || !isset($data['nota_avaliacoes'])) {
             http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Dados incompletos']);
+            echo json_encode(['status' => 'error', 'message' => 'Dados incompletos. Envie id_produto, id_usuarios e nota_avaliacoes.']);
+            exit;
+        }
+
+        // Validar nota entre 1 e 5
+        $nota = (int) $data['nota_avaliacoes'];
+        if ($nota < 1 || $nota > 5) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'A nota deve ser entre 1 e 5.']);
             exit;
         }
 
         $db = Database::getInstance();
         $avaliacaoModel = new \App\Koketsu\Models\Avaliacao($db);
 
+        // Buscar perfil do usuário
         $stmt = $db->prepare("SELECT id_perfil FROM tbl_perfil WHERE id_usuarios = :id_usuario LIMIT 1");
         $stmt->bindParam(':id_usuario', $data['id_usuarios']);
         $stmt->execute();
@@ -868,22 +904,48 @@ class PublicApiController
 
         if (!$perfil) {
             http_response_code(403);
-            echo json_encode(['status' => 'error', 'message' => 'Perfil do usuário não encontrado']);
+            echo json_encode(['status' => 'error', 'message' => 'Perfil do usuário não encontrado. Complete seu cadastro primeiro.']);
             exit;
         }
 
-        $res = $avaliacaoModel->inserirAvaliacao(
-            $data['id_produto'],
-            $perfil['id_perfil'],
-            $data['nota_avaliacoes'],
-            $data['comentario_avaliacoes'] ?? ''
-        );
+        // Verificar se o usuário comprou o produto
+        $comprou = $avaliacaoModel->verificarCompraConfirmada($data['id_produto'], $perfil['id_perfil']);
+        if (!$comprou) {
+            http_response_code(403);
+            echo json_encode(['status' => 'error', 'message' => 'Apenas clientes que compraram este produto podem avaliá-lo.']);
+            exit;
+        }
+
+        // Sanitizar comentário
+        $comentario = htmlspecialchars(trim($data['comentario_avaliacoes'] ?? ''), ENT_QUOTES, 'UTF-8');
+
+        // Verificar se já existe avaliação para editar, ou se deve criar nova
+        $existente = $avaliacaoModel->verificarAvaliacaoExistente($data['id_produto'], $perfil['id_perfil']);
+        
+        if ($existente) {
+            // Editar
+            $res = $avaliacaoModel->atualizarAvaliacao(
+                $existente['id_avaliacoes'],
+                $nota,
+                $comentario
+            );
+            $msg = 'Avaliação atualizada com sucesso!';
+        } else {
+            // Inserir nova
+            $res = $avaliacaoModel->inserirAvaliacao(
+                $data['id_produto'],
+                $perfil['id_perfil'],
+                $nota,
+                $comentario
+            );
+            $msg = 'Avaliação enviada com sucesso!';
+        }
 
         if ($res) {
-            echo json_encode(['status' => 'success', 'message' => 'Avaliação enviada!']);
+            echo json_encode(['status' => 'success', 'message' => $msg]);
         } else {
             http_response_code(500);
-            echo json_encode(['status' => 'error', 'message' => 'Erro ao salvar avaliação. Certifique-se de que o produto já foi entregue.']);
+            echo json_encode(['status' => 'error', 'message' => 'Erro ao salvar avaliação. Tente novamente.']);
         }
         exit;
     }

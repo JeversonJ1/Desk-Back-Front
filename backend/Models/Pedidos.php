@@ -34,11 +34,10 @@ class Pedidos
         return $this->buscarPedidos();
     }
 
-    // Buscar pedido por ID
     public function buscarPedidoPorId(int $id)
     {
 
-        $sql = "SELECT tbl_pedidos.*, tbl_perfil.endereco_perfil, tbl_perfil.id_usuarios, tbl_usuarios.nome_usuarios AS nome_cliente
+        $sql = "SELECT tbl_pedidos.*, tbl_perfil.endereco_perfil, tbl_perfil.telefone_perfil, tbl_perfil.data_cadastro AS data_cadastro_perfil, tbl_perfil.id_usuarios, tbl_usuarios.nome_usuarios AS nome_cliente
                 FROM tbl_pedidos
                 LEFT JOIN tbl_perfil ON tbl_pedidos.id_perfil = tbl_perfil.id_perfil
                 LEFT JOIN tbl_usuarios ON tbl_perfil.id_usuarios = tbl_usuarios.id_usuarios
@@ -278,20 +277,23 @@ class Pedidos
     // Inserir novo pedido
     function inserirPedido($id_perfil, $data_pedido, $total_pedido, $status_pedido)
     {
+        $stmtMax = $this->db->query("SELECT COALESCE(MAX(id_pedido), 0) + 1 AS next_id FROM tbl_pedidos");
+        $nextId = (int) $stmtMax->fetch(PDO::FETCH_ASSOC)['next_id'];
 
         $sql = "INSERT INTO tbl_pedidos
-        (id_perfil, data_pedido, total_pedido, status_pedido, criado_em) 
-        VALUES (:id_perfil, :data_pedido, :total_pedido, :status_pedido, NOW())";
+        (id_pedido, id_perfil, data_pedido, total_pedido, status_pedido, criado_em) 
+        VALUES (:id_pedido, :id_perfil, :data_pedido, :total_pedido, :status_pedido, NOW())";
 
         $stmt = $this->db->prepare($sql);
 
+        $stmt->bindParam(':id_pedido', $nextId, PDO::PARAM_INT);
         $stmt->bindParam(':id_perfil', $id_perfil, PDO::PARAM_INT);
         $stmt->bindParam(':data_pedido', $data_pedido);
         $stmt->bindParam(':total_pedido', $total_pedido);
         $stmt->bindParam(':status_pedido', $status_pedido);
 
         if ($stmt->execute()) {
-            return $this->db->lastInsertId();
+            return $nextId;
         } else {
             error_log("Erro ao inserir pedido: " . json_encode($stmt->errorInfo()));
             return false;

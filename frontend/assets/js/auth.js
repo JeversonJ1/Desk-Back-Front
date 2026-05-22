@@ -71,23 +71,47 @@
         const userDropdownLinks = document.querySelector('.user-dropdown-links');
 
         if (user.tipo === 'admin') {
-            if (ddBadge) ddBadge.textContent = 'Administrador';
+            if (ddBadge) {
+                ddBadge.className = 'dd-badge inline-flex items-center gap-1 text-[9px] font-black text-white uppercase tracking-widest bg-purple-600 px-2 py-0.5 rounded-full mt-0.5';
+                ddBadge.innerHTML = '<i class="bi bi-shield-fill text-[7px]"></i> ADMINISTRADOR';
+            }
             if (userDropdownLinks) {
                 userDropdownLinks.innerHTML = `
-                    <a href="/backend/admin/dashboard"><i class="bi bi-speedometer2"></i> Painel Admin</a>
-                    <div class="user-dropdown-divider"></div>
-                    <a class="logout-link" href="/backend/logout"><i class="bi bi-box-arrow-right"></i> Sair</a>
+                    <a href="/backend/admin/dashboard" class="flex items-center gap-3 px-3 py-2.5 text-[13px] text-gray-300 hover:text-[#F2C84B] hover:bg-[#F2C84B]/8 rounded-xl transition-all">
+                      <i class="bi bi-speedometer2 text-base text-gray-500"></i>
+                      <span class="font-semibold">Painel Admin</span>
+                    </a>
+                    <div class="h-px bg-white/5 my-1 mx-2"></div>
+                    <a class="logout-link flex items-center gap-3 px-3 py-2.5 text-[13px] text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-all" href="/backend/logout">
+                      <i class="bi bi-box-arrow-right text-base"></i>
+                      <span class="font-semibold">Sair da conta</span>
+                    </a>
                 `;
             }
         } else {
-            if (ddBadge) ddBadge.textContent = 'Membro Koketsu';
+            if (ddBadge) {
+                ddBadge.className = 'dd-badge inline-flex items-center gap-1 text-[9px] font-black text-black uppercase tracking-widest bg-[#F2C84B] px-2 py-0.5 rounded-full mt-0.5';
+                ddBadge.innerHTML = '<i class="bi bi-star-fill text-[7px]"></i> MEMBRO KOKETSU';
+            }
             if (userDropdownLinks) {
                 userDropdownLinks.innerHTML = `
-                    <a id="ddProfileLink" href="/backend/cliente/meu-perfil/${user.id || '0'}"><i class="bi bi-person"></i> Meu Perfil</a>
-                    <a href="/backend/cliente/pedidos"><i class="bi bi-bag-check"></i> Meus Pedidos</a>
-                    <a href="/backend/configuracoes"><i class="bi bi-gear"></i> Preferências</a>
-                    <div class="user-dropdown-divider"></div>
-                    <a href="#" id="ddLogoutBtn" class="logout-link"><i class="bi bi-box-arrow-right"></i> Sair</a>
+                    <a id="ddProfileLink" href="/backend/cliente/meu-perfil/${user.id || '0'}" class="flex items-center gap-3 px-3 py-2.5 text-[13px] text-gray-300 hover:text-[#F2C84B] hover:bg-[#F2C84B]/8 rounded-xl transition-all">
+                      <i class="bi bi-person text-base text-gray-500"></i>
+                      <span class="font-semibold">Meu Perfil</span>
+                    </a>
+                    <a href="/backend/cliente/pedidos" class="flex items-center gap-3 px-3 py-2.5 text-[13px] text-gray-300 hover:text-[#F2C84B] hover:bg-[#F2C84B]/8 rounded-xl transition-all">
+                      <i class="bi bi-bag-check text-base text-gray-500"></i>
+                      <span class="font-semibold">Meus Pedidos</span>
+                    </a>
+                    <a href="/backend/configuracoes" class="flex items-center gap-3 px-3 py-2.5 text-[13px] text-gray-300 hover:text-[#F2C84B] hover:bg-[#F2C84B]/8 rounded-xl transition-all">
+                      <i class="bi bi-gear text-base text-gray-500"></i>
+                      <span class="font-semibold">Preferências</span>
+                    </a>
+                    <div class="h-px bg-white/5 my-1 mx-2"></div>
+                    <a href="#" id="ddLogoutBtn" class="logout-link flex items-center gap-3 px-3 py-2.5 text-[13px] text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-all">
+                      <i class="bi bi-box-arrow-right text-base"></i>
+                      <span class="font-semibold">Sair da conta</span>
+                    </a>
                 `;
                 const newLogoutBtn = document.getElementById('ddLogoutBtn');
                 if (newLogoutBtn) newLogoutBtn.addEventListener('click', handleLogout);

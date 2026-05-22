@@ -48,7 +48,7 @@ const ProductManager = (() => {
       const precoFormatado = formatPrice(product.preco);
       return `
         <div class="swiper-slide h-auto pb-8 pt-4"> <!-- Added padding for shadows/hover effects to not be clipped by swiper -->
-          <div class="group relative flex flex-col h-full bg-[#050505] rounded-2xl overflow-hidden border border-white/5 transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(242,200,75,0.15)] hover:border-[#F2C84B]/30 cursor-pointer" onclick="window.location.href='/pages/produto.html?id=${product.id}'">
+          <div class="group relative flex flex-col h-full bg-[#050505] rounded-2xl overflow-hidden border border-white/5 transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(242,200,75,0.22)] hover:border-[#F2C84B]/30 cursor-pointer" onclick="window.location.href='/pages/produto.html?id=${product.id}'">
             
             <!-- Imagem -->
             <div class="relative aspect-[3/4] overflow-hidden bg-[#111]">
@@ -59,15 +59,14 @@ const ProductManager = (() => {
             </div>
             
             <!-- Conteúdo -->
-            <div class="p-6 flex flex-col items-center text-center flex-1 relative z-10">
+            <div class="p-6 flex flex-col items-center text-center flex-1 relative z-10 border-t border-white/5 bg-gradient-to-b from-[#0a0a0a] to-[#050505]">
               <p class="text-[9px] text-[#F2C84B] font-bold uppercase tracking-widest mb-2">${catName}</p>
               <h5 class="text-white font-bold text-sm uppercase tracking-[0.1em] mb-4 group-hover:text-[#F2C84B] transition-colors leading-snug line-clamp-2">${product.nome}</h5>
               
               <div class="mt-auto flex flex-col items-center w-full">
-                <div class="flex items-center justify-center gap-2 mb-1">
+                <div class="flex items-center justify-center gap-2 mb-6">
                   <span class="text-white font-black text-xl tracking-tighter group-hover:text-[#F2C84B] transition-colors">R$ ${precoFormatado}</span>
                 </div>
-                <p class="text-[10px] text-white/50 uppercase tracking-widest mb-6">10x de <span class="text-white/80 font-bold">R$ ${(product.preco / 10).toFixed(2).replace('.', ',')}</span> s/ juros</p>
                 
                 <!-- Botão Ver Detalhes animado -->
                 <div class="w-full bg-transparent border border-white/20 text-white font-bold py-3 text-[10px] uppercase tracking-widest text-center rounded-lg transition-all duration-500 group-hover:bg-[#F2C84B] group-hover:text-black group-hover:border-[#F2C84B] shadow-[0_0_15px_rgba(0,0,0,0.5)]">
@@ -186,13 +185,6 @@ const ProductManager = (() => {
             
             <!-- Gradiente Escuro no Rodapé para Leitura -->
             <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
-            
-            <!-- Badge -->
-            <div class="absolute top-5 left-5 z-10">
-                <span class="text-[#111] bg-[#F2C84B] px-3 py-1.5 text-[9px] font-black uppercase tracking-widest rounded-sm shadow-lg">
-                    ${tag}
-                </span>
-            </div>
             
             <!-- Conteúdo (Rodapé) -->
             <div class="absolute bottom-0 left-0 right-0 p-6 z-10 flex flex-col items-center transform transition-transform duration-500 translate-y-4 group-hover:translate-y-0">

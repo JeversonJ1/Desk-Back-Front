@@ -3,10 +3,10 @@
    ======================================== */
 
 :root {
-  /* Cores da Marca */
-  --color-primary: #F8D346;
-  --color-primary-light: #fff200;
-  --color-primary-dark: #f0e14a;
+  /* Cores da Marca — unificado com main.css */
+  --color-primary: #F2C84B;
+  --color-primary-light: #FFE566;
+  --color-primary-dark: #D4A800;
 
   /* Cores Neutras */
   --color-dark: #000000;

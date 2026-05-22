@@ -20,7 +20,7 @@ const CartManager = (() => {
   /**
    * Monta a mensagem e abre o WhatsApp
    */
-  const sendToWhatsapp = (cart) => {
+  const sendToWhatsapp = (cart, user = null, profile = null) => {
     const linhas = cart.map(item => {
       const subtotal = (item.preco * item.quantidade).toFixed(2).replace('.', ',');
       const tam = item.size ? ` | Tam: ${item.size}` : '';
@@ -29,15 +29,25 @@ const CartManager = (() => {
     const total = cart
       .reduce((acc, i) => acc + i.preco * i.quantidade, 0)
       .toFixed(2).replace('.', ',');
-    const texto = [
+      
+    let textoArr = [
       '🛒 *Pedido Koketsu Grife*',
       '',
       ...linhas,
       '',
       `*Total: R$ ${total}*`,
-      '',
-      `📅 ${new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' })}`
-    ].join('\n');
+      ''
+    ];
+    
+    if (user && profile) {
+      textoArr.push(`👤 *Cliente:* ${user.nome}`);
+      textoArr.push(`📍 *Endereço:* ${profile.endereco}`);
+      textoArr.push('');
+    }
+    
+    textoArr.push(`📅 ${new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' })}`);
+
+    const texto = textoArr.join('\n');
     const url = `https://wa.me/${_wppConfig.numero}?text=${encodeURIComponent(texto)}`;
     window.open(url, '_blank');
   };
@@ -328,7 +338,7 @@ const CartManager = (() => {
 
         // Validação simples: não nulo e não vazio
         if (telefone && endereco && telefone.trim() !== '' && endereco.trim() !== '') {
-          return { ok: true, id_perfil: id_perfil };
+          return { ok: true, id_perfil: id_perfil, telefone, endereco };
         }
       }
 
@@ -467,21 +477,8 @@ const CartManager = (() => {
     const auth = await checkAuthQuick();
 
     if (!auth.authenticated) {
-      // Usuário não logado → fallback para WhatsApp direto
-      if (_wppConfig.ativo) {
-        showToast('Abrindo WhatsApp... 📲');
-        // Salvar pedido no histórico para exibir na página de sucesso
-        localStorage.setItem('koketsu_last_order', JSON.stringify(cart));
-        localStorage.removeItem(CART_STORAGE_KEY);
-        updateCartBadge();
-        setTimeout(() => {
-          sendToWhatsapp(cart);
-          window.location.href = '/pages/sucesso.html';
-        }, 800);
-      } else {
-        showToast('Faça login para finalizar seu pedido.');
-        setTimeout(() => window.location.href = '/pages/login.html', 1500);
-      }
+      showToast('Faça login para finalizar seu pedido.');
+      setTimeout(() => window.location.href = '/backend/login', 1500);
       return;
     }
 
@@ -536,7 +533,7 @@ const CartManager = (() => {
         }
 
         setTimeout(() => {
-          window.location.href = '/pages/login.html';
+          window.location.href = '/backend/login';
         }, 1500);
         return;
       }
@@ -603,7 +600,7 @@ const CartManager = (() => {
 
       // Se WhatsApp ativo, abre a janela e depois redireciona para pedidos
       if (_wppConfig.ativo) {
-        sendToWhatsapp(cart);
+        sendToWhatsapp(cart, authStatus.user, profileCheck);
       }
 
       setTimeout(() => {

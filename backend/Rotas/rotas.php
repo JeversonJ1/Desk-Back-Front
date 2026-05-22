@@ -276,6 +276,8 @@ class Rotas
             "/backend/pedido/deletar" => "PedidosController@deletarPedido",
             "/pedido/ativar" => "PedidosController@ativarPedido",
             "/backend/pedido/ativar" => "PedidosController@ativarPedido",
+            "/pedido/mudar-status" => "PedidosController@mudarStatusRapido",
+            "/backend/pedido/mudar-status" => "PedidosController@mudarStatusRapido",
             //produtos
             "/produtos/salvar" => "ProdutosController@salvarProduto",
             "/backend/produtos/salvar" => "ProdutosController@salvarProduto",

@@ -222,28 +222,47 @@ const Components = {
       
       <!-- Auth Container (Logado) -->
       <div id="navUserContainer" class="hidden items-center group relative">
-        <button id="userAvatarBtn" class="bg-black border border-white/10 rounded-full text-white py-1.5 px-4 flex items-center gap-3 text-[13px] font-semibold transition hover:bg-[var(--brand-yellow)] hover:text-black hover:scale-105 shadow-sm" aria-label="Menu do usuário">
-          <img id="userAvatarImg" src="" alt="Avatar" class="hidden w-6 h-6 rounded-full object-cover">
+        <button id="userAvatarBtn" class="bg-black border border-white/10 rounded-full text-white py-2 px-6 flex items-center gap-3 text-[13px] font-semibold transition hover:bg-[var(--brand-yellow)] hover:text-black hover:scale-105 hover:shadow-[0_4px_15px_rgba(255,215,0,0.3)]" aria-label="Menu do usuário">
+          <img id="userAvatarImg" src="" alt="Avatar" class="hidden w-5 h-5 rounded-full object-cover" onerror="this.style.display='none'; const fb = document.getElementById('userAvatarFallback'); if(fb) fb.style.display='inline-flex';">
           <i id="userAvatarFallback" class="bi bi-person-fill text-xl"></i>
+          <span id="navUserName" class="font-bold uppercase hidden md:inline tracking-[0.1em] text-[0.75rem]"></span>
         </button>
-        <span id="navUserName" class="hidden lg:inline font-bold uppercase ml-2 text-[0.75rem] tracking-[0.1em]"></span>
 
         <!-- Dropdown do usuário (Logado) -->
-        <div id="userDropdown" class="absolute top-full right-0 mt-3 w-64 bg-white rounded-xl shadow-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 z-[1000] overflow-hidden">
-          <div class="bg-gray-50 p-4 border-b border-gray-100 flex items-center gap-3">
-            <img id="ddAvatarImg" src="" alt="Avatar" class="hidden w-10 h-10 rounded-full object-cover border-2 border-[var(--brand-yellow)]">
-            <div id="ddAvatarFallback" class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-xl"><i class="bi bi-person-fill"></i></div>
-            <div>
-              <div id="ddUserName" class="font-bold text-gray-900 text-sm">Cliente</div>
-              <span class="dd-badge text-[10px] font-bold text-[var(--brand-yellow)] uppercase tracking-wider bg-yellow-50 px-2 py-0.5 rounded-full border border-yellow-200">Membro Koketsu</span>
+        <div id="userDropdown" class="absolute top-full right-0 mt-3 w-64 bg-[#0d0d0d] rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] border border-[#F2C84B]/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 z-[1000] overflow-hidden backdrop-blur-xl">
+          <!-- Cabeçalho do dropdown -->
+          <div class="bg-gradient-to-br from-[#1a1400] to-[#111] p-4 border-b border-[#F2C84B]/10 flex items-center gap-3">
+            <div class="relative shrink-0">
+              <img id="ddAvatarImg" src="" alt="Avatar" class="hidden w-11 h-11 rounded-full object-cover border-2 border-[#F2C84B]" onerror="this.style.display='none'; const fb = document.getElementById('ddAvatarFallback'); if(fb) fb.style.display='flex';">
+              <div id="ddAvatarFallback" class="w-11 h-11 rounded-full flex items-center justify-center text-black font-black text-lg" style="background: linear-gradient(135deg, #F2C84B, #b8880b);"><i class="bi bi-person-fill"></i></div>
+              <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-[#0d0d0d]"></span>
+            </div>
+            <div class="min-w-0">
+              <div id="ddUserName" class="font-black text-white text-sm truncate">Cliente</div>
+              <span class="dd-badge inline-flex items-center gap-1 text-[9px] font-black text-black uppercase tracking-widest bg-[#F2C84B] px-2 py-0.5 rounded-full mt-0.5">
+                <i class="bi bi-star-fill text-[7px]"></i> MEMBRO KOKETSU
+              </span>
             </div>
           </div>
-          <div class="user-dropdown-links p-2 flex flex-col">
-            <a id="ddProfileLink" href="/backend/cliente/meu-perfil/0" class="flex items-center gap-3 px-3 py-2 text-sm text-gray-600 hover:text-[var(--brand-yellow)] hover:bg-gray-50 rounded-lg transition"><i class="bi bi-person"></i> Meu Perfil</a>
-            <a href="/backend/cliente/pedidos" class="flex items-center gap-3 px-3 py-2 text-sm text-gray-600 hover:text-[var(--brand-yellow)] hover:bg-gray-50 rounded-lg transition"><i class="bi bi-bag-check"></i> Meus Pedidos</a>
-            <a href="/backend/configuracoes" class="flex items-center gap-3 px-3 py-2 text-sm text-gray-600 hover:text-[var(--brand-yellow)] hover:bg-gray-50 rounded-lg transition"><i class="bi bi-gear"></i> Preferências</a>
-            <div class="h-px bg-gray-100 my-1 mx-2"></div>
-            <a href="#" id="ddLogoutBtn" class="logout-link flex items-center gap-3 px-3 py-2 text-sm text-red-500 hover:bg-red-50 rounded-lg transition"><i class="bi bi-box-arrow-right"></i> Sair</a>
+          <!-- Links -->
+          <div class="user-dropdown-links p-2 flex flex-col gap-0.5">
+            <a id="ddProfileLink" href="/backend/cliente/meu-perfil/0" class="flex items-center gap-3 px-3 py-2.5 text-[13px] text-gray-300 hover:text-[#F2C84B] hover:bg-[#F2C84B]/8 rounded-xl transition-all group/link">
+              <i class="bi bi-person text-base text-gray-500 group-hover/link:text-[#F2C84B] transition-colors"></i>
+              <span class="font-semibold">Meu Perfil</span>
+            </a>
+            <a href="/backend/cliente/pedidos" class="flex items-center gap-3 px-3 py-2.5 text-[13px] text-gray-300 hover:text-[#F2C84B] hover:bg-[#F2C84B]/8 rounded-xl transition-all group/link">
+              <i class="bi bi-bag-check text-base text-gray-500 group-hover/link:text-[#F2C84B] transition-colors"></i>
+              <span class="font-semibold">Meus Pedidos</span>
+            </a>
+            <a href="/backend/configuracoes" class="flex items-center gap-3 px-3 py-2.5 text-[13px] text-gray-300 hover:text-[#F2C84B] hover:bg-[#F2C84B]/8 rounded-xl transition-all group/link">
+              <i class="bi bi-gear text-base text-gray-500 group-hover/link:text-[#F2C84B] transition-colors"></i>
+              <span class="font-semibold">Preferências</span>
+            </a>
+            <div class="h-px bg-white/5 my-1 mx-2"></div>
+            <a href="#" id="ddLogoutBtn" class="logout-link flex items-center gap-3 px-3 py-2.5 text-[13px] text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-all group/link">
+              <i class="bi bi-box-arrow-right text-base transition-colors"></i>
+              <span class="font-semibold">Sair da conta</span>
+            </a>
           </div>
         </div>
       </div>
@@ -255,24 +274,33 @@ const Components = {
           <span class="font-bold uppercase hidden md:inline tracking-[0.1em] text-[0.75rem]">LOGIN</span>
         </a>
         
-        <!-- Dropdown Hover Panel -->
-        <div class="absolute right-0 top-full pt-3 w-[290px] z-[1000] opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
-          <div class="bg-white rounded-xl p-6 shadow-2xl border border-gray-100">
-            <p class="text-gray-500 font-bold uppercase mb-4 text-[0.65rem] tracking-[0.15em]">Acesse sua conta</p>
-            
-            <a href="#" class="block w-full text-center bg-black text-white hover:bg-gray-800 transition mb-2 font-bold uppercase py-3 rounded-lg text-[0.75rem] tracking-[0.1em] shadow-md" onclick="if(window.AuthManager) document.getElementById('navLoginBtn').click()">
-              Entrar na conta
+        <!-- Dropdown Hover Panel (Guest) -->
+        <div class="absolute right-0 top-full pt-3 w-[280px] z-[1000] opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 pointer-events-none group-hover:pointer-events-auto">
+          <div class="bg-[#0d0d0d] rounded-2xl p-5 shadow-[0_20px_60px_rgba(0,0,0,0.8)] border border-[#F2C84B]/20 backdrop-blur-xl">
+            <!-- Cabeçalho -->
+            <div class="flex items-center gap-2 mb-4">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#F2C84B,#b8880b)">
+                <i class="bi bi-person-fill text-black text-sm"></i>
+              </div>
+              <div>
+                <p class="text-white font-black uppercase text-[11px] tracking-[0.15em]">Acesse sua conta</p>
+                <p class="text-gray-500 text-[10px]">Membro Koketsu</p>
+              </div>
+            </div>
+
+            <a href="#" class="block w-full text-center bg-[#F2C84B] text-black hover:brightness-110 transition mb-2 font-black uppercase py-3 rounded-xl text-[0.72rem] tracking-[0.1em] shadow-[0_4px_15px_rgba(242,200,75,0.25)]" onclick="if(window.AuthManager) document.getElementById('navLoginBtn').click()">
+              <i class="bi bi-lightning-fill mr-1"></i> Entrar na conta
             </a>
-            
-            <a href="/backend/register" class="block w-full text-center border-2 border-black text-black hover:bg-gray-50 transition mb-5 font-bold uppercase py-2.5 rounded-lg text-[0.75rem] tracking-[0.1em]">
+
+            <a href="/backend/register" class="block w-full text-center border border-white/15 text-white hover:border-[#F2C84B]/50 hover:text-[#F2C84B] transition mb-4 font-bold uppercase py-2.5 rounded-xl text-[0.72rem] tracking-[0.1em]">
               Criar nova conta
             </a>
-            
-            <hr class="border-gray-200">
-            
-            <a href="/backend/cliente/pedidos" class="group/trace flex items-center justify-between text-decoration-none mt-4">
-              <span class="font-bold uppercase text-gray-500 group-hover/trace:text-black transition text-[0.7rem] tracking-[0.1em]">Rastrear meu pedido</span>
-              <i class="bi bi-arrow-right text-gray-400 group-hover/trace:text-black group-hover/trace:translate-x-1 transition-all"></i>
+
+            <div class="h-px bg-white/5 mb-4"></div>
+
+            <a href="/backend/cliente/pedidos" class="group/trace flex items-center justify-between">
+              <span class="font-bold uppercase text-gray-500 group-hover/trace:text-[#F2C84B] transition text-[0.68rem] tracking-[0.1em]">Rastrear meu pedido</span>
+              <i class="bi bi-arrow-right text-gray-600 group-hover/trace:text-[#F2C84B] group-hover/trace:translate-x-1 transition-all"></i>
             </a>
           </div>
         </div>
