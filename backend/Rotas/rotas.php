@@ -107,15 +107,6 @@ class Rotas
             "/tamanho/listar" => "TamanhoController@viewListarTamanhos",
             "/tamanho/editar/{id}" => "TamanhoController@viewEditarTamanho",
             "/tamanho/excluir/{id}" => "TamanhoController@viewExcluirTamanho",
-            // Itens Pedidos   
-            "/itenspedidos" => "ItensPedidosController@index",
-            "/itenspedidos/criar" => "ItensPedidosController@viewCriarItemPedido",
-            "/itenspedidos/listar" => "ItensPedidosController@viewListarItemPedido",
-            "/backend/itenspedidos/listar" => "ItensPedidosController@viewListarItemPedido",
-            "/itenspedidos/listar/{id}" => "ItensPedidosController@viewItemPedidoUnico",
-            "/itenspedidos/editar/{id}" => "ItensPedidosController@viewEditarItemPedido",
-            "/itenspedidos/excluir/{id}" => "ItensPedidosController@viewExcluirItemPedido",
-            "/itenspedidos/{id}/relatorio/{data1}/{data2}" => "ItensPedidosController@relatorioitenspedidos",
             '/api/itenspedidos' => 'PublicApiController@getItenspedidos',
             //Pedidos
             "/pedido" => "PedidosController@index",
@@ -153,7 +144,6 @@ class Rotas
             "/avaliacao/criar" => "AvaliacaoController@viewCriarAvaliacoes",
             "/avaliacao/listar" => "AvaliacaoController@viewListarAvaliacoes",
             "/backend/avaliacao/listar" => "AvaliacaoController@viewListarAvaliacoes",
-            "/avaliacao/editar/{id}" => "AvaliacaoController@viewEditarAvaliacoes",
             "/avaliacao/excluir/{id}" => "AvaliacaoController@viewExcluirAvaliacoes",
             //Relatórios
             "/relatorios" => "Admin\RelatoriosController@index",
@@ -263,10 +253,6 @@ class Rotas
             "/backend/tamanho/atualizar/{id}" => "TamanhoController@atualizarTamanho",
             "/tamanho/deletar/{id}" => "TamanhoController@deletarTamanho",
             "/backend/tamanho/deletar/{id}" => "TamanhoController@deletarTamanho",
-            //itens pedidos
-            "/itenspedidos/salvar" => "ItensPedidosController@salvarItemPedido",
-            "/itenspedidos/atualizar/{id}" => "ItensPedidosController@atualizarItemPedido",
-            "/itenspedidos/deletar/{id}" => "ItensPedidosController@deletarItemPedido",
             //Pedidos
             "/pedido/salvar" => "PedidosController@salvarPedido",
             "/backend/pedido/salvar" => "PedidosController@salvarPedido",
@@ -289,7 +275,6 @@ class Rotas
             "/backend/produtos/ativar" => "ProdutosController@ativarProduto",
             //avaliacao
             "/avaliacao/salvar" => "AvaliacaoController@salvarAvaliacao",
-            "/avaliacao/atualizar/{id}" => "AvaliacaoController@atualizarAvaliacao",
             "/avaliacao/deletar/{id}" => "AvaliacaoController@deletarAvaliacao",
             //avaliacao cliente
             "/cliente/avaliacao/salvar" => "Cliente\AvaliacoesController@salvar",

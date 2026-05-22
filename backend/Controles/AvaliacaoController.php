@@ -30,13 +30,6 @@ class AvaliacaoController extends AdminController {
         View::render("avaliacao/index", ["avaliacoes" => $avaliacoes]);
     }
 
-    public function viewEditarAvaliacoes($id) {
-        $avaliacao = $this->avaliacao->buscarPorId($id);
-        if (!$avaliacao) {
-            Redirect::redirecionarComMensagem("/backend/avaliacao/listar", "error", "Avaliação não encontrada.");
-        }
-        View::render("avaliacao/edit", ["avaliacao" => $avaliacao]);
-    }
 
     public function viewExcluirAvaliacoes($id) {
         $avaliacao = $this->avaliacao->buscarPorId($id);
@@ -59,17 +52,6 @@ class AvaliacaoController extends AdminController {
         }
     }
 
-    public function atualizarAvaliacao($id) {
-        if ($this->avaliacao->atualizarAvaliacao(
-            $id,
-            $_POST['nota'],
-            $_POST['comentario']
-        )) {
-             Redirect::redirecionarComMensagem("/avaliacao/listar", "success", "Avaliação atualizada com sucesso!");
-        } else {
-             Redirect::redirecionarComMensagem("/avaliacao/editar/$id", "error", "Erro ao atualizar avaliação.");
-        }
-    }
 
     public function deletarAvaliacao($id) {
         if ($this->avaliacao->excluirAvaliacao($id)) {

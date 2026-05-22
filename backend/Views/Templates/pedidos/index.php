@@ -31,14 +31,12 @@ foreach ($pedidos as $p) {
     }
 }
 ?>
-
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-
     /* --- ESTILOS DE LAYOUT --- */
+    body { background-color: var(--bg-main) !important; margin: 0; font-family: Arial, sans-serif; color: var(--text-main); }
     .page-wrapper {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        padding: 30px;
+        font-family: Arial, sans-serif;
+        padding: 0;
         width: 100%;
         box-sizing: border-box;
         background-color: var(--bg-main) !important;
@@ -46,147 +44,165 @@ foreach ($pedidos as $p) {
         color: var(--text-main);
     }
 
-    .page-header-container {
+    /* --- HEADER --- */
+    .page-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 25px;
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 15px;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+        gap: 16px;
     }
-
-    .page-title {
-        font-size: 28px;
-        font-weight: 800;
-        margin: 0;
+    .page-header-left h1 {
+        font-size: 26px;
+        font-weight: 900;
         color: var(--text-main);
         text-transform: uppercase;
-        letter-spacing: -0.5px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
+        letter-spacing: -1px;
+        margin: 0;
     }
-
-    .page-title i {
-        color: var(--accent);
-        filter: drop-shadow(0 0 8px var(--accent-glow));
-    }
-
-    .header-breadcrumb {
+    .page-header-left p {
         font-size: 13px;
         color: var(--text-muted);
+        margin: 4px 0 0;
+    }
+    .btn-main-action {
+        background: linear-gradient(135deg, #F2C84B, #f0a500);
+        color: #000 !important;
+        padding: 13px 24px;
+        border-radius: 12px;
+        font-weight: 800;
+        text-decoration: none;
         text-transform: uppercase;
-        font-weight: 600;
-        letter-spacing: 0.5px;
+        font-size: 13px;
+        transition: .3s;
+        box-shadow: 0 4px 15px rgba(242,200,75,.25);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: none;
+        cursor: pointer;
+    }
+    .btn-main-action:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(242,200,75,.4);
     }
 
-    /* --- KPI CARDS PREMIUM --- */
-    .dashboard-grid {
+    /* --- STAT CARDS --- */
+    .stat-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 20px;
-        margin-bottom: 30px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 28px;
     }
-
+    @media(max-width:900px){
+        .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    }
     .stat-card {
+        background: var(--bg-card);
+        border: 2px solid var(--border-color);
         border-radius: 16px;
-        padding: 22px;
+        padding: 20px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: .3s;
         position: relative;
         overflow: hidden;
-        box-shadow: var(--shadow-sm);
     }
-
+    .stat-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(0,0,0,.5), 0 0 0 1px var(--accent-dim);
+    }
     .stat-card::before {
         content: '';
         position: absolute;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
-        pointer-events: none;
+        right: 0;
+        height: 3px;
+        background: var(--sc-color, #F2C84B);
     }
-
-    /* Cores dos Cards KPI */
-    .kpi-total { background: linear-gradient(135deg, #4E9EBF 0%, #1A365D 100%); }
-    .kpi-revenue { background: linear-gradient(135deg, #F2C84B 0%, #C47A3A 100%); color: #000; }
-    .kpi-actives { background: linear-gradient(135deg, #51cf66 0%, #1A5F20 100%); }
-    .kpi-inactives { background: linear-gradient(135deg, #dc3545 0%, #5A1A22 100%); }
-
-    .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-md);
-        filter: brightness(1.1);
-    }
-
-    .stat-info p {
-        margin: 0 0 5px 0;
-        text-transform: uppercase;
-        font-size: 11px;
-        letter-spacing: 1px;
-        font-weight: 700;
-        opacity: 0.8;
-    }
-
-    .kpi-revenue .stat-info p { color: #000; opacity: 0.9; }
-
     .stat-info h3 {
         margin: 0;
-        font-size: 26px;
-        font-weight: 800;
-        letter-spacing: -0.5px;
+        font-size: 28px;
+        font-weight: 900;
+        color: var(--text-main);
     }
-
+    .stat-info p {
+        margin: 0;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-size: 10px;
+        letter-spacing: 1px;
+        font-weight: 700;
+    }
     .stat-icon {
-        font-size: 26px;
+        font-size: 22px;
+        color: var(--sc-color, #F2C84B);
+        background: var(--sc-bg, rgba(242,200,75,.1));
         width: 50px;
         height: 50px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.12);
-        box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.2);
     }
 
-    .kpi-revenue .stat-icon {
-        background: rgba(0, 0, 0, 0.1);
-        box-shadow: none;
-        color: #000;
-    }
-
-    /* --- BARRA DE FILTROS & AÇÕES --- */
-    .controls-panel {
-        background: var(--bg-card-flat);
-        border: 1px solid var(--border-color);
+    /* --- TABELA E CABEÇALHO --- */
+    .table-card {
+        background: var(--bg-card);
+        border: 2px solid var(--border-color);
         border-radius: 16px;
-        padding: 20px;
+        overflow: hidden;
         margin-bottom: 25px;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
     }
-
-    .actions-bar {
+    .table-head {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 15px;
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--border-color);
         flex-wrap: wrap;
+        gap: 16px;
+    }
+    .table-title {
+        font-size: 14px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        color: var(--text-main);
+    }
+    .table-count {
+        font-size: 12px;
+        color: var(--text-muted);
+        font-weight: 600;
     }
 
-    .search-container {
-        position: relative;
+    /* --- FILTROS & BUSCA --- */
+    .search-group {
         flex: 1;
-        max-width: 450px;
+        max-width: 320px;
+        position: relative;
     }
-
-    .search-container i {
+    .search-input {
+        width: 100%;
+        background: var(--bg-card-flat);
+        border: 2px solid var(--border-color);
+        padding: 12px 12px 12px 44px;
+        border-radius: 12px;
+        color: var(--text-main);
+        font-size: 14px;
+        transition: .3s;
+        outline: none;
+        box-sizing: border-box;
+    }
+    .search-input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .search-group i {
         position: absolute;
         left: 15px;
         top: 50%;
@@ -194,148 +210,63 @@ foreach ($pedidos as $p) {
         color: var(--accent);
     }
 
-    .search-input {
-        width: 100%;
-        background: var(--bg-main);
-        border: 2px solid var(--border-color);
-        padding: 13px 15px 13px 45px;
-        border-radius: 10px;
-        color: var(--text-main);
-        font-size: 14px;
-        transition: all 0.3s ease;
-        outline: none;
-    }
-
-    .search-input:focus {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
-    .btn-create-order {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: linear-gradient(135deg, #F2C84B 0%, #d4a800 100%) !important;
-        color: #000 !important;
-        padding: 14px 26px;
-        border-radius: 10px;
-        font-weight: 800;
-        text-transform: uppercase;
-        font-size: 13px;
-        letter-spacing: 0.5px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        border: none;
-        box-shadow: var(--shadow-gold);
-        cursor: pointer;
-    }
-
-    .btn-create-order:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(242, 200, 75, 0.4);
-        filter: brightness(1.05);
-    }
-
-    /* --- ABAS DE FILTRO --- */
-    .tabs-container {
+    .filter-btns {
         display: flex;
         gap: 8px;
-        overflow-x: auto;
-        padding-bottom: 2px;
-        border-bottom: 1px solid var(--border-color);
+        flex-wrap: wrap;
     }
-
     .tab-button {
-        background: transparent;
-        border: none;
-        color: var(--text-muted);
-        padding: 10px 18px;
-        font-size: 13px;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-size: 12px;
         font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
         cursor: pointer;
-        transition: all 0.2s ease;
-        border-radius: 8px 8px 0 0;
-        position: relative;
-        white-space: nowrap;
-    }
-
-    .tab-button:hover {
-        color: var(--text-main);
-    }
-
-    .tab-button.active {
-        color: var(--accent);
-        background: rgba(242, 200, 75, 0.05);
-    }
-
-    .tab-button.active::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        background-color: var(--accent);
-        border-radius: 3px 3px 0 0;
-        box-shadow: 0 -2px 10px var(--accent-glow);
-    }
-
-    /* --- TABELA DE PEDIDOS PREMIUM --- */
-    .table-container {
-        overflow-x: auto;
-    }
-
-    .order-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0 10px;
-        color: var(--text-main);
-    }
-
-    .order-table thead th {
-        color: var(--accent) !important;
-        text-transform: uppercase;
-        font-size: 11px;
-        padding: 12px 15px;
-        letter-spacing: 1.5px;
-        font-weight: 800;
-        border-bottom: 2px solid var(--border-color);
-    }
-
-    .order-table tbody tr {
-        background: rgba(26, 26, 26, 0.6);
-        backdrop-filter: blur(8px);
-        transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
         border: 1px solid var(--border-color);
+        background: var(--bg-card);
+        color: var(--text-muted);
+        transition: .2s;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        outline: none;
     }
-
-    .order-table tbody tr:hover {
-        transform: scale(1.006);
-        background: rgba(26, 26, 26, 0.9);
-        box-shadow: var(--shadow-sm);
+    .tab-button.active {
+        background: var(--accent);
+        color: #000;
         border-color: var(--accent);
     }
+    .tab-button:hover:not(.active) {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
 
-    .order-table td {
-        padding: 16px 15px !important;
-        border: none;
+    /* --- CUSTOM TABLE --- */
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .custom-table thead th {
+        color: var(--accent) !important;
+        background-color: var(--bg-card-flat) !important;
+        text-transform: uppercase;
+        font-size: 10px;
+        padding: 14px 20px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        border-bottom: 2px solid var(--border-color);
+        text-align: left;
+    }
+    .custom-table tbody tr {
+        border-bottom: 1px solid rgba(255,255,255,.04);
+        transition: .2s;
+        background: transparent;
+    }
+    .custom-table tbody tr:hover {
+        background: var(--accent-dim) !important;
+    }
+    .custom-table td {
+        padding: 16px 20px;
+        color: var(--text-main);
         vertical-align: middle;
-    }
-
-    .order-table td:first-child {
-        border-radius: 12px 0 0 12px;
-        border-left: 1px solid var(--border-color);
-        border-top: 1px solid var(--border-color);
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .order-table td:last-child {
-        border-radius: 0 12px 12px 0;
-        border-right: 1px solid var(--border-color);
-        border-top: 1px solid var(--border-color);
-        border-bottom: 1px solid var(--border-color);
     }
 
     .id-column {
@@ -344,12 +275,10 @@ foreach ($pedidos as $p) {
         font-weight: bold;
         font-size: 13px;
     }
-
     .client-column {
         font-weight: 700;
         color: var(--text-main);
     }
-
     .price-column {
         color: var(--accent);
         font-weight: 800;
@@ -358,40 +287,34 @@ foreach ($pedidos as $p) {
 
     /* Badges de Status */
     .badge-status {
-        padding: 6px 14px;
+        padding: 5px 12px;
         border-radius: 20px;
         font-size: 10px;
         font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: .05em;
         display: inline-block;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
-
     .status-pago, .status-concluido {
         background: rgba(81, 207, 102, 0.12);
         color: #51cf66;
-        border: 1px solid rgba(81, 207, 102, 0.4);
+        border: 1px solid rgba(81, 207, 102, 0.3);
     }
-
     .status-enviado {
         background: rgba(78, 158, 191, 0.12);
         color: #4E9EBF;
-        border: 1px solid rgba(78, 158, 191, 0.4);
+        border: 1px solid rgba(78, 158, 191, 0.3);
     }
-
     .status-pendente {
         background: rgba(242, 200, 75, 0.1);
         color: var(--accent);
         border: 1px solid rgba(242, 200, 75, 0.3);
     }
-
     .status-preparacao, .status-processamento {
         background: rgba(255, 169, 77, 0.1);
         color: #ffa94d;
         border: 1px solid rgba(255, 169, 77, 0.3);
     }
-
     .status-cancelado {
         background: rgba(220, 53, 69, 0.1);
         color: #dc3545;
@@ -403,74 +326,121 @@ foreach ($pedidos as $p) {
         display: flex;
         gap: 6px;
         justify-content: center;
+        align-items: center;
     }
-
-    .btn-action-small {
-        width: 34px;
-        height: 34px;
+    .btn-view {
+        background: var(--bg-main);
+        color: var(--steel);
+        border: 1px solid var(--steel);
+        padding: 7px 14px;
         border-radius: 8px;
-        font-size: 13px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 12px;
+        transition: .2s;
         display: inline-flex;
         align-items: center;
-        justify-content: center;
+        gap: 5px;
         cursor: pointer;
-        transition: all 0.2s ease;
-        border: 1px solid var(--border-color);
+    }
+    .btn-view:hover {
+        background: var(--steel);
+        color: #000;
+    }
+    .btn-edit {
         background: var(--bg-main);
+        color: var(--accent);
+        border: 1px solid var(--accent);
+        padding: 7px 14px;
+        border-radius: 8px;
         text-decoration: none;
+        font-weight: 700;
+        font-size: 12px;
+        transition: .2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+    }
+    .btn-edit:hover {
+        background: var(--accent);
+        color: #000;
+    }
+    .btn-delete {
+        background: rgba(220,53,69,0.1);
+        color: #dc3545;
+        border: 1px solid rgba(220,53,69,0.3);
+        padding: 7px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 12px;
+        transition: .2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+    }
+    .btn-delete:hover {
+        background: #dc3545;
+        color: #fff;
+        border-color: #dc3545;
+    }
+    .btn-activate {
+        background: rgba(40,167,69,0.1);
+        border: 1px solid rgba(40,167,69,0.3);
+        color: #28a745;
+        padding: 7px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 12px;
+        transition: .2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+    }
+    .btn-activate:hover {
+        background: #28a745;
+        color: #fff;
+        border-color: #28a745;
     }
 
-    .btn-view { color: #4dabf7; border-color: rgba(77, 171, 247, 0.3); }
-    .btn-view:hover { background: #4dabf7; color: #000; box-shadow: 0 0 10px rgba(77, 171, 247, 0.4); }
-
-    .btn-edit { color: var(--accent); border-color: rgba(242, 200, 75, 0.3); }
-    .btn-edit:hover { background: var(--accent); color: #000; box-shadow: 0 0 10px var(--accent-glow); }
-
-    .btn-delete { color: #dc3545; border-color: rgba(220, 53, 69, 0.3); }
-    .btn-delete:hover { background: #dc3545; color: #fff; box-shadow: 0 0 10px rgba(220, 53, 69, 0.4); }
-
-    .btn-activate { color: #51cf66; border-color: rgba(81, 207, 102, 0.3); }
-    .btn-activate:hover { background: #51cf66; color: #fff; box-shadow: 0 0 10px rgba(81, 207, 102, 0.4); }
-
     .btn-status-quick {
-        font-size: 12px;
-        padding: 0 10px;
+        font-size: 11px;
+        padding: 6px 12px;
         border-radius: 8px;
-        height: 34px;
         font-weight: 700;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
         gap: 5px;
         transition: all 0.2s ease;
-        border: 1px solid var(--border-color);
-        background: var(--bg-main);
+        text-transform: uppercase;
+        background: transparent;
     }
+    .btn-status-prep { color: #ffa94d; border: 1px solid rgba(255, 169, 77, 0.3); }
+    .btn-status-prep:hover { background: #ffa94d; color: #000; border-color: #ffa94d; }
 
-    .btn-status-prep { color: #ffa94d; border-color: rgba(255, 169, 77, 0.3); }
-    .btn-status-prep:hover { background: #ffa94d; color: #000; }
+    .btn-status-ship { color: #4E9EBF; border: 1px solid rgba(78, 158, 191, 0.3); }
+    .btn-status-ship:hover { background: #4E9EBF; color: #000; border-color: #4E9EBF; }
 
-    .btn-status-ship { color: #4E9EBF; border-color: rgba(78, 158, 191, 0.3); }
-    .btn-status-ship:hover { background: #4E9EBF; color: #000; }
-
-    .btn-status-undo { color: #888; border-color: rgba(136, 136, 136, 0.3); }
-    .btn-status-undo:hover { background: #888; color: #000; }
+    .btn-status-undo { color: #888; border: 1px solid rgba(136, 136, 136, 0.3); }
+    .btn-status-undo:hover { background: #888; color: #000; border-color: #888; }
 
     /* Estilo Especial para Excluídos */
     .tr-deleted td {
-        background: rgba(220, 53, 69, 0.05) !important;
+        background: rgba(220, 53, 69, 0.03) !important;
         opacity: 0.7;
     }
-    
     .tr-deleted td:first-child {
         border-left: 3px solid #dc3545 !important;
     }
-
     .tr-deleted .price-column {
         text-decoration: line-through;
         color: var(--text-muted) !important;
     }
-
     .badge-deleted {
         background: #dc3545;
         color: #fff;
@@ -479,6 +449,7 @@ foreach ($pedidos as $p) {
         padding: 2px 6px;
         border-radius: 4px;
         margin-left: 6px;
+        display: inline-block;
     }
 
     /* --- PAGINAÇÃO --- */
@@ -486,51 +457,44 @@ foreach ($pedidos as $p) {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 25px;
-        padding: 16px 20px;
+        padding: 16px 24px;
+        border-top: 1px solid var(--border-color);
         background: var(--bg-card-flat);
-        border-radius: 12px;
-        border: 1px solid var(--border-color);
     }
-
-    .pagination-info {
-        color: var(--text-muted);
-        font-size: 13px;
-        font-weight: 600;
-    }
-
     .pagination-buttons {
         display: flex;
+        gap: 6px;
         align-items: center;
-        gap: 8px;
     }
-
     .page-link {
-        padding: 8px 16px;
+        padding: 8px 14px;
         background: var(--bg-main);
         border: 1px solid var(--border-color);
         color: var(--text-main);
         border-radius: 8px;
         cursor: pointer;
         font-weight: 700;
-        font-size: 13px;
-        transition: all 0.2s ease;
+        transition: .2s;
+        font-size: 12px;
+        outline: none;
     }
-
     .page-link:hover:not(.disabled) {
         border-color: var(--accent);
         color: var(--accent);
     }
-
     .page-link.active {
-        background: linear-gradient(135deg, #F2C84B 0%, #d4a800 100%);
+        background: var(--accent);
         color: #000;
         border-color: var(--accent);
     }
-
     .page-link.disabled {
-        opacity: 0.3;
+        opacity: .3;
         cursor: not-allowed;
+    }
+    .pagination-dots {
+        color: var(--text-muted);
+        padding: 0 4px;
+        font-weight: bold;
     }
 
     /* --- TOAST NOTIFICATIONS --- */
@@ -544,7 +508,6 @@ foreach ($pedidos as $p) {
         gap: 10px;
         pointer-events: none;
     }
-
     .toast {
         background: #1a1a1a;
         color: #fff;
@@ -562,20 +525,16 @@ foreach ($pedidos as $p) {
         animation: toastIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         transition: all 0.3s ease;
     }
-
     .toast.hide {
         animation: toastOut 0.3s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
     }
-
     .toast-success { border-left-color: #51cf66; }
     .toast-error { border-left-color: #dc3545; }
     .toast-info { border-left-color: #4e9ebf; }
-
     @keyframes toastIn {
         from { transform: translateY(50px) scale(0.8); opacity: 0; }
         to { transform: translateY(0) scale(1); opacity: 1; }
     }
-
     @keyframes toastOut {
         to { transform: translateY(30px) scale(0.8); opacity: 0; }
     }
@@ -594,12 +553,10 @@ foreach ($pedidos as $p) {
         visibility: hidden;
         transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
     .spa-drawer-overlay.open {
         opacity: 1;
         visibility: visible;
     }
-
     .spa-drawer {
         position: fixed;
         top: 0;
@@ -615,11 +572,9 @@ foreach ($pedidos as $p) {
         flex-direction: column;
         color: #fff;
     }
-
     .spa-drawer.open {
         right: 0;
     }
-
     .drawer-header {
         padding: 25px;
         border-bottom: 1px solid #222;
@@ -628,7 +583,6 @@ foreach ($pedidos as $p) {
         align-items: center;
         background: #0d0d0d;
     }
-
     .drawer-header h3 {
         margin: 0;
         font-size: 20px;
@@ -639,7 +593,6 @@ foreach ($pedidos as $p) {
         align-items: center;
         gap: 10px;
     }
-
     .btn-close-drawer {
         background: transparent;
         border: none;
@@ -654,12 +607,10 @@ foreach ($pedidos as $p) {
         align-items: center;
         justify-content: center;
     }
-
     .btn-close-drawer:hover {
         color: #fff;
         background: rgba(255,255,255,0.05);
     }
-
     .drawer-content {
         padding: 25px;
         flex: 1;
@@ -675,7 +626,6 @@ foreach ($pedidos as $p) {
         padding: 20px;
         margin-bottom: 20px;
     }
-
     .drawer-section h4 {
         margin: 0 0 15px 0;
         font-size: 14px;
@@ -685,13 +635,11 @@ foreach ($pedidos as $p) {
         padding-bottom: 8px;
         letter-spacing: 0.5px;
     }
-
     .grid-2col {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 20px;
     }
-
     .detail-row {
         display: flex;
         justify-content: space-between;
@@ -700,16 +648,13 @@ foreach ($pedidos as $p) {
         border-bottom: 1px dashed rgba(255,255,255,0.05);
         padding-bottom: 10px;
     }
-
     .detail-row:last-child {
         border-bottom: none;
         margin-bottom: 0;
         padding-bottom: 0;
     }
-
     .detail-row span { color: #888; }
     .detail-row strong { color: #fff; }
-
     .drawer-total-box {
         background: rgba(242, 200, 75, 0.05);
         border: 1px solid var(--accent);
@@ -720,14 +665,12 @@ foreach ($pedidos as $p) {
         align-items: center;
         margin-top: 15px;
     }
-
     .drawer-total-box span {
         font-weight: 800;
         text-transform: uppercase;
         font-size: 12px;
         color: var(--accent);
     }
-
     .drawer-total-box strong {
         font-size: 22px;
         color: var(--accent);
@@ -738,7 +681,6 @@ foreach ($pedidos as $p) {
     .form-group {
         margin-bottom: 16px;
     }
-
     .form-group label {
         display: block;
         font-size: 11px;
@@ -748,7 +690,6 @@ foreach ($pedidos as $p) {
         letter-spacing: 0.5px;
         margin-bottom: 8px;
     }
-
     .form-control {
         width: 100%;
         background: #0d0d0d;
@@ -760,17 +701,14 @@ foreach ($pedidos as $p) {
         box-sizing: border-box;
         transition: all 0.2s;
     }
-
     .form-control:focus {
         border-color: var(--accent);
         outline: none;
         box-shadow: 0 0 0 3px var(--accent-glow);
     }
-
     textarea.form-control {
         resize: vertical;
     }
-
     .btn-submit-drawer {
         width: 100%;
         background: linear-gradient(135deg, #F2C84B 0%, #d4a800 100%);
@@ -786,7 +724,6 @@ foreach ($pedidos as $p) {
         transition: all 0.3s ease;
         box-shadow: var(--shadow-gold);
     }
-
     .btn-submit-drawer:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(242, 200, 75, 0.4);
@@ -798,7 +735,6 @@ foreach ($pedidos as $p) {
         border-collapse: collapse;
         font-size: 13px;
     }
-
     .drawer-items-table th {
         color: #888;
         text-transform: uppercase;
@@ -808,13 +744,11 @@ foreach ($pedidos as $p) {
         padding: 10px 8px;
         border-bottom: 1px solid #222;
     }
-
     .drawer-items-table td {
         padding: 12px 8px;
         border-bottom: 1px solid rgba(255,255,255,0.03);
         vertical-align: middle;
     }
-
     .btn-remove-row {
         background: transparent;
         border: none;
@@ -828,11 +762,9 @@ foreach ($pedidos as $p) {
         align-items: center;
         justify-content: center;
     }
-
     .btn-remove-row:hover {
         background: rgba(220, 53, 69, 0.1);
     }
-
     .btn-add-item-row {
         background: rgba(255,255,255,0.05);
         color: #fff;
@@ -847,19 +779,16 @@ foreach ($pedidos as $p) {
         margin-top: 10px;
         transition: all 0.2s;
     }
-
     .btn-add-item-row:hover {
         background: rgba(242, 200, 75, 0.05);
         border-color: var(--accent);
         color: var(--accent);
     }
-
     .drawer-footer-actions {
         display: flex;
         gap: 10px;
         margin-top: 25px;
     }
-
     .btn-secondary-drawer {
         flex: 1;
         background: #222;
@@ -873,7 +802,6 @@ foreach ($pedidos as $p) {
         transition: all 0.2s;
         text-align: center;
     }
-
     .btn-secondary-drawer:hover {
         background: #333;
     }
@@ -882,7 +810,6 @@ foreach ($pedidos as $p) {
     .autocomplete-container {
         position: relative;
     }
-
     .autocomplete-list {
         position: absolute;
         top: 100%;
@@ -897,7 +824,6 @@ foreach ($pedidos as $p) {
         box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         display: none;
     }
-
     .autocomplete-item {
         padding: 10px 15px;
         cursor: pointer;
@@ -905,7 +831,6 @@ foreach ($pedidos as $p) {
         transition: all 0.15s;
         border-bottom: 1px solid rgba(255,255,255,0.02);
     }
-
     .autocomplete-item:hover {
         background: var(--accent);
         color: #000;
@@ -913,53 +838,54 @@ foreach ($pedidos as $p) {
     }
 </style>
 
-<div class="page-wrapper">
-    <div class="page-header-container">
-        <div>
-            <h3 class="page-title"><i class="fas fa-shopping-bag"></i> Gerenciar Pedidos</h3>
-            <span class="header-breadcrumb">Painel de Controle - Koketsu</span>
+<div class="page-wrapper" style="padding: 24px;">
+    <!-- HEADER -->
+    <div class="page-header">
+        <div class="page-header-left">
+            <h1><i class="fas fa-shopping-bag" style="color:#F2C84B;"></i> Gerenciar Pedidos</h1>
+            <p>Painel de Controle - Koketsu</p>
         </div>
-        <button onclick="openCreateDrawer()" class="btn-create-order">
+        <button onclick="openCreateDrawer()" class="btn-main-action">
             <i class="fas fa-plus-circle"></i> Novo Pedido
         </button>
     </div>
 
     <!-- CARDS DE MÉTRICAS (KPIs) -->
-    <div class="dashboard-grid">
-        <div class="stat-card kpi-total">
+    <div class="stat-grid">
+        <div class="stat-card" style="--sc-color:#4E9EBF; --sc-bg:rgba(78,158,191,.1);">
             <div class="stat-info">
-                <p>Total Geral</p>
                 <h3 id="kpi-total-val"><?= $total_pedidos ?></h3>
+                <p>Total Geral</p>
             </div>
             <div class="stat-icon">
                 <i class="fas fa-boxes"></i>
             </div>
         </div>
 
-        <div class="stat-card kpi-revenue">
+        <div class="stat-card" style="--sc-color:#C47A3A; --sc-bg:rgba(196,122,58,.1);">
             <div class="stat-info">
-                <p>Faturamento Ativo</p>
                 <h3 id="kpi-revenue-val">R$ <?= number_format($faturamento_ativo, 2, ',', '.') ?></h3>
+                <p>Faturamento Ativo</p>
             </div>
             <div class="stat-icon">
                 <i class="fas fa-coins"></i>
             </div>
         </div>
 
-        <div class="stat-card kpi-actives">
+        <div class="stat-card" style="--sc-color:#51cf66; --sc-bg:rgba(81,207,102,.1);">
             <div class="stat-info">
-                <p>Pedidos Ativos</p>
                 <h3 id="kpi-actives-val"><?= $total_ativos ?></h3>
+                <p>Pedidos Ativos</p>
             </div>
             <div class="stat-icon">
                 <i class="fas fa-check-circle"></i>
             </div>
         </div>
 
-        <div class="stat-card kpi-inactives">
+        <div class="stat-card" style="--sc-color:#dc3545; --sc-bg:rgba(220,53,69,.1);">
             <div class="stat-info">
+                <h3 id="kpi-inactives-val"><?= $total_inactives ?></h3>
                 <p>Pedidos Inativos</p>
-                <h3 id="kpi-inactives-val"><?= $total_inativos ?></h3>
             </div>
             <div class="stat-icon">
                 <i class="fas fa-trash-alt"></i>
@@ -967,149 +893,154 @@ foreach ($pedidos as $p) {
         </div>
     </div>
 
-    <!-- CONTROLES, PESQUISA E ABAS -->
-    <div class="controls-panel">
-        <div class="actions-bar">
-            <div class="search-container">
-                <i class="fas fa-search"></i>
-                <input type="text" id="orderInput" onkeyup="filterOrders()" placeholder="Buscar pedido por ID ou cliente..." class="search-input">
-            </div>
-
-            <div class="tabs-container">
-                <button onclick="changeTab('all')" class="tab-button active" id="tab-all">Todos</button>
-                <button onclick="changeTab('pendente')" class="tab-button" id="tab-pendente">Pendentes</button>
-                <button onclick="changeTab('preparacao')" class="tab-button" id="tab-preparacao">Em Preparação</button>
-                <button onclick="changeTab('pago')" class="tab-button" id="tab-pago">Pagos/Concluídos</button>
-                <button onclick="changeTab('cancelado')" class="tab-button" id="tab-cancelado">Cancelados</button>
-                <button onclick="changeTab('deleted')" class="tab-button" id="tab-deleted">Excluídos</button>
+    <!-- TABELA DE RESULTADOS (TABLE CARD COM CABEÇALHO UNIFICADO) -->
+    <div class="table-card">
+        <div class="table-head">
+            <span class="table-title"><i class="fas fa-list" style="color:#F2C84B;"></i> Lista de Pedidos</span>
+            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                <div class="search-group">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="orderInput" onkeyup="filterOrders()" placeholder="Buscar por ID ou cliente..." class="search-input">
+                </div>
+                <div class="filter-btns">
+                    <button onclick="changeTab('all')" class="tab-button active" id="tab-all">Todos</button>
+                    <button onclick="changeTab('pendente')" class="tab-button" id="tab-pendente">Pendentes</button>
+                    <button onclick="changeTab('preparacao')" class="tab-button" id="tab-preparacao">Em Preparação</button>
+                    <button onclick="changeTab('pago')" class="tab-button" id="tab-pago">Pagos/Concluídos</button>
+                    <button onclick="changeTab('cancelado')" class="tab-button" id="tab-cancelado">Cancelados</button>
+                    <button onclick="changeTab('deleted')" class="tab-button" id="tab-deleted">Excluídos</button>
+                </div>
+                <span class="table-count" id="tableCount"><?= $total_ativos ?> pedidos</span>
             </div>
         </div>
-    </div>
 
-    <!-- TABELA DE RESULTADOS -->
-    <div class="table-container">
-        <table class="order-table" id="orderTable">
-            <thead>
-                <tr>
-                    <th style="width: 90px; text-align: left;">ID</th>
-                    <th style="text-align: left;">Cliente</th>
-                    <th style="text-align: left; width: 140px;">Data</th>
-                    <th style="text-align: left;">Endereço de Entrega</th>
-                    <th style="text-align: right; width: 140px;">Total</th>
-                    <th style="text-align: center; width: 130px;">Status</th>
-                    <th style="text-align: center; width: 220px;">Ações</th>
-                </tr>
-            </thead>
-            <tbody id="orderTableBody">
-                <?php if (isset($pedidos) && is_array($pedidos) && count($pedidos) > 0): ?>
-                    <?php foreach ($pedidos as $pedido):
-                        $is_deleted = !empty($pedido['excluido_em']);
-                        $status_orig = !empty(trim($pedido['status_pedido'] ?? '')) ? $pedido['status_pedido'] : 'Pendente';
-                        $status = strtolower($status_orig);
-                        $badge_class = 'status-pendente';
+        <div style="overflow-x:auto;">
+            <table class="custom-table" id="orderTable">
+                <thead>
+                    <tr>
+                        <th style="width: 100px; text-align: left;">ID</th>
+                        <th style="text-align: left;">Cliente</th>
+                        <th style="text-align: left; width: 140px;">Data</th>
+                        <th style="text-align: left;">Endereço de Entrega</th>
+                        <th style="text-align: right; width: 140px;">Total</th>
+                        <th style="text-align: center; width: 130px;">Status</th>
+                        <th style="text-align: center; width: 220px;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="orderTableBody">
+                    <?php if (isset($pedidos) && is_array($pedidos) && count($pedidos) > 0): ?>
+                        <?php foreach ($pedidos as $pedido):
+                            $is_deleted = !empty($pedido['excluido_em']);
+                            $status_orig = !empty(trim($pedido['status_pedido'] ?? '')) ? $pedido['status_pedido'] : 'Pendente';
+                            $status = strtolower($status_orig);
+                            $badge_class = 'status-pendente';
 
-                        if (in_array($status, ['pago', 'concluido'])) {
-                            $badge_class = 'status-pago';
-                        } elseif ($status === 'enviado') {
-                            $badge_class = 'status-enviado';
-                        } elseif (in_array($status, ['preparação', 'processamento'])) {
-                            $badge_class = 'status-preparacao';
-                        } elseif ($status === 'cancelado') {
-                            $badge_class = 'status-cancelado';
-                        }
-                        ?>
-                        <tr class="order-row <?= $is_deleted ? 'tr-deleted' : '' ?>" 
-                            id="row-<?= $pedido['id_pedido'] ?>"
-                            data-id="<?= $pedido['id_pedido'] ?>"
-                            data-deleted="<?= $is_deleted ? 'true' : 'false' ?>"
-                            data-status="<?= $status ?>">
-                            
-                            <td class="id-column">
-                                #<?= $pedido['id_pedido'] ?>
-                                <span class="badge-deleted-placeholder"><?= $is_deleted ? '<span class="badge-deleted">EXCLUÍDO</span>' : '' ?></span>
-                            </td>
-                            <td class="client-column"><?= htmlspecialchars($pedido['nome_cliente'] ?? 'N/A') ?></td>
-                            <td style="color: #888; font-size: 13px;">
-                                <?= date('d/m/y H:i', strtotime($pedido['data_pedido'])) ?>
-                            </td>
-                            <td style="color: #999; font-size: 13px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" class="address-cell">
-                                <?= htmlspecialchars($pedido['endereco_perfil'] ?? 'Sem endereço cadastrado') ?>
-                            </td>
-                            <td class="price-column" style="text-align: right;">
-                                R$ <?= number_format($pedido['total_pedido'], 2, ',', '.') ?>
-                            </td>
+                            if (in_array($status, ['pago', 'concluido'])) {
+                                $badge_class = 'status-pago';
+                            } elseif ($status === 'enviado') {
+                                $badge_class = 'status-enviado';
+                            } elseif (in_array($status, ['preparação', 'processamento'])) {
+                                $badge_class = 'status-preparacao';
+                            } elseif ($status === 'cancelado') {
+                                $badge_class = 'status-cancelado';
+                            }
+                            ?>
+                            <tr class="order-row <?= $is_deleted ? 'tr-deleted' : '' ?>" 
+                                id="row-<?= $pedido['id_pedido'] ?>"
+                                data-id="<?= $pedido['id_pedido'] ?>"
+                                data-deleted="<?= $is_deleted ? 'true' : 'false' ?>"
+                                data-status="<?= $status ?>">
+                                
+                                <td class="id-column">
+                                    #<?= $pedido['id_pedido'] ?>
+                                    <span class="badge-deleted-placeholder"><?= $is_deleted ? '<span class="badge-deleted">EXCLUÍDO</span>' : '' ?></span>
+                                </td>
+                                <td class="client-column"><?= htmlspecialchars($pedido['nome_cliente'] ?? 'N/A') ?></td>
+                                <td style="color: #888; font-size: 13px;">
+                                    <?= date('d/m/y H:i', strtotime($pedido['data_pedido'])) ?>
+                                </td>
+                                <td style="color: #999; font-size: 13px; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" class="address-cell">
+                                    <?= htmlspecialchars($pedido['endereco_perfil'] ?? 'Sem endereço cadastrado') ?>
+                                </td>
+                                <td class="price-column" style="text-align: right;">
+                                    R$ <?= number_format($pedido['total_pedido'], 2, ',', '.') ?>
+                                </td>
 
-                            <td style="text-align: center;" class="status-cell">
-                                <span class="badge-status <?= $badge_class ?>">
-                                    <?= ucfirst(htmlspecialchars($status_orig)) ?>
-                                </span>
-                            </td>
+                                <td style="text-align: center;" class="status-cell">
+                                    <span class="badge-status <?= $badge_class ?>">
+                                        <?= ucfirst(htmlspecialchars($status_orig)) ?>
+                                    </span>
+                                </td>
 
-                            <td style="text-align: center; white-space: nowrap;" class="actions-cell-container">
-                                <div class="actions-cell">
-                                    <!-- Ver Detalhes Drawer -->
-                                    <button onclick="viewOrder(<?= $pedido['id_pedido'] ?>)" class="btn-action-small btn-view" title="Visualizar Detalhes">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
+                                <td style="text-align: center; white-space: nowrap;" class="actions-cell-container">
+                                    <div class="actions-cell">
+                                        <!-- Ver Detalhes Drawer -->
+                                        <button onclick="viewOrder(<?= $pedido['id_pedido'] ?>)" class="btn-view" title="Visualizar Detalhes">
+                                            <i class="fas fa-eye"></i> Visualizar
+                                        </button>
 
-                                    <!-- Ações Disponíveis Apenas se Não Excluído -->
-                                    <span class="active-actions-wrapper" style="<?= $is_deleted ? 'display:none;' : '' ?>">
-                                        <!-- Transições Rápidas de Status -->
-                                        <span class="quick-status-container">
-                                            <?php if ($status === 'pendente' || $status === 'pago'): ?>
-                                                <button onclick="changeStatus(<?= $pedido['id_pedido'] ?>, 'preparação')" class="btn-status-quick btn-status-prep" title="Preparar Pedido">
-                                                    <i class="fas fa-box"></i> Prep
-                                                </button>
-                                            <?php elseif ($status === 'preparação' || $status === 'processamento'): ?>
-                                                <button onclick="changeStatus(<?= $pedido['id_pedido'] ?>, 'pendente')" class="btn-status-quick btn-status-undo" title="Voltar para Pendente">
-                                                    <i class="fas fa-undo"></i>
-                                                </button>
-                                                <button onclick="changeStatus(<?= $pedido['id_pedido'] ?>, 'enviado')" class="btn-status-quick btn-status-ship" title="Despachar Pedido">
-                                                    <i class="fas fa-truck"></i> Enviar
-                                                </button>
-                                            <?php elseif ($status === 'enviado'): ?>
-                                                <button onclick="changeStatus(<?= $pedido['id_pedido'] ?>, 'preparação')" class="btn-status-quick btn-status-undo" title="Voltar para Preparação">
-                                                    <i class="fas fa-undo"></i>
-                                                </button>
-                                            <?php endif; ?>
+                                        <!-- Ações Disponíveis Apenas se Não Excluído -->
+                                        <span class="active-actions-wrapper" style="<?= $is_deleted ? 'display:none;' : '' ?>">
+                                            <!-- Transições Rápidas de Status -->
+                                            <span class="quick-status-container">
+                                                <?php if ($status === 'pendente' || $status === 'pago'): ?>
+                                                    <button onclick="changeStatus(<?= $pedido['id_pedido'] ?>, 'preparação')" class="btn-status-quick btn-status-prep" title="Preparar Pedido">
+                                                        <i class="fas fa-box"></i> Prep
+                                                    </button>
+                                                <?php elseif ($status === 'preparação' || $status === 'processamento'): ?>
+                                                    <button onclick="changeStatus(<?= $pedido['id_pedido'] ?>, 'pendente')" class="btn-status-quick btn-status-undo" title="Voltar para Pendente">
+                                                        <i class="fas fa-undo"></i> Desfazer
+                                                    </button>
+                                                    <button onclick="changeStatus(<?= $pedido['id_pedido'] ?>, 'enviado')" class="btn-status-quick btn-status-ship" title="Despachar Pedido">
+                                                        <i class="fas fa-truck"></i> Enviar
+                                                    </button>
+                                                <?php elseif ($status === 'enviado'): ?>
+                                                    <button onclick="changeStatus(<?= $pedido['id_pedido'] ?>, 'preparação')" class="btn-status-quick btn-status-undo" title="Voltar para Preparação">
+                                                        <i class="fas fa-undo"></i> Desfazer
+                                                    </button>
+                                                <?php endif; ?>
+                                            </span>
+
+                                            <!-- Editar propriedades do pedido -->
+                                            <button onclick="editOrder(<?= $pedido['id_pedido'] ?>)" class="btn-edit" title="Editar Propriedades">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </button>
+
+                                            <!-- Excluir Pedido -->
+                                            <button onclick="deleteToggleOrder(<?= $pedido['id_pedido'] ?>, true)" class="btn-delete" title="Excluir Pedido">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
                                         </span>
 
-                                        <!-- Editar propriedades do pedido -->
-                                        <button onclick="editOrder(<?= $pedido['id_pedido'] ?>)" class="btn-action-small btn-edit" title="Editar Propriedades">
-                                            <i class="fas fa-pencil-alt"></i>
-                                        </button>
-
-                                        <!-- Excluir Pedido -->
-                                        <button onclick="deleteToggleOrder(<?= $pedido['id_pedido'] ?>, true)" class="btn-action-small btn-delete" title="Excluir Pedido">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </span>
-
-                                    <!-- Restaurar se Excluído -->
-                                    <span class="deleted-actions-wrapper" style="<?= !$is_deleted ? 'display:none;' : '' ?>">
-                                        <button onclick="deleteToggleOrder(<?= $pedido['id_pedido'] ?>, false)" class="btn-action-small btn-activate" title="Reativar Pedido">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                    </span>
-                                </div>
+                                        <!-- Restaurar se Excluído -->
+                                        <span class="deleted-actions-wrapper" style="<?= !$is_deleted ? 'display:none;' : '' ?>">
+                                            <button onclick="deleteToggleOrder(<?= $pedido['id_pedido'] ?>, false)" class="btn-activate" title="Reativar Pedido">
+                                                <i class="fas fa-check"></i> Reativar
+                                            </button>
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr id="empty-row">
+                            <td colspan="7" style="text-align: center; padding: 50px 20px; color: #555;">
+                                <i class="fas fa-folder-open" style="font-size: 48px; display: block; margin-bottom: 15px; color: #333;"></i>
+                                Nenhum pedido encontrado no sistema.
                             </td>
                         </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr id="empty-row">
-                        <td colspan="7" style="text-align: center; padding: 50px 20px; color: #555;">
-                            <i class="fas fa-folder-open" style="font-size: 48px; display: block; margin-bottom: 15px; color: #333;"></i>
-                            Nenhum pedido encontrado no sistema.
-                        </td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
 
         <!-- Paginação -->
         <div class="pagination-container">
             <div class="pagination-info" id="paginationInfo">Carregando paginação...</div>
             <div class="pagination-buttons" id="paginationButtons"></div>
+        </div>
+    </div>
+</div>onButtons"></div>
         </div>
     </div>
 </div>
@@ -1220,6 +1151,7 @@ foreach ($pedidos as $p) {
             }
         });
 
+        document.getElementById('tableCount').textContent = `${visibleRowsCount} pedido${visibleRowsCount !== 1 ? 's' : ''}`;
         updatePaginationUI(totalPages, visibleRowsCount);
     }
 

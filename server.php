@@ -10,7 +10,7 @@ $uri = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
 // ── 1. PRIORIDADE MÁXIMA: Proxy PHP do frontend (/api/*.php) ─────────────────
 //       ex: /api/vitrine.php → frontend/api/vitrine.php
-if (preg_match('/^\/api\/(.+\.php)$/', $uri, $m)) {
+if (preg_match('/^\/api\/([^\/]+\.php)(?:$|\/)/', $uri, $m)) {
     $proxyFile = __DIR__ . '/frontend/api/' . $m[1];
     if (file_exists($proxyFile)) {
         require_once $proxyFile;

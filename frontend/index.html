@@ -233,15 +233,34 @@
                 </div>
             </div>
 
-            <!-- Carousel Container -->
-            <div id="home-reviews-container">
-                <!-- Skeleton loader -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="reviews-skeleton">
-                    <div class="review-skeleton-card" style="height:220px;"></div>
-                    <div class="review-skeleton-card" style="height:220px;"></div>
-                    <div class="review-skeleton-card" style="height:220px;"></div>
+            <!-- Carousel Wrapper -->
+            <div class="relative group" id="home-reviews-carousel-wrapper">
+                <!-- Seta Esquerda -->
+                <button id="carousel-prev-btn" class="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full border border-[var(--brand-yellow)]/20 bg-black/60 text-white flex items-center justify-center hover:bg-[var(--brand-yellow)] hover:text-black hover:border-[var(--brand-yellow)] transition-all duration-300 opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-20 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                    <i class="bi bi-chevron-left text-lg"></i>
+                </button>
+                
+                <!-- Viewport -->
+                <div class="overflow-hidden cursor-grab active:cursor-grabbing rounded-2xl" id="home-reviews-viewport">
+                    <div class="flex transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]" id="home-reviews-track" style="transform: translateX(0px);">
+                        <!-- Skeleton loader -->
+                        <div class="flex gap-6 w-full shrink-0" id="reviews-skeleton">
+                            <div class="review-skeleton-card flex-1" style="height:220px;"></div>
+                            <div class="review-skeleton-card flex-1 hidden md:block" style="height:220px;"></div>
+                            <div class="review-skeleton-card flex-1 hidden lg:block" style="height:220px;"></div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Seta Direita -->
+                <button id="carousel-next-btn" class="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full border border-[var(--brand-yellow)]/20 bg-black/60 text-white flex items-center justify-center hover:bg-[var(--brand-yellow)] hover:text-black hover:border-[var(--brand-yellow)] transition-all duration-300 opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-20 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                    <i class="bi bi-chevron-right text-lg"></i>
+                </button>
             </div>
+
+            <!-- Carousel Pagination Dots -->
+            <div class="flex justify-center gap-2 mt-8" id="home-reviews-dots"></div>
+
 
             <!-- CTA -->
             <div class="text-center mt-14" id="reviews-cta" style="display:none;">
@@ -264,6 +283,53 @@
     @keyframes shimmerSkeleton {
         0%   { background-position: 200% 0; }
         100% { background-position: -200% 0; }
+    }
+
+    /* ── Review Carousel ──────────────────────────────── */
+    #home-reviews-track {
+        display: flex;
+        gap: 24px;
+        width: 100%;
+        will-change: transform;
+    }
+
+    .carousel-item-review {
+        flex-shrink: 0;
+        width: 100%;
+        transition: opacity 0.4s ease;
+    }
+    @media (min-width: 641px) {
+        .carousel-item-review {
+            width: calc((100% - 24px) / 2); /* 2 itens em tablets */
+        }
+    }
+    @media (min-width: 1025px) {
+        .carousel-item-review {
+            width: calc((100% - 48px) / 3); /* 3 itens em desktop */
+        }
+    }
+
+    /* Paginação por pílula premium */
+    .carousel-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .carousel-dot.active {
+        background: var(--brand-yellow);
+        width: 24px;
+        border-radius: 4px;
+        box-shadow: 0 0 10px rgba(242, 200, 75, 0.4);
+    }
+
+    @media (hover: none) {
+        #carousel-prev-btn, #carousel-next-btn {
+            opacity: 0.8 !important;
+        }
     }
 
     /* ── Review Cards (Grid Layout) ───────────────────── */
@@ -466,70 +532,6 @@
 <script src="assets/js/ai-assistant.js?v=2.0"></script>
 <script src="assets/js/mega-menu.js?v=1.0"></script>
 <script src="assets/js/reviews.js?v=1.1"></script>
-<script>
-// ── Home Reviews Override ─────────────────────────────────────────────
-// Custom renderer para a seção da home (grid em vez do carrossel)
-(async () => {
-    const container = document.getElementById('home-reviews-container');
-    const skeleton  = document.getElementById('reviews-skeleton');
-    const cta       = document.getElementById('reviews-cta');
-    if (!container) return;
 
-    try {
-        const resp = await fetch('/api/avaliacoes.php/ultimas');
-        const data = await resp.json();
-        const reviews = Array.isArray(data) ? data : (data?.data || []);
-
-        if (reviews.length === 0) {
-            container.innerHTML = `
-            <div class="text-center py-12 opacity-30">
-                <i class="bi bi-star text-4xl block mb-4 text-[var(--brand-yellow)]"></i>
-                <p class="text-sm uppercase tracking-widest">Seja o primeiro a avaliar!</p>
-            </div>`;
-            return;
-        }
-
-        // Calcular média
-        const avg = (reviews.reduce((s,r) => s + parseFloat(r.nota_avaliacoes||5), 0) / reviews.length).toFixed(1);
-        const avgEl = document.getElementById('home-avg-text');
-        if (avgEl) avgEl.textContent = avg;
-
-        // Renderizar grid (max 6 cards)
-        const shown = reviews.slice(0, 6);
-        container.innerHTML = `<div class="home-review-grid">${
-            shown.map(r => {
-                const nota    = parseInt(r.nota_avaliacoes || 5);
-                const nome    = r.nome_cliente || 'Cliente';
-                const produto = r.nome_produto || '';
-                const coment  = r.comentario_avaliacoes || 'Produto incrível! Recomendo muito.';
-                const inicial = nome.charAt(0).toUpperCase();
-                const stars   = Array.from({length:5}, (_,i) =>
-                    `<i class="bi bi-star${i < nota ? '-fill' : ''} "></i>`
-                ).join('');
-
-                return `
-                <div class="home-review-card">
-                    <div class="hrc-stars">${stars}</div>
-                    <p class="hrc-comment">&ldquo;${coment}&rdquo;</p>
-                    <div class="hrc-footer">
-                        <div class="hrc-avatar">${inicial}</div>
-                        <div>
-                            <div class="hrc-name">${nome}</div>
-                            ${produto ? `<div class="hrc-product">${produto}</div>` : ''}
-                        </div>
-                        <span class="hrc-badge">✓ COMPROU</span>
-                    </div>
-                </div>`;
-            }).join('')
-        }</div>`;
-
-        if (cta) cta.style.display = 'block';
-
-    } catch(e) {
-        console.warn('Reviews home: erro ao carregar', e);
-        if (skeleton) skeleton.style.display = 'none';
-    }
-})();
-</script>
 </body>
 </html>

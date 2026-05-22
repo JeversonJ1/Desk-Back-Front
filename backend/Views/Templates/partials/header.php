@@ -331,12 +331,6 @@ $current_uri = $_SERVER['REQUEST_URI'] ?? '/backend/admin/dashboard';
               <a href="/backend/pedido/listar"
                 class="w3-bar-item w3-button <?php echo isActive('/backend/pedido/listar', $current_uri); ?>">
                 <i class="fas fa-shopping-cart fa-fw"></i> Todos os Pedidos
-              </a>
-              <a href="/backend/itenspedidos/listar"
-                class="w3-bar-item w3-button nav-sub-item <?php echo isActive('/backend/itenspedidos/listar', $current_uri); ?>">
-                <i class="fas fa-list-ul fa-fw"></i> Itens dos Pedidos
-              </a>
-
               <!-- CONTEÚDO -->
               <div class="nav-section-label">Conteúdo</div>
               <a href="/backend/avaliacao/listar"
