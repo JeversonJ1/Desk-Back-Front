@@ -211,6 +211,28 @@ class PublicApiController
             $imgPrincipal = '/backend/upload/' . $imgPrincipal;
         }
 
+        // Buscar cores vinculadas ao produto
+        $cores = [];
+        $stmtCores = $this->db->prepare("SELECT cor_cores FROM tbl_cores WHERE id_produto = ? AND excluido_em IS NULL");
+        $stmtCores->execute([$prod['id_produto']]);
+        $coresResult = $stmtCores->fetchAll(\PDO::FETCH_ASSOC);
+        foreach ($coresResult as $c) {
+            if (!empty($c['cor_cores'])) {
+                $cores[] = trim($c['cor_cores']);
+            }
+        }
+
+        // Buscar tamanhos vinculados ao produto
+        $tamanhos = [];
+        $stmtTamanhos = $this->db->prepare("SELECT tamanho_tamanhos FROM tbl_tamanhos WHERE id_produto = ? AND excluido_em IS NULL");
+        $stmtTamanhos->execute([$prod['id_produto']]);
+        $tamanhosResult = $stmtTamanhos->fetchAll(\PDO::FETCH_ASSOC);
+        foreach ($tamanhosResult as $t) {
+            if (!empty($t['tamanho_tamanhos'])) {
+                $tamanhos[] = trim($t['tamanho_tamanhos']);
+            }
+        }
+
         return [
             'id' => (int) $prod['id_produto'],
             'nome' => $prod['nome_produtos'],
@@ -218,6 +240,8 @@ class PublicApiController
             'preco' => (float) $prod['preco_produtos'],
             'img' => $imgPrincipal, // Não usar base64 para evitar peso excessivo, URLs funcionam
             'galeria' => $galeriaUrls,
+            'cores' => $cores,
+            'tamanhos' => $tamanhos,
             'oferta' => null,
             'desconto' => null
         ];

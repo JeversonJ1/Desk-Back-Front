@@ -138,23 +138,23 @@ window.Utils = (() => {
     try {
       // Remover header estático caso exista e injetar no body
       const existingHeader = document.querySelector('header');
-      
+
       const headerHtml = window.ComponentsTemplate.Header;
       if (existingHeader) {
-         existingHeader.outerHTML = `<header id="global-header">${headerHtml}</header>`;
+        existingHeader.outerHTML = `<header id="global-header">${headerHtml}</header>`;
       } else {
-         document.body.insertAdjacentHTML('afterbegin', `<header id="global-header">${headerHtml}</header>`);
+        document.body.insertAdjacentHTML('afterbegin', `<header id="global-header">${headerHtml}</header>`);
       }
 
       // Remover footer estático caso exista e injetar
       const existingFooter = document.querySelector('footer');
       const footerHtml = window.ComponentsTemplate.Footer;
       if (existingFooter) {
-         existingFooter.outerHTML = footerHtml; // O arquivo footer.html já tem a tag <footer>
+        existingFooter.outerHTML = footerHtml; // O arquivo footer.html já tem a tag <footer>
       } else {
-         document.body.insertAdjacentHTML('beforeend', footerHtml);
+        document.body.insertAdjacentHTML('beforeend', footerHtml);
       }
-      
+
       // Reinicializa scripts dependentes do header (Navbar, Search, Auth, MegaMenu)
       if (window.NavbarManager && typeof window.NavbarManager.handleScroll === 'function') window.NavbarManager.handleScroll();
       if (window.SearchManager && typeof window.SearchManager.init === 'function') window.SearchManager.init();
@@ -191,7 +191,7 @@ window.Utils = (() => {
   };
 })();
 const Components = {
-    Header: `
+  Header: `
 <!-- NAVBAR -->
 <nav id="navbar" class="fixed top-0 w-full h-[96px] z-[2000] bg-black/40 backdrop-blur-md border-b border-[#F2C84B]/15 transition-all duration-300 flex items-center">
   <div class="w-full px-4 lg:px-8 flex items-center justify-between h-full">
@@ -379,7 +379,7 @@ const Components = {
 
 </div>
 `,
-    Footer: `
+  Footer: `
 <div class="footer-grid">
       <div class="coluna-footer newsletter">
         <h3 class="titulo">Faça parte da nossa família e receba acessos exclusivos e novidades.</h3>
@@ -499,17 +499,17 @@ const Components = {
 };
 
 window.MenuManager = (() => {
-    const openMenu = () => {
-        if (window.MegaMenu && typeof window.MegaMenu.open === 'function') {
-            window.MegaMenu.open();
-        }
-    };
-    const closeMenu = () => {
-        if (window.MegaMenu && typeof window.MegaMenu.close === 'function') {
-            window.MegaMenu.close();
-        }
-    };
-    return { openMenu, closeMenu };
+  const openMenu = () => {
+    if (window.MegaMenu && typeof window.MegaMenu.open === 'function') {
+      window.MegaMenu.open();
+    }
+  };
+  const closeMenu = () => {
+    if (window.MegaMenu && typeof window.MegaMenu.close === 'function') {
+      window.MegaMenu.close();
+    }
+  };
+  return { openMenu, closeMenu };
 })();
 
 window.ComponentsTemplate = Components;

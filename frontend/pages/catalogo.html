@@ -60,47 +60,47 @@
                         </div>
 
                         <!-- Categoria -->
-                        <div class="mb-6">
-                            <button class="w-full flex justify-between items-center text-left text-sm font-bold text-white uppercase tracking-[0.1em] focus:outline-none" onclick="toggleFilter('collapseCat', 'iconCat')">
+                        <div class="mb-4">
+                            <button class="w-full flex justify-between items-center text-left text-xs font-bold text-white uppercase tracking-[0.1em] focus:outline-none" onclick="toggleFilter('collapseCat', 'iconCat')">
                                 CATEGORIAS <i class="bi bi-chevron-up transition-transform" id="iconCat"></i>
                             </button>
-                            <div class="block mt-4" id="collapseCat">
+                            <div class="block mt-3" id="collapseCat">
                                 <div class="filter-content" id="category-filter-container">
                                     <p class="text-xs text-gray-500 m-0">Carregando categorias...</p>
                                 </div>
                             </div>
                         </div>
 
-                        <hr class="border-white/10 my-6">
+                        <hr class="border-white/10 my-4">
 
                         <!-- Tamanhos -->
-                        <div class="mb-6">
-                            <span class="block text-sm font-bold text-white uppercase tracking-[0.1em] mb-4">TAMANHOS</span>
-                            <div class="grid grid-cols-4 gap-2" id="size-filter-container">
-                                <p class="text-xs text-gray-500 m-0 col-span-4">Carregando tamanhos...</p>
+                        <div class="mb-4">
+                            <span class="block text-xs font-bold text-white uppercase tracking-[0.1em] mb-3">TAMANHOS</span>
+                            <div class="size-grid" id="size-filter-container">
+                                <p class="text-xs text-gray-500 m-0">Carregando tamanhos...</p>
                             </div>
                         </div>
 
-                        <hr class="border-white/10 my-6">
+                        <hr class="border-white/10 my-4">
 
                         <!-- Cores -->
-                        <div class="mb-6">
-                            <button class="w-full flex justify-between items-center text-left text-sm font-bold text-white uppercase tracking-[0.1em] focus:outline-none" onclick="toggleFilter('collapseCores', 'iconCores')">
+                        <div class="mb-4">
+                            <button class="w-full flex justify-between items-center text-left text-xs font-bold text-white uppercase tracking-[0.1em] focus:outline-none" onclick="toggleFilter('collapseCores', 'iconCores')">
                                 CORES <i class="bi bi-chevron-up transition-transform" id="iconCores"></i>
                             </button>
-                            <div class="block mt-4" id="collapseCores">
-                                <div class="grid grid-cols-5 gap-2" id="color-filter-container">
+                            <div class="block mt-3" id="collapseCores">
+                                <div class="color-filter-grid" id="color-filter-container">
                                     <!-- Carregado dinamicamente via JS -->
-                                    <p class="text-xs text-gray-500 m-0 col-span-5">Carregando cores...</p>
+                                    <p class="text-xs text-gray-500 m-0">Carregando cores...</p>
                                 </div>
                             </div>
                         </div>
 
-                        <hr class="border-white/10 my-6">
+                        <hr class="border-white/10 my-4">
 
                         <!-- Faixa de Preço -->
                         <div class="mb-2">
-                            <span class="block text-sm font-bold text-white uppercase tracking-[0.1em] mb-4">FAIXA DE PREÇO</span>
+                            <span class="block text-xs font-bold text-white uppercase tracking-[0.1em] mb-3">FAIXA DE PREÇO</span>
                             <div>
                                 <div class="relative pt-6">
                                     <div class="absolute -top-1 left-1/2 -translate-x-1/2 bg-[var(--brand-yellow)] text-black text-xs font-bold px-2 py-1 rounded hidden" id="rangeTooltip">R$ 1.000</div>

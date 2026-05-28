@@ -142,9 +142,11 @@ class Rotas
             //Avaliação
             "/avaliacao" => "AvaliacaoController@index",
             "/avaliacao/criar" => "AvaliacaoController@viewCriarAvaliacoes",
+            "/backend/avaliacao/criar" => "AvaliacaoController@viewCriarAvaliacoes",
             "/avaliacao/listar" => "AvaliacaoController@viewListarAvaliacoes",
             "/backend/avaliacao/listar" => "AvaliacaoController@viewListarAvaliacoes",
             "/avaliacao/excluir/{id}" => "AvaliacaoController@viewExcluirAvaliacoes",
+            "/backend/avaliacao/excluir/{id}" => "AvaliacaoController@viewExcluirAvaliacoes",
             //Relatórios
             "/relatorios" => "Admin\RelatoriosController@index",
             "/relatorios/detalhado" => "Admin\RelatoriosController@relatorioDetalhado",
@@ -275,7 +277,9 @@ class Rotas
             "/backend/produtos/ativar" => "ProdutosController@ativarProduto",
             //avaliacao
             "/avaliacao/salvar" => "AvaliacaoController@salvarAvaliacao",
+            "/backend/avaliacao/salvar" => "AvaliacaoController@salvarAvaliacao",
             "/avaliacao/deletar/{id}" => "AvaliacaoController@deletarAvaliacao",
+            "/backend/avaliacao/deletar/{id}" => "AvaliacaoController@deletarAvaliacao",
             //avaliacao cliente
             "/cliente/avaliacao/salvar" => "Cliente\AvaliacoesController@salvar",
             "/cliente/avaliacao/atualizar/{id}" => "Cliente\AvaliacoesController@atualizar",

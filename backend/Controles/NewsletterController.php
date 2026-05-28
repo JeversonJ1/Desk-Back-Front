@@ -15,6 +15,24 @@ class NewsletterController {
 
     public function __construct() {
         $this->db = Database::getInstance();
+        
+        try {
+            $sql = "CREATE TABLE IF NOT EXISTS `tbl_newsletter` (
+                `id_newsletter` INT(11) NOT NULL AUTO_INCREMENT,
+                `email_newsletter` VARCHAR(150) NOT NULL,
+                `data_inscricao` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                `status_newsletter` VARCHAR(50) NOT NULL DEFAULT 'Ativo',
+                `criado_em` DATETIME DEFAULT NULL,
+                `atualizado_em` DATETIME DEFAULT NULL,
+                `excluido_em` DATETIME DEFAULT NULL,
+                PRIMARY KEY (`id_newsletter`),
+                UNIQUE KEY `uq_email_newsletter` (`email_newsletter`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;";
+            $this->db->exec($sql);
+        } catch (\Exception $e) {
+            // Silently ignore
+        }
+
         $this->newsletterModel = new Newsletter($this->db);
     }
 
@@ -130,19 +148,34 @@ class NewsletterController {
                 return;
             }
         }
-
-        $inscritos = $this->newsletterModel->listarTodos();
-        $total = count($inscritos);
-        $enviados = 0;
-
-        $emailService = new NotificacaoEmail();
-
-        foreach ($inscritos as $inscrito) {
-            if ($emailService->enviarPromocao($inscrito['email_newsletter'], $assunto, $mensagem, $imagemUrl, $localPath)) {
-                $enviados++;
+        $destinatario = $_POST['destinatario'] ?? 'todos';
+        if ($destinatario === 'custom') {
+            $destinatario = $_POST['email_personalizado'] ?? '';
+            if (empty($destinatario) || !filter_var($destinatario, FILTER_VALIDATE_EMAIL)) {
+                Redirect::redirecionarComMensagem('/admin/newsletter', 'error', 'Por favor, informe um e-mail válido para envio exclusivo.');
+                return;
             }
         }
+        $emailService = new NotificacaoEmail();
 
-        Redirect::redirecionarComMensagem('/admin/newsletter', 'success', "Disparo concluído: $enviados de $total e-mails enviados com sucesso!");
+        if ($destinatario === 'todos') {
+            $inscritos = $this->newsletterModel->listarTodos();
+            $total = count($inscritos);
+            $enviados = 0;
+
+            foreach ($inscritos as $inscrito) {
+                if ($emailService->enviarPromocao($inscrito['email_newsletter'], $assunto, $mensagem, $imagemUrl, $localPath)) {
+                    $enviados++;
+                }
+            }
+
+            Redirect::redirecionarComMensagem('/admin/newsletter', 'success', "Disparo concluído: $enviados de $total e-mails enviados com sucesso!");
+        } else {
+            if ($emailService->enviarPromocao($destinatario, $assunto, $mensagem, $imagemUrl, $localPath)) {
+                Redirect::redirecionarComMensagem('/admin/newsletter', 'success', "Cupom exclusivo enviado com sucesso para " . htmlspecialchars($destinatario) . "!");
+            } else {
+                Redirect::redirecionarComMensagem('/admin/newsletter', 'error', "Erro ao enviar o e-mail exclusivo para " . htmlspecialchars($destinatario) . ".");
+            }
+        }
     }
 }

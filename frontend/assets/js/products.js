@@ -108,6 +108,12 @@ const ProductManager = (() => {
     const container = document.getElementById('vitrineTailwind');
     if (!container) return;
 
+    // Se não há dados, remove o spinner silenciosamente
+    if (!productsData || productsData.length === 0) {
+      container.innerHTML = '';
+      return;
+    }
+
     let html = '';
     productsData.forEach(category => {
       const catLower = category.categoria.toLowerCase();
@@ -137,12 +143,49 @@ const ProductManager = (() => {
     });
   };
 
+  /**
+   * Agrupa lista plana de produtos por nome da categoria
+   */
+  const groupByCategory = (produtos) => {
+    const map = {};
+    produtos.forEach(p => {
+      const cat = p.nome_categorias || p.categoria_nome || 'Outros';
+      if (!map[cat]) map[cat] = { categoria: cat, itens: [] };
+      const imgPrincipal = p.imagem_produtos
+        ? (p.imagem_produtos.startsWith('http') || p.imagem_produtos.startsWith('/') ? p.imagem_produtos : '/backend/upload/' + p.imagem_produtos)
+        : 'assets/img/placeholder.png';
+      map[cat].itens.push({
+        id: parseInt(p.id_produto),
+        nome: p.nome_produtos,
+        descricao: p.descricao_produtos || '',
+        preco: parseFloat(p.preco_produtos),
+        img: imgPrincipal,
+        galeria: [],
+        oferta: null,
+        desconto: null
+      });
+    });
+    return Object.values(map);
+  };
+
   const fetchProducts = async () => {
     try {
+      // Tenta a vitrine especializada primeiro
       const response = await fetch(API_ENDPOINT + '?t=' + Date.now());
       if (!response.ok) throw new Error(`HTTP: ${response.status}`);
       const data = await response.json();
-      return Array.isArray(data) ? data : [];
+      if (Array.isArray(data) && data.length > 0) return data;
+
+      // Fallback: busca todos os produtos e agrupa por categoria
+      console.warn('Vitrine sem dados, usando fallback de produtos gerais...');
+      const fbRes = await fetch('/api/produtos?t=' + Date.now());
+      if (!fbRes.ok) throw new Error(`Fallback HTTP: ${fbRes.status}`);
+      const fbData = await fbRes.json();
+      const lista = (fbData.data || fbData);
+      if (Array.isArray(lista) && lista.length > 0) {
+        return groupByCategory(lista);
+      }
+      return [];
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
       return [];

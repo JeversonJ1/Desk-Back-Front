@@ -638,7 +638,7 @@
                                 </td>
                                 <td style="color: var(--text-muted); font-size: 13px;">
                                     <?php
-                                    $data_exibir = !empty($avaliacao['data_avaliacao_avaliacoes']) ? $avaliacao['data_avaliacao_avaliacoes'] : ($a['criado_em'] ?? '');
+                                    $data_exibir = !empty($avaliacao['data_avaliacao_avaliacoes']) ? $avaliacao['data_avaliacao_avaliacoes'] : ($avaliacao['criado_em'] ?? '');
                                     echo !empty($data_exibir) ? date('d/m/Y', strtotime($data_exibir)) : '---';
                                     ?>
                                 </td>

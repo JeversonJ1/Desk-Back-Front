@@ -323,7 +323,7 @@
 
     // === Inicializar ===
     window.AuthManager = {
-        init: function() {
+        init: function () {
             initEvents();
             checkAuth();
         }

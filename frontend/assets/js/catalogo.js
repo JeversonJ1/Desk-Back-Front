@@ -373,6 +373,11 @@ const CatalogManager = (() => {
                     input.checked = false;
                 });
 
+                // Remover classes de estilização 'active' dos botões de cores customizados
+                document.querySelectorAll('.color-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+
                 if (priceRange) {
                     priceRange.value = 1000;
                     const maxLabel = document.getElementById('maxPriceLabel');
@@ -448,6 +453,9 @@ const CatalogManager = (() => {
     /**
      * Renderiza a grade de filtros de tamanhos
      */
+    /**
+     * Renderiza a grade de filtros de tamanhos
+     */
     const renderSizeFilters = () => {
         const sizeContainer = document.getElementById('size-filter-container');
         if (!sizeContainer) return;
@@ -470,18 +478,18 @@ const CatalogManager = (() => {
             return (order[a.toUpperCase()] || 99) - (order[b.toUpperCase()] || 99);
         });
 
+        // Renderização limpa sem div adicional para alinhar com o CSS grid
         sizeContainer.innerHTML = sortedSizes.map(size => {
             const id = `s-${size.toLowerCase()}`;
+            const isChecked = activeFilters.sizes.includes(size.toUpperCase());
             return `
-                <div class="form-check custom-check-btn">
-                    <input type="checkbox" name="size" id="${id}" class="size-input" value="${size}">
-                    <label for="${id}" class="size-label">${size}</label>
-                </div>
+                <input type="checkbox" name="size" id="${id}" class="size-input" value="${size}" style="display: none;" ${isChecked ? 'checked' : ''}>
+                <label for="${id}" class="size-label">${size}</label>
             `;
         }).join('');
 
         // Adicionar listeners
-        const sizeInputs = document.querySelectorAll('.size-input');
+        const sizeInputs = sizeContainer.querySelectorAll('.size-input');
         sizeInputs.forEach(input => {
             input.addEventListener('change', () => {
                 const val = input.value.toUpperCase();
@@ -508,7 +516,9 @@ const CatalogManager = (() => {
         const allCores = new Set();
         flatProducts.forEach(p => {
             if (p.cores && Array.isArray(p.cores)) {
-                p.cores.forEach(c => allCores.add(c));
+                p.cores.forEach(c => {
+                    if (c && c.trim() !== '') allCores.add(c.trim());
+                });
             }
         });
 
@@ -517,24 +527,58 @@ const CatalogManager = (() => {
             return;
         }
 
+        const colorMap = {
+            'preto': '#000000',
+            'branco': '#ffffff',
+            'azul escuro': '#0b3c5d',
+            'azul claro': '#a2d5f2',
+            'bege': '#d5ba9b',
+            'marrom': '#5c4033',
+            'azul jeans': '#5a7d9a',
+            'cinza': '#808080',
+            'azul marinho': '#000080',
+            'estampado floral': 'linear-gradient(45deg, #f3a683, #f7d794, #778beb)',
+            'amarelo': '#f1c40f',
+            'vermelho': '#e74c3c',
+            'verde': '#2ecc71',
+            'azul': '#3498db',
+            'rosa': '#e84393',
+            'laranja': '#e67e22',
+            'roxo': '#9b59b6',
+            'caqui': '#c3b091',
+            'creme': '#fffdd0',
+            'off white': '#faf9f6',
+            'chumbo': '#3a3a3a',
+            'bordô': '#800020'
+        };
+
+        // Renderizar botões circulares usando labels vinculados a inputs de checkbox invisíveis
         colorContainer.innerHTML = Array.from(allCores).sort().map(cor => {
+            const normalized = cor.toLowerCase();
+            const colorValue = colorMap[normalized] || '#555555';
             const id = `cor-${cor.toLowerCase().replace(/\s+/g, '-')}`;
+            const isActive = activeFilters.colors.includes(cor);
+            const isWhite = normalized === 'branco' || normalized === 'off white';
+            const borderStyle = isWhite ? 'border: 2px solid rgba(255, 255, 255, 0.4);' : '';
             return `
-                <div class="form-check custom-check">
-                    <input class="form-check-input color-filter-input" type="checkbox" value="${cor}" id="${id}">
-                    <label class="form-check-label" for="${id}">${cor}</label>
-                </div>
+                <input class="color-filter-input" type="checkbox" value="${cor}" id="${id}" style="display: none;" ${isActive ? 'checked' : ''}>
+                <label class="color-btn ${isActive ? 'active' : ''}" for="${id}" style="background-color: ${colorValue}; ${borderStyle}" title="${cor}"></label>
             `;
         }).join('');
 
         // Adicionar listeners para as cores
-        const colorCheckboxes = document.querySelectorAll('.color-filter-input');
+        const colorCheckboxes = colorContainer.querySelectorAll('.color-filter-input');
         colorCheckboxes.forEach(cb => {
             cb.addEventListener('change', () => {
+                const label = colorContainer.querySelector(`label[for="${cb.id}"]`);
                 if (cb.checked) {
-                    activeFilters.colors.push(cb.value);
+                    if (!activeFilters.colors.includes(cb.value)) {
+                        activeFilters.colors.push(cb.value);
+                    }
+                    if (label) label.classList.add('active');
                 } else {
                     activeFilters.colors = activeFilters.colors.filter(c => c !== cb.value);
+                    if (label) label.classList.remove('active');
                 }
                 applyFilters();
             });
