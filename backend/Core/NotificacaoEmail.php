@@ -34,8 +34,22 @@ class NotificacaoEmail{
     public function enviarPromocao(string $email, string $assunto, string $mensagem, string $imagem_url = '', string $local_caminho = ''): bool {
         try {
             $templatePath = __DIR__ . '/../Views/Templates/emails/newsletter_promo.php';
-            
-            // Se tiver imagem local, embutir via CID no PHPMailer
+
+            // Embutir logo da Koketsu via CID
+            $logo_cid = '';
+            $logoPaths = [
+                __DIR__ . '/../../frontend/assets/img/logo2026.png',
+                __DIR__ . '/../Views/Templates/emails/logo_koketsu.png',
+            ];
+            foreach ($logoPaths as $lp) {
+                if (file_exists($lp)) {
+                    $this->emailService->embedImage($lp, 'koketsu_logo');
+                    $logo_cid = 'koketsu_logo';
+                    break;
+                }
+            }
+
+            // Se tiver imagem promocional local, embutir via CID no PHPMailer
             if (!empty($local_caminho) && file_exists($local_caminho)) {
                 $this->emailService->embedImage($local_caminho, 'promo_banner');
             }

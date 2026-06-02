@@ -194,7 +194,9 @@ class Rotas
             '/admin/newsletter' => 'NewsletterController@listar',
             '/backend/admin/newsletter' => 'NewsletterController@listar',
             '/admin/newsletter/excluir/{id}' => 'NewsletterController@excluir',
+            '/backend/admin/newsletter/excluir/{id}' => 'NewsletterController@excluir',
             '/admin/newsletter/exportar' => 'NewsletterController@exportar',
+            '/backend/admin/newsletter/exportar' => 'NewsletterController@exportar',
          ],
 
          "POST" => [
@@ -306,6 +308,7 @@ class Rotas
             '/backend/adminlogin' => 'AuthController@authenticaradmin',
             '/api/newsletter/inscrever' => 'NewsletterController@inscrever',
             '/admin/newsletter/enviar' => 'NewsletterController@enviarFila',
+            '/backend/admin/newsletter/enviar' => 'NewsletterController@enviarFila',
             '/configuracoes/whatsapp' => 'ConfiguracoesController@salvarWhatsapp',
             '/backend/configuracoes/whatsapp' => 'ConfiguracoesController@salvarWhatsapp',
          ]

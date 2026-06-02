@@ -1,5 +1,5 @@
 <?php
-namespace App\koketsu\Core;
+namespace App\Koketsu\Core;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
