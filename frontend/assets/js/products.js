@@ -247,6 +247,45 @@ const ProductManager = (() => {
     gridContainer.innerHTML = html;
   };
 
+  const loadHeroBanners = async () => {
+    const swiperWrapper = document.querySelector('.heroSwiper .swiper-wrapper');
+    if (!swiperWrapper) return;
+    
+    try {
+      const response = await fetch('/api/banners?t=' + Date.now());
+      if (!response.ok) throw new Error('Network response was not ok');
+      const json = await response.json();
+      
+      if (json.status === 'success' && Array.isArray(json.data) && json.data.length > 0) {
+        const activeBanners = json.data.filter(b => b.ativo);
+        if (activeBanners.length > 0) {
+          let slidesHtml = '';
+          activeBanners.forEach(banner => {
+            const imgSrc = (banner.imagem.startsWith('http') || banner.imagem.startsWith('/')) 
+              ? banner.imagem 
+              : '/backend/upload/' + banner.imagem;
+            
+            const linkTagOpen = banner.link ? `<a href="${banner.link}" class="absolute inset-0 z-10">` : '';
+            const linkTagClose = banner.link ? `</a>` : '';
+            slidesHtml += `
+              <div class="swiper-slide relative">
+                ${linkTagOpen}
+                <img src="${imgSrc}" class="absolute inset-0 w-full h-full object-cover" alt="${banner.titulo || 'Banner'}">
+                ${linkTagClose}
+              </div>
+            `;
+          });
+          swiperWrapper.innerHTML = slidesHtml;
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('Error loading dynamic banners:', error);
+    }
+    
+    console.log('Using default fallback banners.');
+  };
+
   const initHeroSwiper = () => {
     if (!window.Swiper) return;
     new Swiper('.heroSwiper', {
@@ -268,6 +307,7 @@ const ProductManager = (() => {
     if (window.Utils && window.Utils.checkAuth) {
       authStatus = await window.Utils.checkAuth();
     }
+    await loadHeroBanners();
     initHeroSwiper();
     const products = await fetchProducts();
     renderDynamicCategoriesCards(products);

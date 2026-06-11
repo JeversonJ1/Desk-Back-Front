@@ -29,14 +29,14 @@ class CarrinhoController {
         echo json_encode($carrinhos); 
     }
 
-    public function viewEditarCarrinho($id) {
+    public function viewEditarCarrinho(int $id) {
         $db = Database::getInstance();
         $carrinhoModel = new Carrinho($db);
         $carrinho = $carrinhoModel->buscarPorId($id);
         echo json_encode($carrinho);
     }
 
-    public function viewExcluirCarrinho($id) {
+    public function viewExcluirCarrinho(int $id) {
         $this->deletarCarrinho($id);
     }
 
@@ -56,7 +56,7 @@ class CarrinhoController {
         }
     }
 
-    public function atualizarCarrinho($id) {
+    public function atualizarCarrinho(int $id) {
         $db = Database::getInstance();
         $carrinhoModel = new Carrinho($db);
         
@@ -70,7 +70,7 @@ class CarrinhoController {
         }
     }
 
-    public function deletarCarrinho($id) {
+    public function deletarCarrinho(int $id) {
         $db = Database::getInstance();
         $carrinhoModel = new Carrinho($db);
         

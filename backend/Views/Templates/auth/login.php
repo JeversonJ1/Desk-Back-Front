@@ -291,15 +291,25 @@ if (isset($_SESSION['flash'])) {
                     <input type="email" name="email_usuarios" placeholder="E-mail de acesso" required>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" style="position:relative;">
                     <i class="fa fa-lock"></i>
-                    <input type="password" name="senha_usuarios" placeholder="Sua senha secreta" required>
+                    <input type="password" id="login_senha" name="senha_usuarios" placeholder="Sua senha secreta" required>
+                    <button type="button" onclick="toggleLoginPwd()" title="Mostrar/ocultar senha"
+                        style="position:absolute;right:18px;top:50%;transform:translateY(-50%);background:none;border:none;color:#555;font-size:16px;cursor:pointer;transition:color 0.2s;padding:4px;"
+                        id="btnToggleLoginPwd">
+                        <i class="fa fa-eye" id="iconLoginPwd"></i>
+                    </button>
                 </div>
 
                 <button type="submit" class="btn-submit">Entrar no Painel</button>
             </form>
 
             <div class="links-area">
+                <div style="margin-bottom:12px;">
+                    <a href="/recuperar-senha" style="color:var(--text-muted);font-size:0.82rem;">
+                        <i class="fa fa-key" style="margin-right:4px;"></i> Esqueci minha senha
+                    </a>
+                </div>
                 Não faz parte da elite? <a href="/backend/register">Cadastre-se</a>
             </div>
         </div>
@@ -309,4 +319,20 @@ if (isset($_SESSION['flash'])) {
         </div>
     </div>
 </body>
+<script>
+function toggleLoginPwd() {
+    const input = document.getElementById('login_senha');
+    const icon  = document.getElementById('iconLoginPwd');
+    const btn   = document.getElementById('btnToggleLoginPwd');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+        btn.style.color = '#f2cc7d';
+    } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+        btn.style.color = '';
+    }
+}
+</script>
 </html>

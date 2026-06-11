@@ -1,5 +1,16 @@
 {
     "manutencao": false,
     "whatsapp_numero": "5511985477260",
-    "whatsapp_ativo": true
+    "whatsapp_ativo": true,
+    "banner_texto": "",
+    "banner_ativo": false,
+    "banner_cor": "dourado",
+    "seo_titulo": "",
+    "seo_descricao": "",
+    "cnpj": "",
+    "email_contato": "",
+    "endereco": "",
+    "social_instagram": "",
+    "social_tiktok": "",
+    "social_youtube": ""
 }

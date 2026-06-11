@@ -283,4 +283,66 @@ VALUES (:id, :nome, :email, :senha, :nivel, :imagem, NOW())";
     }
     return false;
   }
-}
+
+  // ─── Recuperação de Senha ───────────────────────────────────────────────────
+
+  /**
+   * Salva (ou atualiza) o token de recuperação de senha para o usuário
+   */
+  public function salvarTokenRecuperacao(int $idUsuario, string $token, string $expiracao): bool
+  {
+    // Remove tokens anteriores deste usuário
+    $del = $this->db->prepare("DELETE FROM tbl_recuperacao_senha WHERE id_usuarios = :id");
+    $del->bindParam(':id', $idUsuario, PDO::PARAM_INT);
+    $del->execute();
+
+    $sql = "INSERT INTO tbl_recuperacao_senha (id_usuarios, token, expiracao, usado, criado_em)
+            VALUES (:id, :token, :expiracao, 0, NOW())";
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(':id',        $idUsuario,  PDO::PARAM_INT);
+    $stmt->bindParam(':token',     $token);
+    $stmt->bindParam(':expiracao', $expiracao);
+    return $stmt->execute();
+  }
+
+  /**
+   * Busca um token válido (não expirado e não usado)
+   */
+  public function buscarTokenRecuperacao(string $token): ?array
+  {
+    $sql = "SELECT * FROM tbl_recuperacao_senha
+            WHERE token = :token
+              AND usado = 0
+              AND expiracao > NOW()
+            LIMIT 1";
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(':token', $token);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result ?: null;
+  }
+
+  /**
+   * Atualiza somente a senha do usuário (não altera outros dados)
+   */
+  public function atualizarSenha(int $idUsuario, string $novaSenha): bool
+  {
+    $hash = password_hash($novaSenha, PASSWORD_DEFAULT);
+    $sql  = "UPDATE tbl_usuarios SET senha_usuarios = :senha, atualizado_em = NOW() WHERE id_usuarios = :id";
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(':senha', $hash);
+    $stmt->bindParam(':id',    $idUsuario, PDO::PARAM_INT);
+    return $stmt->execute();
+  }
+
+  /**
+   * Marca o token como usado após a redefinição
+   */
+  public function invalidarTokenRecuperacao(string $token): bool
+  {
+    $sql  = "UPDATE tbl_recuperacao_senha SET usado = 1 WHERE token = :token";
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(':token', $token);
+    return $stmt->execute();
+  }
+}

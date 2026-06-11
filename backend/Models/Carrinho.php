@@ -1,5 +1,5 @@
 <?php
-namespace App\backend\models;
+namespace App\Koketsu\Models;
 use PDO;
 class Carrinho {
     private $id_carrinho;
@@ -21,7 +21,7 @@ class Carrinho {
         $sql = "SELECT * FROM tbl_carrinho WHERE excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Buscar carrinhos de um cliente específico
@@ -30,7 +30,7 @@ class Carrinho {
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_cliente', $id_cliente);
         $stmt->execute();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Buscar carrinho por ID
@@ -39,7 +39,7 @@ class Carrinho {
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_carrinho', $id_carrinho);
         $stmt->execute();
-        return $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     // Inserir novo carrinho

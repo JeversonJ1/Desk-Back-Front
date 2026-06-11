@@ -220,7 +220,7 @@ const CatalogManager = (() => {
 
         // Prev Button
         const prevLi = document.createElement('li');
-        prevLi.innerHTML = `<a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 ${currentPage === 1 ? 'text-gray-700 cursor-not-allowed' : 'text-gray-400 hover:text-(--brand-yellow) hover:border-(--brand-yellow) transition'}"><i class="bi bi-arrow-left"></i></a>`;
+        prevLi.innerHTML = `<a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 ${currentPage === 1 ? 'text-gray-700 cursor-not-allowed' : 'text-gray-400 transition'} prev-page-btn">${currentPage === 1 ? '' : ''}<i class="bi bi-arrow-left"></i></a>`;
         prevLi.onclick = (e) => {
             e.preventDefault();
             if (currentPage > 1) {
@@ -238,9 +238,10 @@ const CatalogManager = (() => {
             a.href = "#";
             a.textContent = i;
             if (i === currentPage) {
-                a.className = 'w-10 h-10 flex items-center justify-center rounded-lg bg-(--brand-yellow) text-black font-bold';
+                a.className = 'w-10 h-10 flex items-center justify-center rounded-lg text-black font-bold';
+                a.style.backgroundColor = '#F2C84B';
             } else {
-                a.className = 'w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 text-white hover:border-(--brand-yellow) transition';
+                a.className = 'w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 text-white transition hover-page-btn';
             }
 
             a.onclick = (e) => {
@@ -255,7 +256,7 @@ const CatalogManager = (() => {
 
         // Next Button
         const nextLi = document.createElement('li');
-        nextLi.innerHTML = `<a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 ${currentPage >= totalPages ? 'text-gray-700 cursor-not-allowed' : 'text-gray-400 hover:text-(--brand-yellow) hover:border-(--brand-yellow) transition'}"><i class="bi bi-arrow-right"></i></a>`;
+        nextLi.innerHTML = `<a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 ${currentPage >= totalPages ? 'text-gray-700 cursor-not-allowed' : 'text-gray-400 transition'} next-page-btn"><i class="bi bi-arrow-right"></i></a>`;
         nextLi.onclick = (e) => {
             e.preventDefault();
             if (currentPage < totalPages) {

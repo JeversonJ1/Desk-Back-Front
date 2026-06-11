@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
-    /* ===== DESIGN SYSTEM KOKETSU NEWSLETTER — padrão global ===== */
+    /* ===== DESIGN SYSTEM KOKETSU COMUNICADOS ===== */
     :root {
         --bg-main:    #0f0f0f;
         --bg-card:    #1a1a1a;
@@ -57,7 +57,7 @@
         border-bottom:1px solid var(--border-color); font-size:14px;
     }
 
-    /* ===== STAT CARDS — padrão avaliações ===== */
+    /* ===== STAT CARDS ===== */
     .dashboard-grid {
         display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
         gap:20px; margin-bottom:35px;
@@ -72,7 +72,6 @@
     .stat-card::before {
         content:''; position:absolute; top:0; left:0; width:100%; height:3px; transition:0.3s;
     }
-    /* Barra colorida por card — identidade Koketsu */
     .stat-card.card-inscritos::before  { background:var(--accent); }
     .stat-card.card-mes::before        { background:var(--steel); }
     .stat-card.card-ultima::before     { background:var(--amethyst); }
@@ -187,18 +186,9 @@
         background:var(--steel-dim); border:1px solid var(--steel-glow); color:var(--steel);
         padding:8px 14px; border-radius:8px; font-size:11px; font-weight:700;
         text-transform:uppercase; letter-spacing:0.5px; cursor:pointer; transition:all 0.2s ease;
-        display:inline-flex; align-items:center; gap:6px; font-family:Arial,sans-serif; margin-right:4px;
+        display:inline-flex; align-items:center; gap:6px; font-family:Arial,sans-serif;
     }
     .btn-select-small:hover { background:rgba(78,158,191,0.15); border-color:var(--steel); }
-
-    .btn-danger-small {
-        background:transparent; border:1px solid var(--border-color); color:var(--text-muted);
-        padding:8px 14px; border-radius:8px; text-decoration:none; font-size:11px;
-        font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
-        transition:all 0.2s ease; display:inline-flex; align-items:center; gap:6px;
-        cursor:pointer; font-family:Arial,sans-serif;
-    }
-    .btn-danger-small:hover { background:rgba(220,53,69,0.05); color:var(--danger); border-color:var(--danger); transform:translateY(-1px); }
 
     /* Zero State */
     .zero-state-container { text-align:center; padding:60px 20px !important; color:var(--text-muted); }
@@ -267,7 +257,7 @@
     }
     @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
 
-    /* Newsletter Mockup */
+    /* Mockup */
     .newsletter-mockup { background:#000; border:1px solid #1a1a1a; border-radius:10px; overflow:hidden; font-family:Arial,sans-serif; }
     .mockup-header { background:#000; padding:20px; text-align:center; border-bottom:2px solid #F2C84B; }
     .mockup-header-logo { height:44px; width:auto; display:block; margin:0 auto 8px; }
@@ -308,8 +298,6 @@
     .btn-modal-cancel { background:transparent; border:1px solid var(--border-color); color:var(--text-muted); padding:10px 20px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:700; text-transform:uppercase; transition:all 0.2s; font-family:Arial,sans-serif; }
     .btn-modal-cancel:hover { border-color:#fff; color:#fff; }
     .btn-modal-confirm { padding:10px 24px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:800; text-transform:uppercase; transition:all 0.2s; font-family:Arial,sans-serif; border:none; }
-    .btn-modal-confirm.danger { background:linear-gradient(135deg,#dc3545,#c0392b); color:#fff; box-shadow:0 4px 12px rgba(220,53,69,0.3); }
-    .btn-modal-confirm.danger:hover { box-shadow:0 6px 18px rgba(220,53,69,0.5); transform:translateY(-1px); }
     .btn-modal-confirm.gold { background:linear-gradient(135deg,var(--accent),#d4a800); color:#000; box-shadow:0 4px 12px var(--accent-glow); }
     .btn-modal-confirm.gold:hover { box-shadow:0 6px 18px rgba(242,200,75,0.5); transform:translateY(-1px); }
     .modal-close { background:transparent; border:none; color:var(--text-muted); font-size:18px; cursor:pointer; transition:0.2s; }
@@ -321,29 +309,29 @@
 </style>
 
 <?php
-// Calcular stats dinâmicos
-$totalInscritos = count($inscritos);
-$inscritosMes = 0;
-$ultimaInscricao = null;
+// Calcular stats dinâmicos para clientes ativos
+$totalClientes = count($clientes);
+$clientesMes = 0;
+$ultimoCadastro = null;
 $agora = new DateTime();
-foreach ($inscritos as $n) {
-    $rawDate = $n['criado_em'] ?? $n['data_inscricao'] ?? null;
+foreach ($clientes as $c) {
+    $rawDate = $c['criado_em'] ?? null;
     if (!$rawDate) continue;
     try {
         $data = new DateTime($rawDate);
-        if ($data->format('Y-m') === $agora->format('Y-m')) $inscritosMes++;
-        if (!$ultimaInscricao || $data > $ultimaInscricao) $ultimaInscricao = $data;
+        if ($data->format('Y-m') === $agora->format('Y-m')) $clientesMes++;
+        if (!$ultimoCadastro || $data > $ultimoCadastro) $ultimoCadastro = $data;
     } catch (Exception $e) { continue; }
 }
-$ultimaInscricaoTexto = $ultimaInscricao ? $ultimaInscricao->diff($agora)->days . 'd atrás' : 'N/A';
-if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscricaoTexto = 'hoje';
+$ultimoCadastroTexto = $ultimoCadastro ? $ultimoCadastro->diff($agora)->days . 'd atrás' : 'N/A';
+if ($ultimoCadastro && $ultimoCadastro->diff($agora)->days === 0) $ultimoCadastroTexto = 'hoje';
 ?>
 
 <div class="page-wrapper">
     <h3 class="page-title">
         <i class="fas fa-envelope-open-text"></i>
-        Gestão de Newsletter
-        <span class="title-badge"><?= $totalInscritos ?> inscritos</span>
+        Gestão de Comunicados (Clientes Ativos)
+        <span class="title-badge"><?= $totalClientes ?> clientes ativos</span>
     </h3>
     <header class="header-breadcrumb">
         <span><i class="fas fa-tachometer-alt"></i> Painel de Controle — Koketsu</span>
@@ -353,22 +341,22 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
     <div class="dashboard-grid">
         <div class="stat-card card-inscritos">
             <div class="stat-info">
-                <h3 id="statActive"><?= $totalInscritos ?></h3>
-                <p>Inscritos Ativos</p>
+                <h3 id="statActive"><?= $totalClientes ?></h3>
+                <p>Clientes Ativos</p>
             </div>
             <div class="stat-icon"><i class="fas fa-user-check"></i></div>
         </div>
         <div class="stat-card card-mes">
             <div class="stat-info">
-                <h3><?= $inscritosMes ?></h3>
+                <h3><?= $clientesMes ?></h3>
                 <p>Novos este mês</p>
             </div>
             <div class="stat-icon"><i class="fas fa-calendar-plus"></i></div>
         </div>
         <div class="stat-card card-ultima">
             <div class="stat-info">
-                <h3 style="font-size:22px;"><?= $ultimaInscricaoTexto ?></h3>
-                <p>Última inscrição</p>
+                <h3 style="font-size:22px;"><?= $ultimoCadastroTexto ?></h3>
+                <p>Último Cadastro</p>
             </div>
             <div class="stat-icon"><i class="fas fa-clock"></i></div>
         </div>
@@ -386,7 +374,7 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
         <div class="filters-wrapper">
             <div style="position:relative;width:300px;">
                 <i class="fas fa-search" style="position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--accent);font-size:15px;"></i>
-                <input type="text" id="newsInput" oninput="applyCombinedFilters()" placeholder="Buscar por e-mail..." class="search-input">
+                <input type="text" id="newsInput" oninput="applyCombinedFilters()" placeholder="Buscar por nome ou e-mail..." class="search-input">
             </div>
             <span class="filter-label">Período:</span>
             <button class="pill-button active" onclick="setDateFilter(this,'all')">Todos</button>
@@ -422,30 +410,35 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
                         <th style="width:70px;" onclick="sortTable('id')">
                             ID <i class="fas fa-sort sort-icon"></i>
                         </th>
+                        <th onclick="sortTable('nome')">
+                            Nome do Cliente <i class="fas fa-sort sort-icon"></i>
+                        </th>
                         <th onclick="sortTable('email')">
                             E-mail do Cliente <i class="fas fa-sort sort-icon"></i>
                         </th>
                         <th onclick="sortTable('date')">
-                            Data da Inscrição <i class="fas fa-sort sort-icon"></i>
+                            Data do Cadastro <i class="fas fa-sort sort-icon"></i>
                         </th>
                         <th>Status</th>
-                        <th style="text-align:center;width:220px;">Ações</th>
+                        <th style="text-align:center;width:150px;">Ações</th>
                     </tr>
                 </thead>
                 <tbody id="newsTableBody">
-                    <?php foreach ($inscritos as $news): ?>
+                    <?php foreach ($clientes as $c): ?>
                     <tr class="news-row"
-                        data-date="<?= $news['criado_em'] ?? $news['data_inscricao'] ?? '' ?>"
-                        data-email="<?= strtolower(htmlspecialchars($news['email_newsletter'])) ?>"
-                        data-id="<?= $news['id_newsletter'] ?>">
+                        data-date="<?= $c['criado_em'] ?? '' ?>"
+                        data-nome="<?= strtolower(htmlspecialchars($c['nome_usuarios'])) ?>"
+                        data-email="<?= strtolower(htmlspecialchars($c['email_usuarios'])) ?>"
+                        data-id="<?= $c['id_usuarios'] ?>">
                         <td>
                             <input type="checkbox" class="row-checkbox row-check"
-                                   value="<?= htmlspecialchars($news['email_newsletter']) ?>"
+                                   value="<?= htmlspecialchars($c['email_usuarios']) ?>"
                                    onchange="onRowCheckChange()">
                         </td>
-                        <td style="font-family:monospace;color:#888;">#<?= $news['id_newsletter'] ?></td>
-                        <td class="email-text" style="font-weight:600;"><?= htmlspecialchars($news['email_newsletter']) ?></td>
-                        <td style="color:var(--text-muted);"><?= ($news['criado_em'] ?? $news['data_inscricao'] ?? null) ? date('d/m/Y H:i', strtotime($news['criado_em'] ?? $news['data_inscricao'])) : '—' ?></td>
+                        <td style="font-family:monospace;color:#888;">#<?= $c['id_usuarios'] ?></td>
+                        <td class="nome-text" style="font-weight:600;"><?= htmlspecialchars($c['nome_usuarios']) ?></td>
+                        <td class="email-text" style="color:var(--accent); font-weight:600;"><?= htmlspecialchars($c['email_usuarios']) ?></td>
+                        <td style="color:var(--text-muted);"><?= ($c['criado_em'] ?? null) ? date('d/m/Y H:i', strtotime($c['criado_em'])) : '—' ?></td>
                         <td>
                             <span class="status-badge active">
                                 <i class="fas fa-circle" style="font-size:6px;"></i> Ativo
@@ -453,28 +446,24 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
                         </td>
                         <td style="text-align:center;">
                             <button type="button" class="btn-select-small" title="Direcionar e-mail para o formulário abaixo"
-                                    onclick="selecionarDestinatario('<?= htmlspecialchars($news['email_newsletter']) ?>')">
+                                    onclick="selecionarDestinatario('<?= htmlspecialchars($c['email_usuarios']) ?>')">
                                 <i class="fas fa-arrow-down"></i> Selecionar
-                            </button>
-                            <button type="button" class="btn-danger-small"
-                                    onclick="abrirModalRemover(<?= $news['id_newsletter'] ?>, '<?= htmlspecialchars($news['email_newsletter']) ?>')">
-                                <i class="fas fa-trash"></i> Remover
                             </button>
                         </td>
                     </tr>
                     <?php endforeach; ?>
 
                     <tr id="zeroStateRow" style="display:none;">
-                        <td colspan="6" class="zero-state-container">
+                        <td colspan="7" class="zero-state-container">
                             <i class="fas fa-search-minus"></i>
-                            Nenhum e-mail encontrado com este filtro.
+                            Nenhum cliente encontrado com este filtro.
                         </td>
                     </tr>
-                    <?php if (empty($inscritos)): ?>
+                    <?php if (empty($clientes)): ?>
                     <tr id="emptyDbRow">
-                        <td colspan="6" class="zero-state-container">
-                            <i class="fas fa-envelope-open"></i>
-                            Nenhum e-mail capturado ainda.
+                        <td colspan="7" class="zero-state-container">
+                            <i class="fas fa-user-slash"></i>
+                            Nenhum cliente ativo capturado ainda.
                         </td>
                     </tr>
                     <?php endif; ?>
@@ -495,7 +484,7 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
             <div class="promo-form-container">
                 <h4><i class="fas fa-paper-plane"></i> Enviar Promoção / Novidade</h4>
                 <p id="destinatarioInfo" style="color:var(--text-muted);font-size:13px;margin-bottom:25px;">
-                    Esta ferramenta enviará o e-mail para <strong>todos os <?= $totalInscritos ?></strong> inscritos ativos.
+                    Esta ferramenta enviará o e-mail para <strong>todos os <?= $totalClientes ?></strong> clientes ativos.
                 </p>
 
                 <form id="disparoForm" action="/backend/admin/newsletter/enviar" method="POST" enctype="multipart/form-data" onsubmit="return onFormSubmit(event)">
@@ -503,10 +492,10 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
                     <div class="form-group">
                         <label>Destinatário (Enviar para)</label>
                         <select name="destinatario" id="destinatarioSelect" class="form-control-k" onchange="alternarDestinatario(this)">
-                            <option value="todos">Todos os Inscritos (<?= $totalInscritos ?>)</option>
+                            <option value="todos">Todos os Clientes (<?= $totalClientes ?>)</option>
                             <option value="custom">✏ E-mail Personalizado / Manual...</option>
-                            <?php foreach ($inscritos as $news): ?>
-                                <option value="<?= htmlspecialchars($news['email_newsletter']) ?>"><?= htmlspecialchars($news['email_newsletter']) ?></option>
+                            <?php foreach ($clientes as $c): ?>
+                                <option value="<?= htmlspecialchars($c['email_usuarios']) ?>"><?= htmlspecialchars($c['nome_usuarios']) ?> &lt;<?= htmlspecialchars($c['email_usuarios']) ?>&gt;</option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -519,7 +508,7 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
                     <div class="form-group">
                         <label>Assunto do E-mail</label>
                         <input type="text" name="assunto" id="formAssunto" class="form-control-k"
-                               placeholder="Ex: Coleção 2026 chegou 🚀" required oninput="updatePreview()">
+                               placeholder="Ex: Nova Coleção Koketsu Streetwear 🚀" required oninput="updatePreview()">
                     </div>
 
                     <div class="form-group">
@@ -562,7 +551,7 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
                     <img id="mockupBanner" class="mockup-banner" src="" alt="Banner">
 
                     <div class="mockup-content">
-                        <div class="mockup-badge">✦ &nbsp; Nova Novidade &nbsp; ✦</div>
+                        <div class="mockup-badge">✦ &nbsp; Novidades & Lançamentos &nbsp; ✦</div>
                         <hr class="mockup-divider">
                         <h2 id="mockupSubject" class="mockup-subject">Assunto do e-mail</h2>
                         <div id="mockupText" class="mockup-text">Escreva sua mensagem no formulário ao lado...</div>
@@ -574,8 +563,7 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
                         <a href="#">Instagram</a> &nbsp;|&nbsp;
                         <a href="#">Facebook</a> &nbsp;|&nbsp;
                         <a href="#">WhatsApp</a><br><br>
-                        Você recebeu este e-mail porque se inscreveu na newsletter da Koketsu Grife.<br>
-                        Para cancelar a inscrição, <a href="#">clique aqui</a>.<br><br>
+                        Você recebeu este e-mail porque faz parte da base de clientes da Koketsu Grife.<br><br>
                         © <?= date('Y') ?> Koketsu Grife. Todos os direitos reservados.
                     </div>
                 </div>
@@ -583,27 +571,6 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
 
         </div><!-- /split-layout -->
     </main>
-</div>
-
-<!-- ===== MODAL: REMOVER E-MAIL ===== -->
-<div class="modal-overlay" id="modalRemover">
-    <div class="modal-card">
-        <div class="modal-header">
-            <h4><i class="fas fa-trash"></i> Remover E-mail</h4>
-            <button class="modal-close" onclick="fecharModal('modalRemover')"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="modal-body">
-            <p>Tem certeza que deseja remover o e-mail:</p>
-            <p style="margin:10px 0;"><strong id="modalRemoverEmail"></strong></p>
-            <p style="font-size:12px;">Esta ação é irreversível e o inscrito perderá acesso às novidades.</p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn-modal-cancel" onclick="fecharModal('modalRemover')">Cancelar</button>
-            <a id="modalRemoverLink" href="#" class="btn-modal-confirm danger">
-                <i class="fas fa-trash"></i> Sim, Remover
-            </a>
-        </div>
-    </div>
 </div>
 
 <!-- ===== MODAL: DISPARO MASSA ===== -->
@@ -666,10 +633,11 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
 
         rows.forEach(row => {
             const email = row.dataset.email || '';
+            const nome = row.dataset.nome || '';
             const rawDate = row.dataset.date;
             const rowDate = rawDate ? new Date(rawDate) : null;
 
-            const matchesText = !searchText || email.includes(searchText);
+            const matchesText = !searchText || email.includes(searchText) || nome.includes(searchText);
             let matchesDate = true;
             if (rowDate) {
                 if (currentDateFilter === 'today') matchesDate = rowDate >= startOfDay;
@@ -699,7 +667,6 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
     /* ======================== SORTING ======================== */
     function sortTable(col) {
         const thead = document.querySelectorAll('.newsletter-table thead th');
-        // Limpar icons
         thead.forEach(th => { th.classList.remove('sort-asc','sort-desc'); });
 
         if (sortCol === col) {
@@ -709,12 +676,12 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
             sortDir = 'asc';
         }
 
-        // Marcar o th correto
-        const colMap = { id: 1, email: 2, date: 3 };
+        const colMap = { id: 1, nome: 2, email: 3, date: 4 };
         const thIdx = colMap[col];
         if (thIdx !== undefined) {
             thead[thIdx].classList.add(sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
-            thead[thIdx].querySelector('.sort-icon').className = `fas fa-sort-${sortDir === 'asc' ? 'up' : 'down'} sort-icon`;
+            const sortIcon = thead[thIdx].querySelector('.sort-icon');
+            if (sortIcon) sortIcon.className = `fas fa-sort-${sortDir === 'asc' ? 'up' : 'down'} sort-icon`;
         }
 
         const tbody = document.getElementById("newsTableBody");
@@ -725,6 +692,9 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
             if (col === 'id') {
                 valA = parseInt(a.dataset.id);
                 valB = parseInt(b.dataset.id);
+            } else if (col === 'nome') {
+                valA = a.dataset.nome;
+                valB = b.dataset.nome;
             } else if (col === 'email') {
                 valA = a.dataset.email;
                 valB = b.dataset.email;
@@ -765,14 +735,14 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
         container.innerHTML = "";
 
         if (total === 0) {
-            info.innerText = "0 inscritos encontrados";
+            info.innerText = "0 clientes encontrados";
             if (wrap) wrap.style.display = "none";
             return;
         }
         if (wrap) wrap.style.display = "";
         const start = (currentPage - 1) * rowsPerPage + 1;
         const end = Math.min(currentPage * rowsPerPage, total);
-        info.innerText = `Exibindo ${start}–${end} de ${total} inscritos`;
+        info.innerText = `Exibindo ${start}–${end} de ${total} clientes`;
 
         if (totalPages <= 1) { if (wrap) wrap.style.display = "none"; return; }
 
@@ -836,27 +806,19 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
         document.getElementById('bulkBar').classList.remove('visible');
     }
 
-    /* ======================== MODAL REMOVER ======================== */
-    function abrirModalRemover(id, email) {
-        document.getElementById('modalRemoverEmail').textContent = email;
-        document.getElementById('modalRemoverLink').href = '/backend/admin/newsletter/excluir/' + id;
-        abrirModal('modalRemover');
-    }
-
     /* ======================== MODAL ENVIO MASSA ======================== */
     function abrirModalEnvioMassa() {
         const checks = Array.from(document.querySelectorAll('.row-check:checked'));
         const count = checks.length;
         if (count === 0) return;
         document.getElementById('modalEnvioMassaTexto').innerHTML =
-            `Esta ação enviará o e-mail para <strong>${count} inscrito(s) selecionado(s)</strong>.<br><small style="color:#666;font-size:11px;">Preencha o formulário abaixo primeiro e confirme aqui.</small>`;
+            `Esta ação enviará o e-mail para <strong>${count} cliente(s) selecionado(s)</strong>.<br><small style="color:#666;font-size:11px;">Preencha o formulário abaixo primeiro e confirme aqui.</small>`;
         abrirModal('modalEnvioMassa');
     }
 
     function confirmarEnvio() {
         const checks = Array.from(document.querySelectorAll('.row-check:checked'));
         if (checks.length === 0) { fecharModal('modalEnvioMassa'); return; }
-        // Selecionar o primeiro e-mail para envio no formulário
         const email = checks[0].value;
         selecionarDestinatario(email);
         fecharModal('modalEnvioMassa');
@@ -870,7 +832,7 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
         const dest = select.value;
         let texto = '';
         if (dest === 'todos') {
-            texto = `Confirma o disparo para <strong>todos os <?= $totalInscritos ?> inscritos</strong>?`;
+            texto = `Confirma o disparo do e-mail para <strong>todos os <?= $totalClientes ?> clientes ativos</strong>?`;
         } else if (dest === 'custom') {
             const em = document.getElementById('customEmailInput').value || 'e-mail informado';
             texto = `Confirma o envio exclusivo para <strong>${em}</strong>?`;
@@ -900,13 +862,11 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
         document.getElementById(id).classList.remove('active');
         document.body.style.overflow = '';
     }
-    // Fechar modal clicando fora
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', e => {
             if (e.target === overlay) fecharModal(overlay.id);
         });
     });
-    // ESC fecha modal
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') {
             document.querySelectorAll('.modal-overlay.active').forEach(m => fecharModal(m.id));
@@ -936,7 +896,7 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
         if (val === "todos") {
             customGroup.style.display = "none";
             customInput.removeAttribute("required");
-            infoMsg.innerHTML = `Esta ferramenta enviará o e-mail para <strong>todos os <?= $totalInscritos ?></strong> inscritos ativos.`;
+            infoMsg.innerHTML = `Esta ferramenta enviará o e-mail para <strong>todos os <?= $totalClientes ?></strong> clientes ativos cadastrados.`;
             submitLabel.innerHTML = 'Disparar para Todos';
         } else if (val === "custom") {
             customGroup.style.display = "";
@@ -948,7 +908,7 @@ if ($ultimaInscricao && $ultimaInscricao->diff($agora)->days === 0) $ultimaInscr
             customGroup.style.display = "none";
             customInput.removeAttribute("required");
             infoMsg.innerHTML = `Envio <strong>exclusivo</strong> para <strong>${val}</strong>.`;
-            submitLabel.innerHTML = 'Enviar Cupom Exclusivo';
+            submitLabel.innerHTML = 'Enviar Comunicado';
         }
     }
 

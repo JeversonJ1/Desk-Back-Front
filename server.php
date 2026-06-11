@@ -8,8 +8,18 @@
 
 $uri = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
+
+// ── 0. UTILITÁRIOS RAIZ (git_push.php, fix_db.php, etc.) ────────────────────
+$rootPhpScripts = ['git_push.php', 'fix_db.php', 'fix_db2.php', 'fix_db_ai.php', 'temp_db.php', 'test_db.php', 'criar_tabela_recuperacao.php', 'create_newsletter.php'];
+$requestedFile = ltrim($uri, '/');
+if (in_array($requestedFile, $rootPhpScripts) && file_exists(__DIR__ . '/' . $requestedFile)) {
+    require_once __DIR__ . '/' . $requestedFile;
+    return true;
+}
+
 // ── 1. PRIORIDADE MÁXIMA: Proxy PHP do frontend (/api/*.php) ─────────────────
 //       ex: /api/vitrine.php → frontend/api/vitrine.php
+
 if (preg_match('/^\/api\/([^\/]+\.php)(?:$|\/)/', $uri, $m)) {
     $proxyFile = __DIR__ . '/frontend/api/' . $m[1];
     if (file_exists($proxyFile)) {
@@ -92,7 +102,9 @@ $backendPrefixes = '/^\/(
     configuracoes|
     itenspedidos|
     manutencao|
-    newsletter
+    newsletter|
+    recuperar-senha|
+    nova-senha
 )(\/|$)/xi';
 
 // ── 5a. Rota raiz: serve o frontend ──────────────────────────────────────────

@@ -263,10 +263,17 @@
             </td>
             <td style="text-align:center;">
               <div style="display:flex;justify-content:center;gap:6px;">
-                <a href="/backend/usuario/editar/<?= $usuario['id_usuarios'] ?>"
-                   class="btn-action btn-edit" title="Editar">
-                  <i class="fas fa-pencil-alt"></i>
-                </a>
+                <?php if ($nivel !== 'cliente'): ?>
+                  <a href="/backend/usuario/editar/<?= $usuario['id_usuarios'] ?>"
+                     class="btn-action btn-edit" title="Editar">
+                    <i class="fas fa-pencil-alt"></i>
+                  </a>
+                <?php else: ?>
+                  <span class="btn-action" title="Clientes só podem editar o próprio perfil"
+                        style="opacity:.35; cursor:not-allowed; border:1px solid rgba(108,117,125,.2); color:#6c757d; background:transparent;">
+                    <i class="fas fa-lock"></i>
+                  </span>
+                <?php endif; ?>
                 <?php if ($is_inativo): ?>
                 <a href="/backend/usuario/ativar/<?= $usuario['id_usuarios'] ?>"
                    class="btn-action btn-activate" title="Ativar">

@@ -12,7 +12,7 @@ echo implode("\n", $output) . "\n\n";
 
 $output = [];
 echo "2. Realizando Commit...\n";
-exec('git commit -m "feat: upgrade premium das paginas de newsletter e configuracoes" 2>&1', $output, $return_var);
+exec('git commit -m "chore: salvar progresso do projeto - ' . date('Y-m-d H:i') . '" 2>&1', $output, $return_var);
 echo "Status: " . ($return_var === 0 ? "SUCESSO" : "ERRO ($return_var)") . "\n";
 echo implode("\n", $output) . "\n\n";
 

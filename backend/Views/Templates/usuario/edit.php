@@ -57,7 +57,14 @@
 
         <div class="form-group">
             <label for="senha_usuarios">Nova Senha (deixe vazio para manter):</label>
-            <input type="password" id="senha_usuarios" name="senha_usuarios" placeholder="••••••••"> 
+            <div style="position:relative;">
+                <input type="password" id="senha_usuarios" name="senha_usuarios" placeholder="••••••••" style="padding-right:46px;width:100%;box-sizing:border-box;">
+                <button type="button" onclick="toggleEditPwd()" title="Mostrar/ocultar senha"
+                    style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:#555;font-size:16px;cursor:pointer;transition:color 0.2s;padding:4px;"
+                    id="btnToggleEditPwd">
+                    <i class="fa fa-eye" id="iconEditPwd"></i>
+                </button>
+            </div>
         </div>
 
         <div class="form-group">
@@ -235,6 +242,21 @@ function previewPhoto(event) {
             document.getElementById('photoPreview').src = e.target.result;
         };
         reader.readAsDataURL(file);
+    }
+}
+
+function toggleEditPwd() {
+    const input = document.getElementById('senha_usuarios');
+    const icon  = document.getElementById('iconEditPwd');
+    const btn   = document.getElementById('btnToggleEditPwd');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+        btn.style.color = '#f2cc7d';
+    } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+        btn.style.color = '';
     }
 }
 </script>

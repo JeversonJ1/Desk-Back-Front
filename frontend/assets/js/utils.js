@@ -400,7 +400,6 @@ const Components = {
         <h3 class="titulo">AJUDA</h3>
         <a href="/pages/duvidas.html">Dúvidas Frequentes</a>
         <a href="/pages/Trocas.html">Trocas e Devoluções</a>
-        <a href="/pages/frete.html">Frete e Entrega</a>
       </div>
 
       <div class="coluna-footer">

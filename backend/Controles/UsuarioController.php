@@ -122,12 +122,26 @@ class UsuarioController extends AdminController
             Redirect::redirecionarComMensagem("/usuario/listar", "error", "Usuario não encontrado.");
         }
 
+        // Clientes só podem editar o próprio perfil — admin não tem permissão
+        if (strtolower($usuario['nivel_acesso'] ?? '') === 'cliente') {
+            Redirect::redirecionarComMensagem("/usuario/listar", "error", "Clientes só podem editar o próprio perfil. O admin não tem permissão para editar dados de clientes.");
+            return;
+        }
+
         View::render("/usuario/edit", ["usuario" => $usuario]);
     }
 
     public function atualizarUsuario()
     {
         $id = (int) $_POST['id_usuarios'];
+
+        // Busca o usuário para verificar o nível antes de atualizar
+        $usuarioAtual = $this->usuario->buscarPorID($id);
+        if ($usuarioAtual && strtolower($usuarioAtual['nivel_acesso'] ?? '') === 'cliente') {
+            Redirect::redirecionarComMensagem("/usuario/listar", "error", "Clientes só podem editar o próprio perfil. Operação não permitida.");
+            return;
+        }
+
         $nome = $_POST['nome_usuarios'];
         $email = $_POST['email_usuarios'];
         $senha = $_POST['senha_usuarios'];

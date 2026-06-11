@@ -170,9 +170,9 @@ const CartManager = (() => {
     }
 
     const toast = document.createElement('div');
-    toast.className = 'pointer-events-auto flex items-center gap-3 bg-black text-white px-4 py-3 rounded-lg border border-(--brand-yellow) shadow-lg shadow-black/50 transform transition-all duration-300 translate-y-4 opacity-0';
+    toast.className = 'pointer-events-auto flex items-center gap-3 bg-black text-white px-4 py-3 rounded-lg shadow-lg shadow-black/50 transform transition-all duration-300 translate-y-4 opacity-0';
     toast.innerHTML = `
-        <i class="bi bi-check-circle-fill text-(--brand-yellow)"></i>
+        <i class="bi bi-check-circle-fill" style="color:#F2C84B;"></i>
         <span class="text-sm font-medium">${message}</span>
         <button class="ml-auto text-gray-400 hover:text-white transition" onclick="this.parentElement.remove()">
             <i class="bi bi-x-lg"></i>
@@ -214,10 +214,10 @@ const CartManager = (() => {
         <div class="p-4 border-t border-white/10 bg-[#111]">
           <div class="flex justify-between items-center mb-4 text-white">
             <span class="uppercase text-xs tracking-wider text-gray-400">Subtotal</span>
-            <span id="miniCartSubtotal" class="font-bold text-(--brand-yellow) text-lg">R$ 0,00</span>
+            <span id="miniCartSubtotal" class="font-bold text-lg" style="color:#F2C84B;">R$ 0,00</span>
           </div>
           <a href="/pages/carrinho.html" class="block w-full py-3 px-4 border border-white/20 text-white text-center rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition mb-3">VER CARRINHO</a>
-          <button id="btn-finalizar-pedido" class="w-full py-3 px-4 bg-(--brand-yellow) text-black rounded-lg text-xs font-bold uppercase tracking-widest hover:brightness-110 transition flex items-center justify-center gap-2 shadow-lg shadow-yellow-500/20">
+          <button id="btn-finalizar-pedido" class="w-full py-3 px-4 text-black rounded-lg text-xs font-bold uppercase tracking-widest hover:brightness-110 transition flex items-center justify-center gap-2 shadow-lg" style="background-color:#F2C84B; box-shadow:0 4px 15px rgba(242,200,75,0.35);">
             <i class="bi bi-whatsapp"></i> FINALIZAR PEDIDO
           </button>
         </div>
@@ -352,7 +352,7 @@ const CartManager = (() => {
               <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" id="${modalId}-backdrop"></div>
               <div class="bg-[#111] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md p-6 relative z-10 transform scale-95 opacity-0 transition-all duration-300 pointer-events-auto flex flex-col items-center text-center" id="${modalId}-content">
                   <div class="w-full flex justify-between items-start mb-6">
-                      <h5 class="text-(--brand-yellow) font-bold uppercase tracking-wider text-xl flex items-center gap-2">
+                      <h5 class="font-bold uppercase tracking-wider text-xl flex items-center gap-2" style="color:#F2C84B;">
                           <i class="bi bi-exclamation-triangle"></i> Falta Pouco!
                       </h5>
                       <button type="button" class="text-gray-400 hover:text-white transition" id="btnCloseProfileModal">
@@ -362,7 +362,7 @@ const CartManager = (() => {
                   <div class="text-center w-full">
                       <p class="text-gray-300 text-sm mb-4 leading-relaxed">Para garantir que seu pedido chegue certinho, precisamos que você preencha seu <strong class="text-white">Telefone</strong> e <strong class="text-white">Endereço</strong>.</p>
                       <p class="text-gray-500 text-xs mb-6">Você será redirecionado para completar seu perfil no painel de cliente.</p>
-                      <button id="btnRedirectProfile" class="w-full bg-(--brand-yellow) text-black py-4 rounded-xl font-bold uppercase tracking-widest text-sm hover:brightness-110 transition shadow-lg shadow-yellow-500/20">PREENCHER AGORA</button>
+                      <button id="btnRedirectProfile" class="w-full text-black py-4 rounded-xl font-bold uppercase tracking-widest text-sm hover:brightness-110 transition shadow-lg" style="background-color:#F2C84B; box-shadow:0 4px 15px rgba(242,200,75,0.35);">PREENCHER AGORA</button>
                   </div>
               </div>
           </div>

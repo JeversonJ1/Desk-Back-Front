@@ -179,6 +179,8 @@ class Rotas
             '/admin' => 'AuthController@loginadmin',
             '/login' => 'AuthController@login',
             '/logout' => 'AuthController@logout',
+            '/recuperar-senha' => 'RecuperacaoSenhaController@viewRecuperarSenha',
+            '/nova-senha' => 'RecuperacaoSenhaController@viewNovaSenha',
             // Aliases legados (URLs antigas — redirecionam para as rotas corretas)
             '/backend/register' => 'AuthController@register',
             '/backend/login' => 'AuthController@login',
@@ -190,6 +192,8 @@ class Rotas
             '/backend/configuracoes' => 'ConfiguracoesController@index',
             '/configuracoes/exportar' => 'ConfiguracoesController@exportarDados',
             '/configuracoes/excluir' => 'ConfiguracoesController@excluirConta',
+            '/configuracoes/banners' => 'ConfiguracoesController@listarBannersJson',
+            '/backend/configuracoes/banners' => 'ConfiguracoesController@listarBannersJson',
             '/manutencao' => 'PublicApiController@viewManutencao',
             '/admin/newsletter' => 'NewsletterController@listar',
             '/backend/admin/newsletter' => 'NewsletterController@listar',
@@ -306,11 +310,24 @@ class Rotas
             '/backend/login' => 'AuthController@authenticarUnificado',
             '/adminlogin' => 'AuthController@authenticaradmin',
             '/backend/adminlogin' => 'AuthController@authenticaradmin',
+            // Recuperação de Senha
+            '/recuperar-senha' => 'RecuperacaoSenhaController@solicitarRecuperacao',
+            '/nova-senha' => 'RecuperacaoSenhaController@redefinirSenha',
             '/api/newsletter/inscrever' => 'NewsletterController@inscrever',
             '/admin/newsletter/enviar' => 'NewsletterController@enviarFila',
             '/backend/admin/newsletter/enviar' => 'NewsletterController@enviarFila',
             '/configuracoes/whatsapp' => 'ConfiguracoesController@salvarWhatsapp',
             '/backend/configuracoes/whatsapp' => 'ConfiguracoesController@salvarWhatsapp',
+            '/configuracoes/salvar-gerais' => 'ConfiguracoesController@salvarGerais',
+            '/backend/configuracoes/salvar-gerais' => 'ConfiguracoesController@salvarGerais',
+            '/configuracoes/banners/salvar' => 'ConfiguracoesController@salvarBanner',
+            '/backend/configuracoes/banners/salvar' => 'ConfiguracoesController@salvarBanner',
+            '/configuracoes/banners/excluir/{id}' => 'ConfiguracoesController@excluirBanner',
+            '/backend/configuracoes/banners/excluir/{id}' => 'ConfiguracoesController@excluirBanner',
+            '/configuracoes/banners/toggle/{id}' => 'ConfiguracoesController@toggleBanner',
+            '/backend/configuracoes/banners/toggle/{id}' => 'ConfiguracoesController@toggleBanner',
+            '/configuracoes/banners/editar/{id}' => 'ConfiguracoesController@editarBanner',
+            '/backend/configuracoes/banners/editar/{id}' => 'ConfiguracoesController@editarBanner',
          ]
       ];
    }

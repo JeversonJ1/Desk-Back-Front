@@ -4,6 +4,7 @@
 
 :root {
   /* Cores da Marca — unificado com main.css */
+  --brand-yellow: #F2C84B;
   --color-primary: #F2C84B;
   --color-primary-light: #FFE566;
   --color-primary-dark: #D4A800;
