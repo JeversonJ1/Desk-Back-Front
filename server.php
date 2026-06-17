@@ -8,6 +8,39 @@
 
 $uri = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
+// ── MODO MANUTENÇÃO GLOBAL (SERVER-SIDE DETECT) ─────────────────────────────
+if (!isset($_SESSION)) {
+    session_start();
+}
+$configFile = __DIR__ . '/backend/Config/settings.json';
+if (file_exists($configFile)) {
+    $config = json_decode(file_get_contents($configFile), true);
+    if (!empty($config['manutencao'])) {
+        $isLoggedIn = isset($_SESSION['usuario_id']);
+        $isAdmin = ($isLoggedIn && ($_SESSION['usuario_tipo'] ?? '') === 'admin');
+        
+        $isSafeRoute = (
+            strpos($uri, 'login') !== false || 
+            strpos($uri, 'auth') !== false || 
+            strpos($uri, 'manutencao') !== false ||
+            strpos($uri, 'admin') !== false ||
+            $isAdmin
+        );
+
+        if (!$isSafeRoute) {
+            $ext = strtolower(pathinfo($uri, PATHINFO_EXTENSION));
+            $isHtmlOrPage = ($uri === '/' || empty($ext) || in_array($ext, ['html', 'php', 'htm']));
+            if ($isHtmlOrPage) {
+                header('Content-Type: text/html; charset=utf-8');
+                include __DIR__ . '/backend/Views/Templates/manutencao.php';
+                exit;
+            }
+        }
+    }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+
 
 // ── 0. UTILITÁRIOS RAIZ (git_push.php, fix_db.php, etc.) ────────────────────
 $rootPhpScripts = ['git_push.php', 'fix_db.php', 'fix_db2.php', 'fix_db_ai.php', 'temp_db.php', 'test_db.php', 'criar_tabela_recuperacao.php', 'create_newsletter.php'];

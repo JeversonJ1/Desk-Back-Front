@@ -1,3 +1,6 @@
+<?php
+/** @var array $usuario */
+?>
 <div class="page-wrapper">
     <h3 class="page-title">
         <i class="fa fa-pencil" style="color: #f2cc7d;"></i> 

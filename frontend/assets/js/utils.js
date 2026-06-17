@@ -136,14 +136,182 @@ window.Utils = (() => {
    */
   const loadPartials = async () => {
     try {
+      // Fetch settings first to check for maintenance and promotional banner
+      let config = null;
+      try {
+        const configRes = await fetch('/api/config.php');
+        if (configRes.ok) {
+          config = await configRes.json();
+        }
+      } catch (err) {
+        console.error('Erro ao buscar configurações:', err);
+      }
+
+      // Check Maintenance Mode
+      if (config && config.manutencao) {
+        const auth = await checkAuth();
+        const isAdmin = (auth && auth.authenticated && auth.user && auth.user.tipo === 'admin');
+        if (!isAdmin) {
+          // Replace body with beautiful maintenance view
+          document.body.innerHTML = `
+            <div style="background-color:#050505; color:#ffffff; font-family:'Outfit', sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; text-align:center; margin:0; padding:20px; box-sizing:border-box;">
+              <div style="max-width:550px; padding:60px 40px; background:rgba(255, 255, 255, 0.02); border-radius:32px; border:1px solid rgba(197, 160, 45, 0.1); box-shadow:0 30px 60px rgba(0,0,0,0.8);">
+                <img src="/assets/img/logo2026.png" alt="Koketsu" style="height:60px; margin-bottom:40px; filter:drop-shadow(0 0 10px rgba(197, 160, 45, 0.3));">
+                <div style="width:100px; height:100px; background:rgba(197, 160, 45, 0.1); border:1px solid rgba(197, 160, 45, 0.2); border-radius:30px; display:flex; align-items:center; justify-content:center; margin:0 auto 30px; animation: pulse 2s infinite ease-in-out;">
+                  <i class="bi bi-gear-fill" style="font-size:40px; color:#c5a02d;"></i>
+                </div>
+                <h1 style="font-size:2.5em; margin-bottom:20px; font-weight:800; letter-spacing:-1px; background:linear-gradient(135deg, #fff 0%, #c5a02d 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Estamos Evoluindo</h1>
+                <p style="font-size:1.1em; color:#888; line-height:1.8; margin-bottom:40px;">A Koketsu Store está passando por uma atualização estética premium para melhor atendê-lo. Voltaremos em instantes com uma experiência renovada.</p>
+                <div style="font-size:0.85em; color:#888; letter-spacing:1px; text-transform:uppercase; font-weight:700; opacity:0.5;">
+                  &copy; ${new Date().getFullYear()} Koketsu Store • Estilo & Excelência
+                </div>
+              </div>
+            </div>
+          `;
+          document.body.style.overflow = 'hidden';
+          return;
+        }
+      }
+
       // Remover header estático caso exista e injetar no body
       const existingHeader = document.querySelector('header');
-
       const headerHtml = window.ComponentsTemplate.Header;
       if (existingHeader) {
         existingHeader.outerHTML = `<header id="global-header">${headerHtml}</header>`;
       } else {
         document.body.insertAdjacentHTML('afterbegin', `<header id="global-header">${headerHtml}</header>`);
+      }
+
+      // RENDER PROMOTIONAL BANNER IF ACTIVE (AS INFINITE CAROUSEL/MARQUEE)
+      // Clean up old style tags and classes from previous versions
+      const oldStyle = document.getElementById('promo-banner-styles');
+      if (oldStyle) oldStyle.remove();
+      document.body.classList.remove('has-promo-banner');
+
+      if (config && config.banner_ativo && config.banner_texto) {
+        // Remove existing marquee banner if any
+        const existingBanner = document.querySelector('.promo-banner-marquee');
+        if (existingBanner) existingBanner.remove();
+
+        const bannerEl = document.createElement('div');
+        bannerEl.className = `promo-banner-marquee bg-${config.banner_cor || 'dourado'}`;
+
+        let trackHtml = '';
+        for (let i = 0; i < 16; i++) {
+          trackHtml += `<div class="promo-banner-marquee-item">${config.banner_texto}</div>`;
+        }
+        bannerEl.innerHTML = `<div class="promo-banner-marquee-track">${trackHtml}</div>`;
+
+        // Check if we are on the homepage (possui .hero-swiper-container)
+        const heroContainer = document.querySelector('.hero-swiper-container');
+        if (heroContainer) {
+          // Home page: place it below the main hero swiper banner (relative flow)
+          heroContainer.insertAdjacentElement('afterend', bannerEl);
+          document.body.classList.remove('has-promo-banner-other');
+        } else {
+          // Other pages: place it fixed below the fixed navbar (top: 96px)
+          const globalHeader = document.getElementById('global-header');
+          if (globalHeader) {
+            globalHeader.insertAdjacentElement('afterend', bannerEl);
+            bannerEl.style.position = 'fixed';
+            bannerEl.style.top = '96px';
+            bannerEl.style.left = '0';
+            bannerEl.style.width = '100%';
+            bannerEl.style.zIndex = '1900';
+            document.body.classList.add('has-promo-banner-other');
+          }
+        }
+
+        // Add dynamic CSS styles for the marquee effect and theme colors
+        const styleId = 'promo-banner-marquee-styles';
+        if (!document.getElementById(styleId)) {
+          const style = document.createElement('style');
+          style.id = styleId;
+          style.innerHTML = `
+            .promo-banner-marquee {
+              width: 100%;
+              overflow: hidden;
+              white-space: nowrap;
+              box-sizing: border-box;
+              height: 44px;
+              display: flex;
+              align-items: center;
+              position: relative;
+              z-index: 100;
+              box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+              border-top: 1px solid rgba(255,255,255,0.05);
+              border-bottom: 1px solid rgba(0,0,0,0.2);
+            }
+            .promo-banner-marquee-track {
+              display: inline-flex;
+              animation: marquee-scroll 25s linear infinite;
+              will-change: transform;
+            }
+            .promo-banner-marquee-item {
+              display: inline-flex;
+              align-items: center;
+              font-family: 'Oswald', sans-serif;
+              font-size: 13px;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 2px;
+              padding: 0;
+              margin: 0;
+              white-space: nowrap;
+            }
+            .promo-banner-marquee-item::after {
+              content: "✦";
+              margin-left: 40px;
+              margin-right: 40px;
+              color: inherit;
+              opacity: 0.6;
+            }
+            @keyframes marquee-scroll {
+              0% { transform: translate3d(0, 0, 0); }
+              100% { transform: translate3d(-50%, 0, 0); }
+            }
+            .promo-banner-marquee.bg-dourado {
+              background: linear-gradient(135deg, #F2C84B, #b8880b);
+              color: #000;
+            }
+            .promo-banner-marquee.bg-vermelho {
+              background: linear-gradient(135deg, #e74c3c, #c0392b);
+              color: #fff;
+            }
+            .promo-banner-marquee.bg-preto {
+              background: #111;
+              color: #fff;
+              border-bottom: 1px solid rgba(242, 200, 75, 0.3);
+            }
+            body.has-promo-banner-other {
+              padding-top: 44px !important;
+            }
+            @media (max-width: 768px) {
+              .promo-banner-marquee {
+                height: 36px;
+              }
+              .promo-banner-marquee-item {
+                font-size: 11px;
+                letter-spacing: 1px;
+              }
+              .promo-banner-marquee-item::after {
+                margin-left: 25px;
+                margin-right: 25px;
+              }
+              body.has-promo-banner-other {
+                padding-top: 36px !important;
+              }
+              body.has-promo-banner-other .promo-banner-marquee {
+                top: 96px !important;
+              }
+            }
+          `;
+          document.head.appendChild(style);
+        }
+      } else {
+        document.body.classList.remove('has-promo-banner-other');
+        const existingBanner = document.querySelector('.promo-banner-marquee');
+        if (existingBanner) existingBanner.remove();
       }
 
       // Remover footer estático caso exista e injetar

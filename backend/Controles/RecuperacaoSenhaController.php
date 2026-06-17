@@ -10,8 +10,8 @@ use App\Koketsu\core\NotificacaoEmail;
 class RecuperacaoSenhaController
 {
     private Usuario $usuarioModel;
-    private $notificacaoEmail;
-    private $db;
+    private NotificacaoEmail $notificacaoEmail;
+    private \PDO $db;
 
     public function __construct()
     {
@@ -52,7 +52,7 @@ class RecuperacaoSenhaController
             $usuario = $usuario[0];
 
             // Gera token seguro
-            $token = bin2hex(random_bytes(32));
+            $token = bin2hex(\random_bytes(32));
             $expiracao = date('Y-m-d H:i:s', strtotime('+1 hour'));
 
             // Salva token no banco

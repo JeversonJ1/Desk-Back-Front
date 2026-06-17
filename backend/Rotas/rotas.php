@@ -214,7 +214,9 @@ class Rotas
             "/api/banners" => 'PublicApiController@createBanner',
             "/api/banners/{id}/deletar" => 'PublicApiController@deleteBanner',
             "/configuracoes/manutencao" => 'ConfiguracoesController@salvarManutencao',
+            "/backend/configuracoes/manutencao" => 'ConfiguracoesController@salvarManutencao',
             "/configuracoes/salvar" => 'ConfiguracoesController@salvar',
+            "/backend/configuracoes/salvar" => 'ConfiguracoesController@salvar',
             // Clientes
             "/cliente/perfil-atualizar/{id}" => "Cliente\DashboardController@atualizarCliente",
             "/backend/cliente/perfil-atualizar/{id}" => "Cliente\DashboardController@atualizarCliente",

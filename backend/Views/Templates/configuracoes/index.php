@@ -63,80 +63,16 @@
 
         <!-- GRID DE CONFIGURAÇÕES -->
         <div class="settings-grid">
-            
-            <!-- CARD 1: MODO MANUTENÇÃO -->
-            <div class="settings-card card-manutencao" id="card-manutencao">
-                <div class="card-bar"></div>
-                <section class="settings-section">
-                    <div class="section-title">
-                        <i class="fa fa-lock"></i> MODO MANUTENÇÃO
-                    </div>
-                    <p class="setting-desc">Controle o status de acesso público da loja virtual.</p>
-                    
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <h4>Modo Manutenção</h4>
-                            <p class="text-muted">Bloquear temporariamente o acesso de clientes ao site.</p>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" id="maintenance-toggle" <?= ($config['manutencao'] ?? false) ? 'checked' : '' ?> onchange="toggleMaintenance(this.checked)">
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                </section>
-            </div>
 
-            <!-- CARD 2: BANNER PROMOCIONAL GLOBAL -->
-            <div class="settings-card card-banner" id="card-banner">
-                <div class="card-bar"></div>
-                <section class="settings-section">
-                    <div class="section-title">
-                        <i class="fa fa-bullhorn"></i> BANNER PROMOCIONAL
-                    </div>
-                    <p class="setting-desc">Exiba uma barra de avisos ou descontos no topo do site.</p>
-                    
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <h4>Banner Ativo</h4>
-                            <p class="text-muted">Mostrar a barra de aviso no cabeçalho do e-commerce.</p>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" name="banner_ativo" <?= ($config['banner_ativo'] ?? false) ? 'checked' : '' ?>>
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="k-label">Texto do Banner</label>
-                        <input type="text" name="banner_texto" class="k-input" placeholder="Ex: Cupom KOKETSU10 garante 10% OFF!" value="<?= htmlspecialchars($config['banner_texto'] ?? '') ?>">
-                    </div>
-
-                    <div class="form-group" style="margin-top: 15px;">
-                        <label class="k-label">Cor do Banner</label>
-                        <select name="banner_cor" class="k-select">
-                            <option value="dourado" <?= ($config['banner_cor'] ?? '') === 'dourado' ? 'selected' : '' ?>>Dourado Imperial (Padrão)</option>
-                            <option value="vermelho" <?= ($config['banner_cor'] ?? '') === 'vermelho' ? 'selected' : '' ?>>Vermelho Alerta</option>
-                            <option value="preto" <?= ($config['banner_cor'] ?? '') === 'preto' ? 'selected' : '' ?>>Preto Minimalista</option>
-                        </select>
-                    </div>
-
-                    <div class="card-actions">
-                        <button class="btn-save-gold btn-save" onclick="salvarCard('card-banner', ['banner_ativo', 'banner_texto', 'banner_cor'])">
-                            <i class="fa fa-save"></i> SALVAR BANNER
-                        </button>
-                    </div>
-                    <div class="save-indicator"></div>
-                </section>
-            </div>
-
-            <!-- CARD 5: BANNERS DO CARROSSEL DA HOME -->
+            <!-- CARD 1: BANNERS DO CARROSSEL DA HOME (PRIMEIRO - TOPO) -->
             <div class="settings-card card-banners-home" id="card-banners-home" style="grid-column: 1 / -1;">
                 <div class="card-bar"></div>
                 <section class="settings-section">
                     <div class="section-title">
                         <i class="fa fa-images"></i> BANNERS DO CARROSSEL DA HOME
+                        <span class="badge-new" style="background: #00bcd4;">PRINCIPAL</span>
                     </div>
-                    <p class="setting-desc">Gerencie as imagens rotativas e links de destino do banner principal na tela inicial do site.</p>
+                    <p class="setting-desc">Gerencie as imagens rotativas e links de destino do banner principal na tela inicial do site. O primeiro banner ativo será exibido em destaque.</p>
                     
                     <div class="banners-home-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
                         
@@ -152,7 +88,7 @@
                                     <div class="upload-dropzone" id="banner-dropzone" onclick="document.getElementById('banner-file-input').click()">
                                         <i class="fa fa-cloud-upload-alt" style="font-size: 2rem; margin-bottom: 10px; color: var(--card-accent);"></i>
                                         <p style="margin: 0; font-size: 0.8rem; font-weight: bold;">Clique ou Arraste a imagem aqui</p>
-                                        <p style="margin: 5px 0 0 0; font-size: 0.7rem; color: var(--text-muted);">Formatos aceitos: JPG, PNG, WEBP. Máx 2MB</p>
+                                        <p style="margin: 5px 0 0 0; font-size: 0.7rem; color: var(--text-muted);">Formatos aceitos: JPG, PNG, WEBP. Alta Resolução</p>
                                         <input type="file" id="banner-file-input" name="banner_imagem" accept="image/*" style="display: none;" onchange="previewBannerFile(this)">
                                     </div>
                                     <!-- Imagem Preview -->
@@ -194,6 +130,71 @@
                             </div>
                         </div>
                     </div>
+                </section>
+            </div>
+            
+            <!-- CARD 2: MODO MANUTENÇÃO -->
+            <div class="settings-card card-manutencao" id="card-manutencao">
+                <div class="card-bar"></div>
+                <section class="settings-section">
+                    <div class="section-title">
+                        <i class="fa fa-lock"></i> MODO MANUTENÇÃO
+                    </div>
+                    <p class="setting-desc">Controle o status de acesso público da loja virtual.</p>
+                    
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Modo Manutenção</h4>
+                            <p class="text-muted">Bloquear temporariamente o acesso de clientes ao site.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="maintenance-toggle" <?= ($config['manutencao'] ?? false) ? 'checked' : '' ?> onchange="toggleMaintenance(this.checked)">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </section>
+            </div>
+
+            <!-- CARD 3: BANNER PROMOCIONAL GLOBAL -->
+            <div class="settings-card card-banner" id="card-banner">
+                <div class="card-bar"></div>
+                <section class="settings-section">
+                    <div class="section-title">
+                        <i class="fa fa-bullhorn"></i> BANNER PROMOCIONAL
+                    </div>
+                    <p class="setting-desc">Exiba uma barra de avisos ou descontos no topo do site.</p>
+                    
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Banner Ativo</h4>
+                            <p class="text-muted">Mostrar a barra de aviso no cabeçalho do e-commerce.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" name="banner_ativo" <?= ($config['banner_ativo'] ?? false) ? 'checked' : '' ?>>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="k-label">Texto do Banner</label>
+                        <input type="text" name="banner_texto" class="k-input" placeholder="Ex: Cupom KOKETSU10 garante 10% OFF!" value="<?= htmlspecialchars($config['banner_texto'] ?? '') ?>">
+                    </div>
+
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label class="k-label">Cor do Banner</label>
+                        <select name="banner_cor" class="k-select">
+                            <option value="dourado" <?= ($config['banner_cor'] ?? '') === 'dourado' ? 'selected' : '' ?>>Dourado Imperial (Padrão)</option>
+                            <option value="vermelho" <?= ($config['banner_cor'] ?? '') === 'vermelho' ? 'selected' : '' ?>>Vermelho Alerta</option>
+                            <option value="preto" <?= ($config['banner_cor'] ?? '') === 'preto' ? 'selected' : '' ?>>Preto Minimalista</option>
+                        </select>
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="btn-save-gold btn-save" onclick="salvarCard('card-banner', ['banner_ativo', 'banner_texto', 'banner_cor'])">
+                            <i class="fa fa-save"></i> SALVAR BANNER
+                        </button>
+                    </div>
+                    <div class="save-indicator"></div>
                 </section>
             </div>
 
@@ -579,7 +580,7 @@
                                     <input type="checkbox" ${checked} onchange="toggleBannerAtivo(${banner.id_carrossel})">
                                     <span class="slider round"></span>
                                 </label>
-                                <button type="button" title="Editar banner" onclick="abrirEditarBanner(${banner.id_carrossel}, '${(banner.link_destino_imagem_carrossel||'').replace(/'/g,\"\\\\'\")  }', ${banner.ordem_imagem_carrossel}, '${imgSrc}')" style="background:rgba(0,188,212,0.12); border:1px solid rgba(0,188,212,0.35); color:#00bcd4; cursor:pointer; font-size:0.78rem; padding:6px 10px; border-radius:6px; transition:all 0.2s; display:flex; align-items:center; gap:5px; font-weight:700;" onmouseover="this.style.background='rgba(0,188,212,0.22)'" onmouseout="this.style.background='rgba(0,188,212,0.12)'">
+                                <button type="button" title="Editar banner" onclick="abrirEditarBanner(${banner.id_carrossel}, '${(banner.link_destino_imagem_carrossel||'').replace(/'/g, `\\\\'`)}', ${banner.ordem_imagem_carrossel}, '${imgSrc}')" style="background:rgba(0,188,212,0.12); border:1px solid rgba(0,188,212,0.35); color:#00bcd4; cursor:pointer; font-size:0.78rem; padding:6px 10px; border-radius:6px; transition:all 0.2s; display:flex; align-items:center; gap:5px; font-weight:700;" onmouseover="this.style.background='rgba(0,188,212,0.22)'" onmouseout="this.style.background='rgba(0,188,212,0.12)'">
                                     <i class="fa fa-pencil-alt"></i> Editar
                                 </button>
                                 <button type="button" title="Excluir banner" onclick="deletarBanner(${banner.id_carrossel})" style="background:rgba(220,53,69,0.10); border:1px solid rgba(220,53,69,0.3); color:var(--color-danger); cursor:pointer; font-size:0.78rem; padding:6px 10px; border-radius:6px; transition:all 0.2s; display:flex; align-items:center; gap:5px; font-weight:700;" onmouseover="this.style.background='rgba(220,53,69,0.2)'" onmouseout="this.style.background='rgba(220,53,69,0.10)'">

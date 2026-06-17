@@ -7,8 +7,8 @@ use App\Koketsu\Core\View;
 use App\Koketsu\Core\Redirect;
 
 class CategoriasController {
-    public $categoria;
-    public $db;
+    public Categoria $categoria;
+    public \PDO $db;
     public function __construct() {
         $this->db = Database::getInstance();
         $this->categoria = new Categoria($this->db);
@@ -18,11 +18,11 @@ class CategoriasController {
         $resultado = $this->categoria->buscarCategorias();
         return $resultado;
     }
-     public function viewListarCategoria($pagina){
+     public function viewListarCategoria(int $pagina = 1){
     $dados = $this->categoria->paginacao($pagina);
-    $total = $this->categoria->totalDeCategorias($pagina);
-    $total_inativos = $this->categoria->buscarCategoriasInativos($pagina);
-    $total_ativos = $this->categoria->buscarCategoriasAtivos($pagina);
+    $total = $this->categoria->totalDeCategorias();
+    $total_inativos = $this->categoria->buscarCategoriasInativos();
+    $total_ativos = $this->categoria->buscarCategoriasAtivos();
     view::render('categoria/index', 
     [
         "categorias" => $dados['data'],
@@ -49,7 +49,7 @@ class CategoriasController {
     }
 
 
-    public function viewExcluirCategoria($id){
+    public function viewExcluirCategoria(int $id){
          $dados = $this->categoria->buscarCategoriaPorId($id);
          if ($dados) {
              view::render("categoria/delete", ["categoria" => $dados]);
@@ -58,7 +58,7 @@ class CategoriasController {
          }
     }
 
-    public function relatorioCategoria($id, $data1, $data2){
+    public function relatorioCategoria(int $id, string $data1, string $data2){
      view::render("categoria/relatorio",
            ["id" => $id, "data1" => $data1, "data2" => $data2]
       );
@@ -67,15 +67,14 @@ class CategoriasController {
     public function salvarCategoria(){
        if($this->categoria->inserirCategoria(
             $_POST["nome_categorias"],
-            $_POST["descricao_categorias"],
-            "Ativo"
+            $_POST["descricao_categorias"]
         )){
             Redirect::redirecionarComMensagem("categoria/listar", "success", "Categoria criada com sucesso!");
         }else{
             Redirect::redirecionarComMensagem("categoria/create", "error", "Erro ao criar categoria. Tente novamente.");
         }
     }
-    public function atualizarCategoria($id){
+    public function atualizarCategoria(int $id){
         if($this->categoria->atualizarCategoria(
             $id,
             $_POST["nome_categorias"],
@@ -86,7 +85,7 @@ class CategoriasController {
             Redirect::redirecionarComMensagem("categoria/editar/$id", "error", "Erro ao atualizar categoria.");
         }
     }
-    public function deletarCategoria($id){
+    public function deletarCategoria(int $id){
         if($this->categoria->deletarCategoria($id)){
             Redirect::redirecionarComMensagem("categoria/listar", "success", "Categoria deletada com sucesso!");
         }else{

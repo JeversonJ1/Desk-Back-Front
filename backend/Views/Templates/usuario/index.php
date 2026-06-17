@@ -1,3 +1,10 @@
+<?php
+/** @var int $total_usuarios */
+/** @var int $total_ativos */
+/** @var int $total_inativos */
+/** @var int $total_admin */
+/** @var array $usuarios */
+?>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>

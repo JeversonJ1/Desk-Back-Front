@@ -14,7 +14,7 @@ use App\Koketsu\core\NotificacaoEmail;
 class AuthController{
     private Usuario $usuarioModel;
     private Session $session;
-    private $notificacaoEmail;
+    private NotificacaoEmail $notificacaoEmail;
 
     public function __construct(){
         $db = Database::getInstance();

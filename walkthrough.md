@@ -1,5 +1,46 @@
 # Walkthrough: QA & Debug Audit — Koketsu Grife
 
+## Sessão 4 — Correção do Modo Manutenção e Banner Promocional (Junho 2026)
+
+**Corrigidos os bugs que impediam o funcionamento e exibição do Modo Manutenção e do Banner Promocional no storefront.**
+
+### Bug #1 🔴 Rota `/backend/configuracoes/manutencao` retornando 404
+Ao tentar ativar o modo manutenção no painel, o AJAX enviava um POST para `/backend/configuracoes/manutencao` mas a rota no arquivo de rotas não continha o prefixo `/backend/`.
+* **Fix:** Adicionadas as rotas duplicadas com prefixo `/backend/` em [rotas.php](file:///c:/Users/jever/OneDrive/%C3%81rea%20de%20Trabalho/Desk-Back-Front/backend/Rotas/rotas.php) para `/backend/configuracoes/manutencao` e `/backend/configuracoes/salvar`.
+
+### Bug #2 🔴 Modo Manutenção não funcionava no Storefront
+Como a homepage e as páginas do e-commerce são estáticas (`.html`) e carregadas diretamente via `server.php` por motivos de performance, as validações de backend em PHP não eram executadas para os visitantes normais.
+* **Fix (Server-Side):** Adicionada verificação no [server.php](file:///c:/Users/jever/OneDrive/%C3%81rea%20de%20Trabalho/Desk-Back-Front/server.php) que intercepta requisições de páginas HTML. Se a manutenção estiver ativa no `settings.json` e o usuário não for um administrador logado, o servidor bloqueia o acesso e exibe a tela de manutenção premium.
+* **Fix (Client-Side):** Adicionada verificação dinâmica na função `loadPartials` do arquivo [utils.js](file:///c:/Users/jever/OneDrive/%C3%81rea%20de%20Trabalho/Desk-Back-Front/frontend/assets/js/utils.js). Caso o usuário acesse qualquer página do storefront via cache ou carregamento direto e a manutenção esteja ativa (sem privilégios de administrador), o DOM é substituído pela tela de manutenção.
+
+### Bug #3 🔴 Banner Promocional não aparecia no site
+As configurações de texto e cor do banner promocional eram salvas, mas o arquivo da API pública de configurações do frontend ([config.php](file:///c:/Users/jever/OneDrive/%C3%81rea%20de%20Trabalho/Desk-Back-Front/frontend/api/config.php)) não retornava esses valores e o frontend não possuía o HTML/CSS do banner.
+* **Fix:** 
+  1. Atualizado [config.php](file:///c:/Users/jever/OneDrive/%C3%81rea%20de%20Trabalho/Desk-Back-Front/frontend/api/config.php) para retornar as propriedades do banner.
+  2. Implementada renderização dinâmica de um **banner infinito estilo carrossel (Marquee)** em [utils.js](file:///c:/Users/jever/OneDrive/%C3%81rea%20de%20Trabalho/Desk-Back-Front/frontend/assets/js/utils.js).
+  3. Na **homepage**, o banner carrossel é posicionado perfeitamente **abaixo do banner principal (hero carousel)** de forma integrada no layout. Nas outras páginas que não possuem o banner principal, ele se fixa elegantemente logo abaixo da navbar fixa do site, deslocando o conteúdo de maneira limpa.
+
+---
+
+## Sessão 3 — Remoção da Restrição de Tamanho de Upload de Banners (Junho 2026)
+
+**Removido o limite de 2MB para upload de imagens de banners sem perda de qualidade.**
+
+### Melhoria 1 🟢 Aumento do limite na aplicação
+No arquivo [FileManager.php](file:///c:/Users/jever/OneDrive/%C3%81rea%20de%20Trabalho/Desk-Back-Front/backend/Core/FileManager.php), o tamanho máximo padrão de upload (`$tamanhoMaximo`) foi alterado de **2MB (2097152)** para **100MB (104857600)**. Isso permite que banners e outras mídias de alta resolução sejam enviados sem erros ou compactação forçada.
+
+### Melhoria 2 🟢 Configurações do Servidor PHP (`.user.ini`)
+Criados arquivos [.user.ini](file:///c:/Users/jever/OneDrive/%C3%81rea%20de%20Trabalho/Desk-Back-Front/.user.ini) na raiz do projeto e [backend/.user.ini](file:///c:/Users/jever/OneDrive/%C3%81rea%20de%20Trabalho/Desk-Back-Front/backend/.user.ini) definindo:
+- `upload_max_filesize = 100M`
+- `post_max_size = 100M`
+- `memory_limit = 256M`
+Isso garante que o servidor PHP aceite requisições POST com arquivos de tamanho elevado.
+
+### Melhoria 3 🟢 Atualização visual da interface de Banners
+No painel de configurações [index.php](file:///c:/Users/jever/OneDrive/%C3%81rea%20de%20Trabalho/Desk-Back-Front/backend/Views/Templates/configuracoes/index.php), o texto indicativo de tamanho máximo foi alterado de `"Máx 2MB"` para `"Alta Resolução"` para refletir o novo limite e guiar o usuário.
+
+---
+
 ## Sessão 2 — Bugs Corrigidos (Abril 2026)
 
 **8 bugs identificados e corrigidos. 12 arquivos de lixo removidos.**
