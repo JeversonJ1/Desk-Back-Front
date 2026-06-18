@@ -31,19 +31,45 @@ class PublicApiController
     public function getProdutos()
     {
         $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
-        $registros_por_pagina = 10;
+        $registros_por_pagina = isset($_GET['limit']) ? max(1, (int) $_GET['limit']) : 10;
         $offset = ($page - 1) * $registros_por_pagina;
 
+        $categoria_id = isset($_GET['categoria_id']) ? (int)$_GET['categoria_id'] : null;
+        $categoryIdsList = [];
+        if ($categoria_id !== null) {
+            // Buscar nome da categoria
+            $stmtCatName = $this->db->prepare("SELECT nome_categorias FROM tbl_categorias WHERE id_categorias = ?");
+            $stmtCatName->execute([$categoria_id]);
+            $catName = $stmtCatName->fetchColumn();
+            if ($catName) {
+                // Buscar todas as categorias com o mesmo nome
+                $stmtAllCats = $this->db->prepare("SELECT id_categorias FROM tbl_categorias WHERE nome_categorias = ? AND excluido_em IS NULL");
+                $stmtAllCats->execute([$catName]);
+                $categoryIdsList = $stmtAllCats->fetchAll(\PDO::FETCH_COLUMN);
+            }
+            if (empty($categoryIdsList)) {
+                $categoryIdsList = [$categoria_id];
+            }
+        }
+
+        $whereCategory = "";
+        if (!empty($categoryIdsList)) {
+            $inClause = implode(',', array_map('intval', $categoryIdsList));
+            $whereCategory = " AND id_categoria IN ($inClause)";
+        }
+
         // Total de registros
-        $sqlCount = "SELECT COUNT(*) as total FROM tbl_produtos WHERE excluido_em IS NULL";
+        $sqlCount = "SELECT COUNT(*) as total FROM tbl_produtos WHERE excluido_em IS NULL" . $whereCategory;
         $stmtCount = $this->db->prepare($sqlCount);
         $stmtCount->execute();
         $total = $stmtCount->fetch(\PDO::FETCH_ASSOC)['total'];
         $total_paginas = ceil($total / $registros_por_pagina);
 
         // Dados paginados
-        $sql = "SELECT * FROM tbl_produtos WHERE excluido_em IS NULL LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
+        $sql = "SELECT * FROM tbl_produtos WHERE excluido_em IS NULL" . $whereCategory . " LIMIT :limit OFFSET :offset";
         $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', $registros_por_pagina, \PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
         $stmt->execute();
         $dados = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -480,14 +506,22 @@ class PublicApiController
         $offset = ($page - 1) * $registros_por_pagina;
 
         // Total de registros
-        $sqlCount = "SELECT COUNT(*) as total FROM tbl_categorias WHERE excluido_em IS NULL";
+        $sqlCount = "SELECT COUNT(DISTINCT c.nome_categorias) as total 
+                     FROM tbl_categorias c
+                     INNER JOIN tbl_produtos p ON c.id_categorias = p.id_categoria
+                     WHERE c.excluido_em IS NULL AND p.excluido_em IS NULL";
         $stmtCount = $this->db->prepare($sqlCount);
         $stmtCount->execute();
         $total = $stmtCount->fetch(\PDO::FETCH_ASSOC)['total'];
         $total_paginas = ceil($total / $registros_por_pagina);
 
         // Dados paginados
-        $sql = "SELECT id_categorias, nome_categorias FROM tbl_categorias WHERE excluido_em IS NULL LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
+        $sql = "SELECT MIN(c.id_categorias) AS id_categorias, c.nome_categorias 
+                FROM tbl_categorias c
+                INNER JOIN tbl_produtos p ON c.id_categorias = p.id_categoria
+                WHERE c.excluido_em IS NULL AND p.excluido_em IS NULL
+                GROUP BY c.nome_categorias
+                LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $categorias = $stmt->fetchAll(\PDO::FETCH_ASSOC);

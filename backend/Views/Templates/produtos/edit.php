@@ -94,10 +94,10 @@
                 <div class="image-preview-container" onclick="document.getElementById('imagem_produtos').click();">
                     <?php 
                         $fotoRaw = $produtos['imagem_produtos'] ?? '';
-                        if (!empty($fotoRaw)) {
+                        if (!empty($fotoRaw) && $fotoRaw !== 'default.jpg') {
                             $fotoAtual = (str_starts_with($fotoRaw, 'http') || str_starts_with($fotoRaw, '/')) ? $fotoRaw : '/backend/upload/' . $fotoRaw;
                         } else {
-                            $fotoAtual = 'https://placehold.co/400x400?text=Capa';
+                            $fotoAtual = '/frontend/assets/img/LogoKoketsu.jpg';
                         }
                     ?>
                     <img id="imgPreview" src="<?= $fotoAtual; ?>" alt="Preview">

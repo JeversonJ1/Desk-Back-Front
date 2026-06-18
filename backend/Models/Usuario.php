@@ -64,7 +64,7 @@ class Usuario
   public function paginacao(int $pagina = 1, int $porPagina = 50)
   {
     $offset = ($pagina - 1) * $porPagina;
-    $sql = "SELECT id_usuarios,nome_usuarios,email_usuarios,nivel_acesso,excluido_em FROM tbl_usuarios 
+    $sql = "SELECT id_usuarios, nome_usuarios, email_usuarios, nivel_acesso, excluido_em, foto_usuarios, criado_em FROM tbl_usuarios 
                 LIMIT :offset, :porPagina";
     $stmt = $this->db->prepare($sql);
     $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);

@@ -48,12 +48,12 @@ const ProductManager = (() => {
       const precoFormatado = formatPrice(product.preco);
       return `
         <div class="swiper-slide h-auto pb-8 pt-4"> <!-- Added padding for shadows/hover effects to not be clipped by swiper -->
-          <div class="group relative flex flex-col h-full bg-[#050505] rounded-2xl overflow-hidden border border-white/5 transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(242,200,75,0.22)] hover:border-[#F2C84B]/30 cursor-pointer" onclick="window.location.href='/pages/produto.html?id=${product.id}'">
+          <div class="group relative flex flex-col h-full bg-[#050505] rounded-2xl overflow-hidden border border-white/5 transition-all duration-700 hover:shadow-[0_20px_50px_rgba(242,200,75,0.22)] hover:border-[#F2C84B]/30 cursor-pointer" onclick="window.location.href='/pages/produto.html?id=${product.id}'">
             
             <!-- Imagem -->
             <div class="relative aspect-[3/4] overflow-hidden bg-[#111]">
               ${product.oferta || product.desconto ? `<div class="absolute top-4 left-4 flex flex-col gap-2 z-10"><span class="bg-[#F2C84B] text-black font-black px-3 py-1 text-[8px] rounded-sm tracking-widest uppercase shadow-lg shadow-yellow-500/20">${product.oferta || product.desconto}</span></div>` : ''}
-              <img alt="${product.nome}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100" src="${product.img ? product.img : 'assets/img/placeholder.png'}" loading="lazy"/>
+              <img alt="${product.nome}" class="w-full h-full object-cover transition-transform duration-1000 opacity-90 group-hover:opacity-100" src="${product.img && !product.img.endsWith('/backend/upload/') && !product.img.endsWith('/backend/upload') && product.img !== 'assets/img/placeholder.png' ? product.img : '/frontend/assets/img/LogoKoketsu.jpg'}" onerror="this.src='/frontend/assets/img/LogoKoketsu.jpg'" loading="lazy"/>
               <!-- Overlay sutil -->
               <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60 pointer-events-none"></div>
             </div>
@@ -151,9 +151,9 @@ const ProductManager = (() => {
     produtos.forEach(p => {
       const cat = p.nome_categorias || p.categoria_nome || 'Outros';
       if (!map[cat]) map[cat] = { categoria: cat, itens: [] };
-      const imgPrincipal = p.imagem_produtos
+      const imgPrincipal = (p.imagem_produtos && p.imagem_produtos.trim() !== '')
         ? (p.imagem_produtos.startsWith('http') || p.imagem_produtos.startsWith('/') ? p.imagem_produtos : '/backend/upload/' + p.imagem_produtos)
-        : 'assets/img/placeholder.png';
+        : '/frontend/assets/img/LogoKoketsu.jpg';
       map[cat].itens.push({
         id: parseInt(p.id_produto),
         nome: p.nome_produtos,
@@ -216,15 +216,14 @@ const ProductManager = (() => {
           tag = 'ACESSÓRIOS';
       }
 
-      // Pick a random item from this category for the image
-      const randomItem = category.itens[Math.floor(Math.random() * category.itens.length)];
-      const imgSrc = (randomItem && randomItem.img) ? randomItem.img : 'assets/img/placeholder.png';
+      const randomItem = category.itens[0];
+      const imgSrc = (randomItem && randomItem.img && !randomItem.img.endsWith('/backend/upload/') && !randomItem.img.endsWith('/backend/upload')) ? randomItem.img : '/frontend/assets/img/LogoKoketsu.jpg';
       const catUrl = `/pages/catalogo.html?categoria=${encodeURIComponent(category.categoria.toLowerCase())}`;
 
       html += `
         <div class="relative rounded-2xl overflow-hidden flex flex-col group cursor-pointer transition-all duration-700 hover:-translate-y-2 shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(242,200,75,0.2)] h-[400px]" onclick="window.location.href='${catUrl}'">
             <!-- Imagem de Fundo (Edge to Edge) -->
-            <img src="${imgSrc}" alt="${category.categoria}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
+            <img src="${imgSrc}" alt="${category.categoria}" onerror="this.src='/frontend/assets/img/LogoKoketsu.jpg'" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
             
             <!-- Gradiente Escuro no Rodapé para Leitura -->
             <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -295,10 +294,6 @@ const ProductManager = (() => {
       autoplay: {
         delay: 5000,
         disableOnInteraction: false,
-      },
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
       },
     });
   };

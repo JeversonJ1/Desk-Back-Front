@@ -31,14 +31,23 @@ if (empty($produto)): ?>
                 <p><strong>Criado em:</strong> <?= htmlspecialchars($produto['criado_em']) ?></p>
             </div>
 
-            <!-- Coluna da Imagem (Exemplo) -->
             <div class="w3-half w3-center">
-                <!-- Se você tiver o link da imagem no campo 'imagem_produtos', use-o aqui. Caso contrário, este é um placeholder. -->
-                <img src="https://placehold.co/250x250/007bff/white?text=PRODUTO+<?= htmlspecialchars($produto['id_produto']) ?>" 
+                <?php
+                $imgRaw = $produto['imagem_produtos'] ?? '';
+                if (empty($imgRaw) || $imgRaw === 'default.jpg') {
+                    $imgSrc = '/frontend/assets/img/LogoKoketsu.jpg';
+                } else if (str_starts_with($imgRaw, 'http') || str_starts_with($imgRaw, '/')) {
+                    $imgSrc = $imgRaw;
+                } else {
+                    $imgSrc = '/backend/upload/' . $imgRaw;
+                }
+                ?>
+                <img src="<?= htmlspecialchars($imgSrc) ?>" 
                      alt="Imagem do Produto" 
                      class="w3-round" 
-                     style="width:100%; max-width: 250px;">
-                <p><small class="w3-text-grey">Imagem de Exemplo</small></p>
+                     style="width:100%; max-width: 250px;"
+                     onerror="this.src='/frontend/assets/img/LogoKoketsu.jpg'">
+                <p><small class="w3-text-grey">Imagem do Produto</small></p>
             </div>
         </div>
 

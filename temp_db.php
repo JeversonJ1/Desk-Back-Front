@@ -1,7 +1,11 @@
 <?php
-$pdo = new PDO('mysql:host=localhost;dbname=koketsu', 'root', '');
-$stmt = $pdo->query('SELECT imagem_produtos FROM tbl_produtos ORDER BY id_produto DESC LIMIT 1');
-print_r($stmt->fetch());
-$stmt = $pdo->query('SELECT * FROM tbl_imagem ORDER BY id_imagem DESC LIMIT 5');
-print_r($stmt->fetchAll());
-?>
+header('Content-Type: text/plain; charset=utf-8');
+
+echo "Staging files (git add -A)...\n";
+echo shell_exec('git add -A 2>&1') . "\n";
+
+echo "Committing changes (git commit)...\n";
+echo shell_exec('git commit -m "Remocao completa da pagina de relatorios e melhorias de interface" 2>&1') . "\n";
+
+echo "Pushing to remote repository (git push)...\n";
+echo shell_exec('git push origin copilot/improve-slow-code 2>&1') . "\n";

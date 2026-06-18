@@ -212,9 +212,8 @@ footer {
     
     <?php if ($session->get('usuario_tipo') == 'admin'){ ?>
     <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-star fa-fw"></i>  Avaliações</a>
-    <a href="/backend/relatorios" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bar-chart fa-fw"></i>  Relatórios</a>
     <a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-cog fa-fw"></i>  Configurações</a><br><br>
-     <?php } ?>
+    <?php } ?>
   </div>
 </nav>
 

@@ -147,11 +147,6 @@ class Rotas
             "/backend/avaliacao/listar" => "AvaliacaoController@viewListarAvaliacoes",
             "/avaliacao/excluir/{id}" => "AvaliacaoController@viewExcluirAvaliacoes",
             "/backend/avaliacao/excluir/{id}" => "AvaliacaoController@viewExcluirAvaliacoes",
-            //Relatórios
-            "/relatorios" => "Admin\RelatoriosController@index",
-            "/relatorios/detalhado" => "Admin\RelatoriosController@relatorioDetalhado",
-            "/relatorios/financeiro" => "Admin\RelatoriosController@relatorioFinanceiro",
-            "/relatorios/produtos" => "Admin\RelatoriosController@relatorioProdutos",
             //Carrinho
             "/backend/carrinho" => "CarrinhoController@index",
             "/backend/carrinho/criar" => "CarrinhoController@viewCriarCarrinho",
@@ -283,6 +278,10 @@ class Rotas
             "/backend/produtos/deletar" => "ProdutosController@deletarProdutos",
             "/produtos/ativar" => "ProdutosController@ativarProduto",
             "/backend/produtos/ativar" => "ProdutosController@ativarProduto",
+            "/produtos/excluir-permanente" => "ProdutosController@excluirPermanente",
+            "/backend/produtos/excluir-permanente" => "ProdutosController@excluirPermanente",
+            "/produtos/acao-lote" => "ProdutosController@acaoEmLote",
+            "/backend/produtos/acao-lote" => "ProdutosController@acaoEmLote",
             //avaliacao
             "/avaliacao/salvar" => "AvaliacaoController@salvarAvaliacao",
             "/backend/avaliacao/salvar" => "AvaliacaoController@salvarAvaliacao",

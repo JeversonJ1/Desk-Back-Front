@@ -18,7 +18,15 @@ As configurações de texto e cor do banner promocional eram salvas, mas o arqui
 * **Fix:** 
   1. Atualizado [config.php](file:///c:/Users/jever/OneDrive/%C3%81rea%20de%20Trabalho/Desk-Back-Front/frontend/api/config.php) para retornar as propriedades do banner.
   2. Implementada renderização dinâmica de um **banner infinito estilo carrossel (Marquee)** em [utils.js](file:///c:/Users/jever/OneDrive/%C3%81rea%20de%20Trabalho/Desk-Back-Front/frontend/assets/js/utils.js).
-  3. Na **homepage**, o banner carrossel é posicionado perfeitamente **abaixo do banner principal (hero carousel)** de forma integrada no layout. Nas outras páginas que não possuem o banner principal, ele se fixa elegantemente logo abaixo da navbar fixa do site, deslocando o conteúdo de maneira limpa.
+  3. Na **homepage**, o banner carrossel é posicionado perfeitamente **abaixo do banner principal (hero carousel)** de forma integrada no layout. O banner foi removido das páginas internas de catálogo e produto, aparecendo exclusivamente na tela inicial.
+  4. Removidos os marcadores circulares de paginação do carrossel principal (Swiper pagination bullets) que obstruíam e prejudicavam a visibilidade dos banners de roupas.
+
+### Melhoria 5 🟢 Ativação Dinâmica de SEO & Redes Sociais no Storefront
+As configurações de Informações & SEO e Redes Sociais eram salvas no painel de controle, mas não alteravam as páginas do cliente.
+* **Fix (SEO):** Atualizado [config.php](file:///c:/Users/jever/OneDrive/%C3%81rea%20de%20Trabalho/Desk-Back-Front/frontend/api/config.php) para fornecer metadados de SEO (Título, Descrição, CNPJ, E-mail de Contato, Endereço Físico) e implementada a injeção dinâmica desses metadados na aba do navegador e nas tags `<meta>` via [utils.js](file:///c:/Users/jever/OneDrive/%C3%81rea%20de%20Trabalho/Desk-Back-Front/frontend/assets/js/utils.js).
+* **Fix (Redes Sociais):**
+  1. Adicionado suporte a mais uma rede social (**Facebook**) nas configurações do painel administrativo, salvando em [settings.json](file:///c:/Users/jever/OneDrive/%C3%81rea%20de%20Trabalho/Desk-Back-Front/backend/Config/settings.json).
+  2. Implementada injeção dinâmica nos botões e logos de redes sociais do rodapé da loja, associando os links reais (Instagram, Facebook, TikTok, YouTube) e o botão do WhatsApp ao respectivo número configurado. Ao clicar no ícone, o cliente é redirecionado em uma nova aba para a rede da marca.
 
 ---
 

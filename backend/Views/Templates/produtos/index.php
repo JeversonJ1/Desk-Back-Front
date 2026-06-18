@@ -127,6 +127,55 @@
     font-weight:700; font-size:12px; transition:.2s; display:inline-flex; align-items:center; gap:5px;
   }
   .btn-activate:hover { background:#28a745; color:#fff; }
+  .btn-inactivate {
+    background: rgba(255,193,7,0.1); color: #ffc107; border: 1px solid rgba(255,193,7,0.3);
+    padding: 7px 14px; border-radius: 8px; text-decoration: none;
+    font-weight: 700; font-size: 12px; transition: .2s; display: inline-flex; align-items: center; gap: 5px;
+    cursor: pointer;
+  }
+  .btn-inactivate:hover { background: #ffc107; color: #000; border-color: #ffc107; }
+
+  /* --- TOAST NOTIFICATIONS --- */
+  .toast-container {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+  }
+  .toast {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 16px 22px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    border-left: 5px solid var(--accent);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 300px;
+    pointer-events: auto;
+    animation: toastIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    transition: all 0.3s ease;
+  }
+  .toast.hide {
+    animation: toastOut 0.3s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
+  }
+  .toast-success { border-left-color: #51cf66; }
+  .toast-error { border-left-color: #dc3545; }
+  .toast-info { border-left-color: #4e9ebf; }
+  @keyframes toastIn {
+    from { transform: translateY(50px) scale(0.8); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+  }
+  @keyframes toastOut {
+    to { transform: translateY(30px) scale(0.8); opacity: 0; }
+  }
 
   /* --- PAGINAÇÃO --- */
   .pagination-container {
@@ -158,6 +207,7 @@ $estoqueTotal    = array_sum(array_map(fn($p) => (int)$p['estoque_produtos'], ar
 ?>
 
 <div class="page-wrapper">
+  <div class="toast-container" id="toastContainer"></div>
 
   <!-- HEADER -->
   <div class="page-header">
@@ -231,9 +281,18 @@ $estoqueTotal    = array_sum(array_map(fn($p) => (int)$p['estoque_produtos'], ar
 
   <!-- TABELA -->
   <div class="table-card">
-    <div class="table-head">
-      <span class="table-title"><i class="fas fa-list" style="color:#F2C84B;"></i> Lista de Produtos</span>
-      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+    <div class="table-head" style="position:relative; min-height:60px; display:flex; align-items:center; justify-content:space-between; padding:18px 24px;">
+      <span class="table-title" id="normalTitle"><i class="fas fa-list" style="color:#F2C84B;"></i> Lista de Produtos</span>
+      <span class="table-title" id="batchTitle" style="display:none; color:#F2C84B; font-weight:800;"><i class="fas fa-tasks"></i> Ações em Lote (<span id="selectedCount">0</span>)</span>
+      
+      <!-- Batch Actions Bar -->
+      <div id="batchActionsBar" style="display:none; gap:10px; align-items:center;">
+          <button onclick="executeBatch('ativar')" class="btn-activate" style="cursor:pointer;"><i class="fas fa-check"></i> Ativar</button>
+          <button onclick="executeBatch('inativar')" class="btn-inactivate" style="cursor:pointer;"><i class="fas fa-ban"></i> Inativar</button>
+          <button onclick="executeBatch('excluir_permanente')" class="btn-delete" style="cursor:pointer;"><i class="fas fa-trash-alt"></i> Excluir Permanente</button>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;" id="normalFilters">
         <div class="search-group" style="max-width:320px;">
           <i class="fas fa-search"></i>
           <input type="text" id="inputBusca" class="search-input" placeholder="Buscar por nome...">
@@ -251,6 +310,9 @@ $estoqueTotal    = array_sum(array_map(fn($p) => (int)$p['estoque_produtos'], ar
       <table class="custom-table" id="tabelaProdutos">
         <thead>
           <tr>
+            <th width="40" style="text-align:center; vertical-align:middle;">
+              <input type="checkbox" id="selectAll" style="transform: scale(1.25); cursor:pointer;">
+            </th>
             <th width="110">Foto</th>
             <th>Produto</th>
             <th>Descrição</th>
@@ -269,12 +331,20 @@ $estoqueTotal    = array_sum(array_map(fn($p) => (int)$p['estoque_produtos'], ar
             $parcs = number_format($p['preco_produtos'] / 6, 2, ',', '.');
           ?>
           <tr class="item-produto <?= $is_inativo ? 'tr-inativo' : '' ?>"
-              data-status="<?= $is_inativo ? 'inativo' : 'ativo' ?>">
+              id="product-row-<?= $p['id_produto'] ?>"
+              data-id="<?= $p['id_produto'] ?>"
+              data-preco="<?= (float)$p['preco_produtos'] ?>"
+              data-estoque="<?= $estoqueNum ?>"
+              data-status="<?= $is_inativo ? 'inativo' : 'ativo' ?>"
+              data-categoria="<?= htmlspecialchars($p['categoria'] ?? 'Sem Categoria') ?>">
+            <td style="text-align:center; vertical-align:middle;">
+              <input type="checkbox" class="select-item" data-id="<?= $p['id_produto'] ?>" style="transform: scale(1.25); cursor:pointer;" onchange="handleSelectChange()">
+            </td>
             <td>
               <?php 
                 $imgRaw = $p['imagem_produtos'] ?? '';
-                if (empty($imgRaw)) {
-                    $imgSrc = 'https://placehold.co/160x160?text=📦';
+                if (empty($imgRaw) || $imgRaw === 'default.jpg') {
+                    $imgSrc = '/frontend/assets/img/LogoKoketsu.jpg';
                 } else if (str_starts_with($imgRaw, 'http') || str_starts_with($imgRaw, '/')) {
                     $imgSrc = $imgRaw;
                 } else {
@@ -283,7 +353,7 @@ $estoqueTotal    = array_sum(array_map(fn($p) => (int)$p['estoque_produtos'], ar
               ?>
               <img src="<?= htmlspecialchars($imgSrc) ?>"
                    class="prod-img"
-                   onerror="this.src='https://placehold.co/160x160?text=📦'">
+                   onerror="this.src='/frontend/assets/img/LogoKoketsu.jpg'">
             </td>
             <td>
               <span class="prod-name nome-produto"><?= htmlspecialchars($p['nome_produtos']) ?></span>
@@ -308,27 +378,34 @@ $estoqueTotal    = array_sum(array_map(fn($p) => (int)$p['estoque_produtos'], ar
                 <?= $is_inativo ? 'Inativo' : 'Ativo' ?>
               </span>
             </td>
-            <td style="text-align:center;">
+            <td style="text-align:center; white-space:nowrap;">
               <div style="display:flex;gap:6px;justify-content:center;">
                 <a href="/backend/produtos/editar/<?= $p['id_produto'] ?>" class="btn-edit" title="Editar">
                   <i class="fas fa-pencil-alt"></i>
                 </a>
-                <?php if ($is_inativo): ?>
-                <a href="/backend/produtos/ativar/<?= $p['id_produto'] ?>" class="btn-activate" title="Ativar">
-                  <i class="fas fa-check"></i>
-                </a>
-                <?php else: ?>
-                <a href="/backend/produtos/excluir/<?= $p['id_produto'] ?>" class="btn-delete"
-                   title="Inativar" onclick="return confirm('Deseja inativar este produto?')">
-                  <i class="fas fa-trash-alt"></i>
-                </a>
-                <?php endif; ?>
+                
+                <span class="toggle-active-wrapper">
+                  <?php if ($is_inativo): ?>
+                  <button onclick="toggleProductActive(<?= $p['id_produto'] ?>, true)" class="btn-activate" title="Ativar">
+                    <i class="fas fa-check"></i> Ativar
+                  </button>
+                  <?php else: ?>
+                  <button onclick="toggleProductActive(<?= $p['id_produto'] ?>, false)" class="btn-inactivate" title="Inativar">
+                    <i class="fas fa-ban"></i> Inativar
+                  </button>
+                  <?php endif; ?>
+                </span>
+                
+                <button onclick="deleteProductPermanent(<?= $p['id_produto'] ?>)" class="btn-delete" title="Excluir Permanentemente">
+                  <i class="fas fa-trash-alt"></i> Excluir
+                </button>
               </div>
             </td>
           </tr>
           <?php endforeach; ?>
         </tbody>
       </table>
+    </div></table>
     </div>
 
     <?php if(empty($produtos)): ?>
@@ -419,6 +496,296 @@ function renderPagination(totalPages, total, start) {
 document.getElementById('inputBusca').addEventListener('input', () => {
   currentPage = 1; applyFilters(); displayTable();
 });
+
+// ── Toast Notifications ──────────────────────────────────────────
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+  
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  
+  let icon = 'fa-check-circle';
+  if (type === 'error') icon = 'fa-exclamation-circle';
+  if (type === 'info') icon = 'fa-info-circle';
+  
+  toast.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.classList.add('hide');
+    toast.addEventListener('animationend', () => toast.remove());
+  }, 4000);
+}
+
+// ── Checkboxes & Selection ───────────────────────────────────────
+const selectAllCheckbox = document.getElementById('selectAll');
+if (selectAllCheckbox) {
+  selectAllCheckbox.addEventListener('change', function() {
+    const isChecked = this.checked;
+    document.querySelectorAll('.item-produto').forEach(row => {
+      if (row.getAttribute('data-filtered') !== 'false') {
+        const chk = row.querySelector('.select-item');
+        if (chk) chk.checked = isChecked;
+      }
+    });
+    handleSelectChange();
+  });
+}
+
+function handleSelectChange() {
+  const checkboxes = Array.from(document.querySelectorAll('.select-item'));
+  const checked = checkboxes.filter(c => c.checked);
+  const selectedCount = checked.length;
+  
+  const normalFilters = document.getElementById('normalFilters');
+  const batchActionsBar = document.getElementById('batchActionsBar');
+  const normalTitle = document.getElementById('normalTitle');
+  const batchTitle = document.getElementById('batchTitle');
+  const countSpan = document.getElementById('selectedCount');
+  
+  if (selectedCount > 0) {
+    if (normalFilters) normalFilters.style.display = 'none';
+    if (batchActionsBar) batchActionsBar.style.display = 'flex';
+    if (normalTitle) normalTitle.style.display = 'none';
+    if (batchTitle) batchTitle.style.display = 'inline';
+    if (countSpan) countSpan.textContent = selectedCount;
+  } else {
+    if (normalFilters) normalFilters.style.display = 'flex';
+    if (batchActionsBar) batchActionsBar.style.display = 'none';
+    if (normalTitle) normalTitle.style.display = 'inline';
+    if (batchTitle) batchTitle.style.display = 'none';
+    if (selectAllCheckbox) selectAllCheckbox.checked = false;
+  }
+}
+
+// ── Helper para requisições AJAX ─────────────────────────────────
+async function fazerRequisicaoAjax(url, dados) {
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify(dados)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Erro na requisição AJAX:', error);
+    return { success: false, message: 'Erro de conexão ou resposta inválida do servidor.' };
+  }
+}
+
+// ── Funções de Ação Individual ──────────────────────────────────
+async function toggleProductActive(id, ativar) {
+  const url = ativar ? '/backend/produtos/ativar?json=1' : '/backend/produtos/deletar?json=1';
+  const res = await fazerRequisicaoAjax(url, { id_produto: id });
+  
+  if (res.success) {
+    const row = document.getElementById(`product-row-${id}`);
+    if (row) {
+      row.dataset.status = ativar ? 'ativo' : 'inativo';
+      
+      if (ativar) {
+        row.classList.remove('tr-inativo');
+      } else {
+        row.classList.add('tr-inativo');
+      }
+      
+      const badge = row.querySelector('.badge-status');
+      if (badge) {
+        badge.className = `badge-status ${ativar ? 'status-ativo' : 'status-inativo'}`;
+        badge.textContent = ativar ? 'Ativo' : 'Inativo';
+      }
+      
+      const wrapper = row.querySelector('.toggle-active-wrapper');
+      if (wrapper) {
+        if (ativar) {
+          wrapper.innerHTML = `<button onclick="toggleProductActive(${id}, false)" class="btn-inactivate" title="Inativar"><i class="fas fa-ban"></i> Inativar</button>`;
+        } else {
+          wrapper.innerHTML = `<button onclick="toggleProductActive(${id}, true)" class="btn-activate" title="Ativar"><i class="fas fa-check"></i> Ativar</button>`;
+        }
+      }
+    }
+    
+    showToast(res.message || 'Operação realizada com sucesso!');
+    applyFilters();
+    displayTable();
+    updateKPIsAndCharts();
+  } else {
+    showToast(res.message || 'Ocorreu um erro ao atualizar o status.', 'error');
+  }
+}
+
+async function deleteProductPermanent(id) {
+  if (!confirm('Deseja realmente EXCLUIR PERMANENTEMENTE este produto? Esta ação não pode ser desfeita e removerá todas as avaliações, imagens da galeria e registros associados!')) {
+    return;
+  }
+  
+  const url = '/backend/produtos/excluir-permanente?json=1';
+  const res = await fazerRequisicaoAjax(url, { id_produto: id });
+  
+  if (res.success) {
+    const row = document.getElementById(`product-row-${id}`);
+    if (row) {
+      row.remove();
+    }
+    showToast(res.message || 'Produto excluído permanentemente!');
+    applyFilters();
+    displayTable();
+    updateKPIsAndCharts();
+  } else {
+    showToast(res.message || 'Erro ao excluir produto permanentemente.', 'error');
+  }
+}
+
+// ── Funções de Ação em Lote ─────────────────────────────────────
+async function executeBatch(acao) {
+  const checkboxes = Array.from(document.querySelectorAll('.select-item'));
+  const checked = checkboxes.filter(c => c.checked);
+  const ids = checked.map(c => parseInt(c.dataset.id));
+  
+  if (ids.length === 0) {
+    showToast('Nenhum produto selecionado.', 'error');
+    return;
+  }
+  
+  if (acao === 'excluir_permanente') {
+    if (!confirm(`Deseja realmente EXCLUIR PERMANENTEMENTE os ${ids.length} produtos selecionados? Esta ação é irreversível!`)) {
+      return;
+    }
+  }
+  
+  const url = '/backend/produtos/acao-lote?json=1';
+  const res = await fazerRequisicaoAjax(url, { ids: ids, acao: acao });
+  
+  if (res.success) {
+    ids.forEach(id => {
+      const row = document.getElementById(`product-row-${id}`);
+      if (!row) return;
+      
+      const chk = row.querySelector('.select-item');
+      if (chk) chk.checked = false;
+      
+      if (acao === 'excluir_permanente') {
+        row.remove();
+      } else if (acao === 'inativar') {
+        row.dataset.status = 'inativo';
+        row.classList.add('tr-inativo');
+        const badge = row.querySelector('.badge-status');
+        if (badge) {
+          badge.className = 'badge-status status-inativo';
+          badge.textContent = 'Inativo';
+        }
+        const wrapper = row.querySelector('.toggle-active-wrapper');
+        if (wrapper) {
+          wrapper.innerHTML = `<button onclick="toggleProductActive(${id}, true)" class="btn-activate" title="Ativar"><i class="fas fa-check"></i> Ativar</button>`;
+        }
+      } else if (acao === 'ativar') {
+        row.dataset.status = 'ativo';
+        row.classList.remove('tr-inativo');
+        const badge = row.querySelector('.badge-status');
+        if (badge) {
+          badge.className = 'badge-status status-ativo';
+          badge.textContent = 'Ativo';
+        }
+        const wrapper = row.querySelector('.toggle-active-wrapper');
+        if (wrapper) {
+          wrapper.innerHTML = `<button onclick="toggleProductActive(${id}, false)" class="btn-inactivate" title="Inativar"><i class="fas fa-ban"></i> Inativar</button>`;
+        }
+      }
+    });
+    
+    if (selectAllCheckbox) selectAllCheckbox.checked = false;
+    handleSelectChange();
+    
+    showToast(res.message || 'Ação em lote realizada com sucesso!');
+    applyFilters();
+    displayTable();
+    updateKPIsAndCharts();
+  } else {
+    showToast(res.message || 'Erro ao executar ação em lote.', 'error');
+  }
+}
+
+// ── Atualização de KPIs e Gráficos ───────────────────────────────
+function updateKPIsAndCharts() {
+  const allRows = Array.from(document.querySelectorAll('.item-produto'));
+  
+  let ativos = 0;
+  let inativos = 0;
+  let estoqueTotal = 0;
+  let valorInventario = 0;
+  
+  allRows.forEach(row => {
+    const status = row.dataset.status;
+    const preco = parseFloat(row.dataset.preco || 0);
+    const estoque = parseInt(row.dataset.estoque || 0);
+    
+    if (status === 'ativo') {
+      ativos++;
+      estoqueTotal += estoque;
+      valorInventario += preco * estoque;
+    } else {
+      inativos++;
+    }
+  });
+  
+  const kpis = document.querySelectorAll('.stat-info h3');
+  if (kpis.length >= 4) {
+    kpis[0].textContent = ativos;
+    kpis[1].textContent = inativos;
+    kpis[2].textContent = estoqueTotal.toLocaleString('pt-BR');
+    kpis[3].textContent = 'R$ ' + Math.round(valorInventario).toLocaleString('pt-BR');
+  }
+  
+  // Atualiza as estruturas globais de gráfico em memória
+  allProdutos.length = 0;
+  allRows.forEach(row => {
+    allProdutos.push({
+      id_produto: row.dataset.id,
+      preco_produtos: row.dataset.preco,
+      estoque_produtos: row.dataset.estoque,
+      excluido_em: row.dataset.status === 'inativo' ? '2026-06-17' : null,
+      categoria: row.dataset.categoria
+    });
+  });
+  
+  const catCounts = {};
+  allProdutos.forEach(p => {
+    if (!p.excluido_em) {
+      const cat = p.categoria || 'Sem Categoria';
+      catCounts[cat] = (catCounts[cat] || 0) + 1;
+    }
+  });
+  
+  dadosGrafico.length = 0;
+  for (const cat in catCounts) {
+    dadosGrafico.push({
+      categoria: cat,
+      total: catCounts[cat]
+    });
+  }
+  
+  const activeMetricBtn = document.querySelector('.chart-filter-btn.active');
+  const activeMetric = activeMetricBtn ? activeMetricBtn.dataset.metric : 'estoque';
+  
+  if (dadosGrafico.length > 0) {
+    renderBarChart(activeMetric);
+    renderDonut();
+  } else {
+    if (barChartInstance) { barChartInstance.destroy(); barChartInstance = null; }
+    if (donutInstance) { donutInstance.destroy(); donutInstance = null; }
+  }
+}
 
 // ── Gráficos ─────────────────────────────────────────────────────
 const dadosGrafico = <?= json_encode($produto ?? []) ?>;

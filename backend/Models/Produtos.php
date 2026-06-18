@@ -55,8 +55,9 @@ class Produtos
     $offset = ($pagina - 1) * $porPagina;
 
     if ($nomeBusca) {
-      $sql = "SELECT id_produto, nome_produtos, descricao_produtos, preco_produtos, estoque_produtos, imagem_produtos, id_categoria, criado_em, atualizado_em, excluido_em FROM tbl_produtos
-                    WHERE nome_produtos LIKE :nome
+      $sql = "SELECT p.id_produto, p.nome_produtos, p.descricao_produtos, p.preco_produtos, p.estoque_produtos, p.imagem_produtos, p.id_categoria, p.criado_em, p.atualizado_em, p.excluido_em, c.nome_categorias AS categoria FROM tbl_produtos p
+                    LEFT JOIN tbl_categorias c ON p.id_categoria = c.id_categorias
+                    WHERE p.nome_produtos LIKE :nome
                     LIMIT :offset, :porPagina";
       $stmt = $this->db->prepare($sql);
       $nomeBuscaFormatado = '%' . $nomeBusca . '%';
@@ -69,7 +70,8 @@ class Produtos
       $totalStmt->bindParam(':nome', $nomeBuscaFormatado);
       $totalStmt->execute();
     } else {
-      $sql = "SELECT id_produto, nome_produtos, descricao_produtos, preco_produtos, estoque_produtos, imagem_produtos, id_categoria, criado_em, atualizado_em, excluido_em FROM tbl_produtos
+      $sql = "SELECT p.id_produto, p.nome_produtos, p.descricao_produtos, p.preco_produtos, p.estoque_produtos, p.imagem_produtos, p.id_categoria, p.criado_em, p.atualizado_em, p.excluido_em, c.nome_categorias AS categoria FROM tbl_produtos p
+                    LEFT JOIN tbl_categorias c ON p.id_categoria = c.id_categorias
                     LIMIT :offset, :porPagina";
       $stmt = $this->db->prepare($sql);
       $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
@@ -206,6 +208,42 @@ class Produtos
     $stmt = $this->db->prepare($sql);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  public function excluirProdutoPermanente(int $id)
+  {
+    try {
+      $this->db->beginTransaction();
+
+      // 1. Deletar avaliações
+      $stmt = $this->db->prepare("DELETE FROM tbl_avaliacoes WHERE id_produto = :id");
+      $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+      $stmt->execute();
+
+      // 2. Deletar imagens associadas na galeria
+      $stmt = $this->db->prepare("DELETE FROM tbl_imagem WHERE id_produto = :id");
+      $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+      $stmt->execute();
+
+      // 3. Deletar itens de pedidos
+      $stmt = $this->db->prepare("DELETE FROM tbl_itens_pedidos WHERE id_produto = :id");
+      $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+      $stmt->execute();
+
+      // 4. Deletar produto (cascades cores, tamanhos, estoque_movimentacao)
+      $stmt = $this->db->prepare("DELETE FROM tbl_produtos WHERE id_produto = :id");
+      $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+      $stmt->execute();
+
+      $this->db->commit();
+      return true;
+    } catch (\Exception $e) {
+      if ($this->db->inTransaction()) {
+        $this->db->rollBack();
+      }
+      error_log("Erro ao excluir permanentemente o produto #{$id}: " . $e->getMessage());
+      return false;
+    }
   }
 
   public static function contarProdutos($db)

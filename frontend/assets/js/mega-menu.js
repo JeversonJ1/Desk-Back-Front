@@ -193,16 +193,16 @@ const MegaMenu = (() => {
       const stars = renderStars(nota);
 
       // Build image URL
-      let imgSrc = '/assets/img/placeholder-product.png';
-      if (p.imagem_produtos) imgSrc = `/backend/upload/${p.imagem_produtos}`;
-      else if (p.imagem) imgSrc = p.imagem.startsWith('http') ? p.imagem : `/backend/upload/${p.imagem}`;
-      else if (p.url_imagem) imgSrc = p.url_imagem;
+      let imgSrc = '/assets/img/LogoKoketsu.jpg';
+      if (p.imagem_produtos && p.imagem_produtos.trim() !== '') imgSrc = `/backend/upload/${p.imagem_produtos}`;
+      else if (p.imagem && p.imagem.trim() !== '') imgSrc = p.imagem.startsWith('http') ? p.imagem : `/backend/upload/${p.imagem}`;
+      else if (p.url_imagem && p.url_imagem.trim() !== '') imgSrc = p.url_imagem;
 
       return `
-        <a href="/pages/produto.html?id=${id}" class="group relative flex flex-col h-full bg-[#050505] rounded-xl overflow-hidden border border-white/5 transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_15px_30px_rgba(242,200,75,0.2)] hover:border-[#F2C84B]/35 cursor-pointer" onclick="MegaMenu.close()">
+        <a href="/pages/produto.html?id=${id}" class="group relative flex flex-col h-full bg-[#050505] rounded-xl overflow-hidden border border-white/5 transition-all duration-500 hover:shadow-[0_15px_30px_rgba(242,200,75,0.2)] hover:border-[#F2C84B]/35 cursor-pointer" onclick="MegaMenu.close()">
           <!-- Imagem -->
           <div class="relative aspect-square overflow-hidden bg-[#111]">
-            <img src="${imgSrc}" alt="${nome}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100" loading="lazy" onerror="this.src='/assets/img/logo2026.png'">
+            <img src="${imgSrc}" alt="${nome}" class="w-full h-full object-cover transition-transform duration-700 opacity-90 group-hover:opacity-100" loading="lazy" onerror="this.src='/assets/img/LogoKoketsu.jpg'">
             <!-- Overlay sutil -->
             <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60 pointer-events-none"></div>
           </div>

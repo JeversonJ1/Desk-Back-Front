@@ -250,7 +250,6 @@ $maxVendido = !empty($topProdutos) ? max(array_column($topProdutos,'total_vendid
     <div class="panel">
       <div class="panel-head">
         <span class="panel-title"><i class="fas fa-chart-area"></i> Receita — Últimos 7 Dias</span>
-        <a href="/backend/relatorios" class="panel-link">Ver Relatório →</a>
       </div>
       <div class="panel-body">
         <div class="chart-wrap">
@@ -324,10 +323,11 @@ $maxVendido = !empty($topProdutos) ? max(array_column($topProdutos,'total_vendid
       <?php else: ?>
       <?php foreach($topProdutos as $tp):
         $pct = $maxVendido > 0 ? round(($tp['total_vendido']/$maxVendido)*100) : 0;
-        $imgUrl = '/backend/upload/'.$tp['imagem_produtos'];
+        $imgRaw = $tp['imagem_produtos'] ?? '';
+        $imgUrl = (empty($imgRaw) || $imgRaw === 'default.jpg') ? '/frontend/assets/img/LogoKoketsu.jpg' : '/backend/upload/'.$imgRaw;
       ?>
       <div class="top-prod-row">
-        <img src="<?= htmlspecialchars($imgUrl) ?>" class="top-prod-img" onerror="this.src='https://placehold.co/48x48?text=📦'" alt="">
+        <img src="<?= htmlspecialchars($imgUrl) ?>" class="top-prod-img" onerror="this.src='/frontend/assets/img/LogoKoketsu.jpg'" alt="">
         <div class="top-prod-info">
           <div class="top-prod-name"><?= htmlspecialchars($tp['nome_produtos']) ?></div>
           <div class="top-prod-sold"><?= $tp['total_vendido'] ?> vendidos</div>
@@ -349,11 +349,12 @@ $maxVendido = !empty($topProdutos) ? max(array_column($topProdutos,'total_vendid
       <p style="padding:24px;color:#28a745;text-align:center;font-size:13px;"><i class="fas fa-check-circle"></i> Estoque saudável!</p>
       <?php else: ?>
       <?php foreach($estoqueBaixo as $ep):
-        $imgUrl = '/backend/upload/'.$ep['imagem_produtos'];
+        $imgRaw = $ep['imagem_produtos'] ?? '';
+        $imgUrl = (empty($imgRaw) || $imgRaw === 'default.jpg') ? '/frontend/assets/img/LogoKoketsu.jpg' : '/backend/upload/'.$imgRaw;
         $cor = $ep['estoque_produtos'] <= 3 ? '#dc3545' : '#ff8c00';
       ?>
       <div class="stock-row">
-        <img src="<?= htmlspecialchars($imgUrl) ?>" class="stock-img" onerror="this.src='https://placehold.co/44x44?text=📦'" alt="">
+        <img src="<?= htmlspecialchars($imgUrl) ?>" class="stock-img" onerror="this.src='/frontend/assets/img/LogoKoketsu.jpg'" alt="">
         <div class="stock-name"><?= htmlspecialchars($ep['nome_produtos']) ?></div>
         <div style="text-align:right;flex-shrink:0;">
           <div class="stock-qty" style="color:<?= $cor ?>;"><?= $ep['estoque_produtos'] ?></div>

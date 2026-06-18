@@ -62,7 +62,11 @@ const ProductDetailManager = (() => {
             if (cat.itens) {
                 const item = cat.itens.find(p => p.id === id);
                 if (item) {
-                    return { ...item, categoriaOrigem: cat.categoria };
+                    let finalImg = item.img;
+                    if (!finalImg || finalImg.endsWith('/backend/upload/') || finalImg.endsWith('/backend/upload')) {
+                        finalImg = '/frontend/assets/img/LogoKoketsu.jpg';
+                    }
+                    return { ...item, img: finalImg, categoriaOrigem: cat.categoria };
                 }
             }
         }
@@ -93,9 +97,12 @@ const ProductDetailManager = (() => {
         // Imagem Principal — com cursor de zoom e aria
         const mainImg = document.getElementById('main-product-img');
         if (mainImg) {
-            mainImg.src = product.img;
+            mainImg.src = product.img && !product.img.endsWith('/backend/upload/') && !product.img.endsWith('/backend/upload') ? product.img : '/frontend/assets/img/LogoKoketsu.jpg';
             mainImg.alt = product.nome;
             mainImg.style.cursor = 'zoom-in';
+            mainImg.onerror = function() {
+                this.src = '/frontend/assets/img/LogoKoketsu.jpg';
+            };
         }
 
         // Galeria de Miniaturas (desktop vertical + mobile horizontal)
@@ -130,9 +137,14 @@ const ProductDetailManager = (() => {
      * Renderiza galeria desktop (miniaturas verticais) e mobile (carrossel horizontal)
      */
     const renderGallery = (product) => {
-        let allMedia = [product.img];
+        let finalImg = product.img;
+        if (!finalImg || finalImg.endsWith('/backend/upload/') || finalImg.endsWith('/backend/upload')) {
+            finalImg = '/frontend/assets/img/LogoKoketsu.jpg';
+        }
+        let allMedia = [finalImg];
         if (product.galeria && product.galeria.length > 0) {
-            allMedia = [...allMedia, ...product.galeria];
+            const validGaleria = product.galeria.filter(g => g && !g.endsWith('/backend/upload/') && !g.endsWith('/backend/upload'));
+            allMedia = [...allMedia, ...validGaleria];
         }
 
         // Helper para criar thumb HTML
@@ -143,7 +155,7 @@ const ProductDetailManager = (() => {
                    <div class="absolute inset-0 flex items-center justify-center bg-black/30">
                        <i class="bi bi-play-fill text-white text-xl"></i>
                    </div>`
-                : `<img src="${mediaUrl}" class="w-full h-full object-cover" alt="Foto do produto">`;
+                : `<img src="${mediaUrl}" onerror="this.src='/frontend/assets/img/LogoKoketsu.jpg'" class="w-full h-full object-cover" alt="Foto do produto">`;
 
             return `
             <div class="relative shrink-0 rounded-lg overflow-hidden cursor-pointer border-2 
@@ -271,12 +283,13 @@ const ProductDetailManager = (() => {
      */
     const createMiniCard = (prod) => {
         const precoFormatado = prod.preco.toFixed(2).replace('.', ',');
+        const finalImg = (prod.img && !prod.img.endsWith('/backend/upload/') && !prod.img.endsWith('/backend/upload')) ? prod.img : '/frontend/assets/img/LogoKoketsu.jpg';
 
         return `
-        <div class="group relative flex flex-col h-full bg-[#0a0a0a] rounded-2xl overflow-hidden border border-white/5 transition-all duration-500 hover:-translate-y-3 hover:shadow-[0_25px_60px_rgba(242,200,75,0.18)] hover:border-[#F2C84B]/40 cursor-pointer" onclick="window.location.href='produto.html?id=${prod.id}'">
+        <div class="group relative flex flex-col h-full bg-[#0a0a0a] rounded-2xl overflow-hidden border border-white/5 transition-all duration-500 hover:shadow-[0_25px_60px_rgba(242,200,75,0.18)] hover:border-[#F2C84B]/40 cursor-pointer" onclick="window.location.href='produto.html?id=${prod.id}'">
             <!-- Imagem -->
             <div class="relative aspect-[3/4] overflow-hidden bg-[#111]">
-                <img src="${prod.img}" alt="${prod.nome}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100" loading="lazy">
+                <img src="${finalImg}" onerror="this.src='/frontend/assets/img/LogoKoketsu.jpg'" alt="${prod.nome}" class="w-full h-full object-cover transition-transform duration-700 opacity-90 group-hover:opacity-100" loading="lazy">
                 <!-- Overlay gradiente -->
                 <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-70 pointer-events-none"></div>
                 <!-- Badge categoria -->

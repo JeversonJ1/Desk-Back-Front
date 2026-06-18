@@ -131,7 +131,6 @@ $backendPrefixes = '/^\/(
     pedido|
     avaliacao|
     avaliacoes?|
-    relatorios?|
     configuracoes|
     itenspedidos|
     manutencao|

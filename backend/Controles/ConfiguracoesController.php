@@ -159,6 +159,7 @@ class ConfiguracoesController extends AuthenticatedController {
         if (isset($input['social_instagram'])) $config['social_instagram'] = htmlspecialchars($input['social_instagram'], ENT_QUOTES, 'UTF-8');
         if (isset($input['social_tiktok'])) $config['social_tiktok'] = htmlspecialchars($input['social_tiktok'], ENT_QUOTES, 'UTF-8');
         if (isset($input['social_youtube'])) $config['social_youtube'] = htmlspecialchars($input['social_youtube'], ENT_QUOTES, 'UTF-8');
+        if (isset($input['social_facebook'])) $config['social_facebook'] = htmlspecialchars($input['social_facebook'], ENT_QUOTES, 'UTF-8');
 
 
         if (file_put_contents($this->configFile, json_encode($config, JSON_PRETTY_PRINT))) {

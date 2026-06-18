@@ -188,7 +188,10 @@ window.Utils = (() => {
       if (oldStyle) oldStyle.remove();
       document.body.classList.remove('has-promo-banner');
 
-      if (config && config.banner_ativo && config.banner_texto) {
+      // Check if we are on the homepage (possui .hero-swiper-container)
+      const heroContainer = document.querySelector('.hero-swiper-container');
+
+      if (config && config.banner_ativo && config.banner_texto && heroContainer) {
         // Remove existing marquee banner if any
         const existingBanner = document.querySelector('.promo-banner-marquee');
         if (existingBanner) existingBanner.remove();
@@ -202,25 +205,9 @@ window.Utils = (() => {
         }
         bannerEl.innerHTML = `<div class="promo-banner-marquee-track">${trackHtml}</div>`;
 
-        // Check if we are on the homepage (possui .hero-swiper-container)
-        const heroContainer = document.querySelector('.hero-swiper-container');
-        if (heroContainer) {
-          // Home page: place it below the main hero swiper banner (relative flow)
-          heroContainer.insertAdjacentElement('afterend', bannerEl);
-          document.body.classList.remove('has-promo-banner-other');
-        } else {
-          // Other pages: place it fixed below the fixed navbar (top: 96px)
-          const globalHeader = document.getElementById('global-header');
-          if (globalHeader) {
-            globalHeader.insertAdjacentElement('afterend', bannerEl);
-            bannerEl.style.position = 'fixed';
-            bannerEl.style.top = '96px';
-            bannerEl.style.left = '0';
-            bannerEl.style.width = '100%';
-            bannerEl.style.zIndex = '1900';
-            document.body.classList.add('has-promo-banner-other');
-          }
-        }
+        // Home page: place it below the main hero swiper banner (relative flow)
+        heroContainer.insertAdjacentElement('afterend', bannerEl);
+        document.body.classList.remove('has-promo-banner-other');
 
         // Add dynamic CSS styles for the marquee effect and theme colors
         const styleId = 'promo-banner-marquee-styles';
@@ -244,7 +231,7 @@ window.Utils = (() => {
             }
             .promo-banner-marquee-track {
               display: inline-flex;
-              animation: marquee-scroll 25s linear infinite;
+              animation: marquee-scroll 55s linear infinite;
               will-change: transform;
             }
             .promo-banner-marquee-item {
@@ -283,9 +270,6 @@ window.Utils = (() => {
               color: #fff;
               border-bottom: 1px solid rgba(242, 200, 75, 0.3);
             }
-            body.has-promo-banner-other {
-              padding-top: 44px !important;
-            }
             @media (max-width: 768px) {
               .promo-banner-marquee {
                 height: 36px;
@@ -297,12 +281,6 @@ window.Utils = (() => {
               .promo-banner-marquee-item::after {
                 margin-left: 25px;
                 margin-right: 25px;
-              }
-              body.has-promo-banner-other {
-                padding-top: 36px !important;
-              }
-              body.has-promo-banner-other .promo-banner-marquee {
-                top: 96px !important;
               }
             }
           `;
@@ -321,6 +299,73 @@ window.Utils = (() => {
         existingFooter.outerHTML = footerHtml; // O arquivo footer.html já tem a tag <footer>
       } else {
         document.body.insertAdjacentHTML('beforeend', footerHtml);
+      }
+
+      // UPDATE SEO AND SOCIAL SETTINGS DYNAMICALLY
+      if (config) {
+        // Update tab title and description tags
+        if (config.seo_titulo) {
+          document.title = config.seo_titulo;
+        }
+        if (config.seo_descricao) {
+          let metaDesc = document.querySelector('meta[name="description"]');
+          if (!metaDesc) {
+            metaDesc = document.createElement('meta');
+            metaDesc.name = 'description';
+            document.head.appendChild(metaDesc);
+          }
+          metaDesc.content = config.seo_descricao;
+        }
+
+        // Update footer social media icons & redirection links
+        const socialContainer = document.querySelector('.redes-sociais-icones');
+        if (socialContainer) {
+          let iconsHtml = '';
+          if (config.social_instagram) {
+            iconsHtml += `<a href="${config.social_instagram}" target="_blank" title="Instagram"><i class="bi bi-instagram me-3 text-white hover:text-[var(--brand-yellow)] transition"></i></a>`;
+          }
+          if (config.social_facebook) {
+            iconsHtml += `<a href="${config.social_facebook}" target="_blank" title="Facebook"><i class="bi bi-facebook me-3 text-white hover:text-[var(--brand-yellow)] transition"></i></a>`;
+          }
+          if (config.social_tiktok) {
+            iconsHtml += `<a href="${config.social_tiktok}" target="_blank" title="TikTok"><i class="bi bi-tiktok me-3 text-white hover:text-[var(--brand-yellow)] transition"></i></a>`;
+          }
+          if (config.social_youtube) {
+            iconsHtml += `<a href="${config.social_youtube}" target="_blank" title="YouTube"><i class="bi bi-youtube text-white hover:text-[var(--brand-yellow)] transition"></i></a>`;
+          }
+          if (iconsHtml) {
+            socialContainer.innerHTML = iconsHtml;
+          }
+        }
+
+        // Update WhatsApp button in footer
+        const whatsappBtn = document.querySelector('.btn-whatsapp-footer');
+        if (whatsappBtn && config.whatsapp_numero) {
+          whatsappBtn.href = `https://wa.me/${config.whatsapp_numero}`;
+        }
+
+        // Update SAC contact email in footer
+        const emailSac = document.querySelector('.email-sac');
+        if (emailSac && config.email_contato) {
+          emailSac.textContent = config.email_contato;
+        }
+
+        // Update CNPJ and Address in the copyright area
+        const innerCopyright = document.querySelector('.footer-copyright-inner');
+        if (innerCopyright) {
+          let additionalInfo = '';
+          if (config.cnpj) additionalInfo += `CNPJ: ${config.cnpj} `;
+          if (config.endereco) additionalInfo += `| Endereço: ${config.endereco} `;
+          if (additionalInfo) {
+            // Clear any old dynamically added info first
+            const oldInfo = innerCopyright.querySelector('.dynamic-copyright-info');
+            if (oldInfo) oldInfo.remove();
+            const infoEl = document.createElement('p');
+            infoEl.className = 'dynamic-copyright-info text-[10px] text-gray-500 mt-2 uppercase tracking-wider font-semibold';
+            infoEl.textContent = additionalInfo;
+            innerCopyright.appendChild(infoEl);
+          }
+        }
       }
 
       // Reinicializa scripts dependentes do header (Navbar, Search, Auth, MegaMenu)

@@ -62,10 +62,10 @@ public function viewAtivarPedido(int $id){
          View::render("pedidos/ativar",["pedido" => $dados]);
     }
     public function ativarPedido(){
-        $id = (int)($_POST['id_pedido'] ?? 0);
-        if (!$id) {
+        if (!isset($_POST['id_pedido']) || $_POST['id_pedido'] === '' || (int)$_POST['id_pedido'] < 0) {
             $this->sendResponse(false, "ID do pedido inválido.");
         }
+        $id = (int)$_POST['id_pedido'];
         if ($this->pedidos->ativarPedido($id)) {
             $this->sendResponse(true, "Pedido ativado com sucesso!");
         } else {
@@ -194,7 +194,7 @@ public function viewAtivarPedido(int $id){
         $id_pedido = filter_input(INPUT_POST, 'id_pedido', FILTER_VALIDATE_INT);
         $novo_status = $_POST['status'] ?? '';
 
-        if (!$id_pedido || !$novo_status) {
+        if ($id_pedido === false || $id_pedido === null || $id_pedido < 0 || !$novo_status) {
             $this->sendResponse(false, "Dados inválidos para alterar o status.");
         }
 
@@ -295,10 +295,10 @@ public function viewAtivarPedido(int $id){
 
     // Método para processar a exclusão/ativação (soft delete toggle) via POST
     public function deletarPedido() {
-        $id = (int)($_POST['id_pedido'] ?? 0);
-        if (!$id) {
+        if (!isset($_POST['id_pedido']) || $_POST['id_pedido'] === '' || (int)$_POST['id_pedido'] < 0) {
             $this->sendResponse(false, "ID do pedido inválido.");
         }
+        $id = (int)$_POST['id_pedido'];
         if ($this->pedidos->deletarPedido($id)) {
             $this->sendResponse(true, "Status do pedido alterado com sucesso!");
         } else {

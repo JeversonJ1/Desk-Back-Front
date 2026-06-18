@@ -265,8 +265,13 @@
                         <input type="url" name="social_youtube" class="k-input" placeholder="https://youtube.com/c/koketsugrife" value="<?= htmlspecialchars($config['social_youtube'] ?? '') ?>">
                     </div>
 
+                    <div class="form-group" style="margin-top: 12px;">
+                        <label class="k-label"><i class="fab fa-facebook"></i> Facebook</label>
+                        <input type="url" name="social_facebook" class="k-input" placeholder="https://facebook.com/koketsugrife" value="<?= htmlspecialchars($config['social_facebook'] ?? '') ?>">
+                    </div>
+
                     <div class="card-actions">
-                        <button class="btn-save-gold btn-save" onclick="salvarCard('card-social', ['social_instagram', 'social_tiktok', 'social_youtube'])">
+                        <button class="btn-save-gold btn-save" onclick="salvarCard('card-social', ['social_instagram', 'social_tiktok', 'social_youtube', 'social_facebook'])">
                             <i class="fa fa-save"></i> SALVAR LINKS
                         </button>
                     </div>

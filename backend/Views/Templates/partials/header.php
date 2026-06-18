@@ -349,10 +349,7 @@ $current_uri = $_SERVER['REQUEST_URI'] ?? '/backend/admin/dashboard';
                 class="w3-bar-item w3-button <?php echo isActive('/backend/configuracoes', $current_uri); ?>">
                 <i class="fas fa-gear fa-fw"></i> Configurações
               </a>
-              <a href="/backend/relatorios"
-                class="w3-bar-item w3-button <?php echo isActive('/backend/relatorios', $current_uri); ?>">
-                <i class="fas fa-chart-bar fa-fw"></i> Relatórios
-              </a>
+
 
             <?php else: /* vendedor */ ?>
 

@@ -55,11 +55,11 @@ const SearchManager = (() => {
             return;
         }
         container.innerHTML = products.map(prod => `
-            <div class="group relative flex flex-col h-full bg-[#050505] rounded-2xl overflow-hidden border border-white/5 transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(242,200,75,0.15)] hover:border-[#F2C84B]/30 cursor-pointer" onclick="window.location.href='produto.html?id=${prod.id}'">
+            <div class="group relative flex flex-col h-full bg-[#050505] rounded-2xl overflow-hidden border border-white/5 transition-all duration-700 hover:shadow-[0_20px_50px_rgba(242,200,75,0.15)] hover:border-[#F2C84B]/30 cursor-pointer" onclick="window.location.href='produto.html?id=${prod.id}'">
                 
                 <!-- Imagem -->
                 <div class="relative aspect-[3/4] overflow-hidden bg-[#111]">
-                    <img src="${prod.img}" alt="${prod.nome}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100" loading="lazy">
+                    <img src="${prod.img && !prod.img.endsWith('/backend/upload/') && !prod.img.endsWith('/backend/upload') ? prod.img : '/frontend/assets/img/LogoKoketsu.jpg'}" onerror="this.src='/frontend/assets/img/LogoKoketsu.jpg'" alt="${prod.nome}" class="w-full h-full object-cover transition-transform duration-1000 opacity-90 group-hover:opacity-100" loading="lazy">
                     <!-- Overlay sutil -->
                     <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60 pointer-events-none"></div>
                 </div>

@@ -340,8 +340,8 @@
     <!-- Scripts -->
     <script src="../assets/js/utils.js?v=1.1"></script>
     <script src="../assets/js/navbar.js?v=1.1"></script>
-    <script src="../assets/js/mega-menu.js?v=1.0"></script>
-    <script src="../assets/js/search.js?v=1.1"></script>
+    <script src="../assets/js/mega-menu.js?v=1.1"></script>
+    <script src="../assets/js/search.js?v=2.1"></script>
     <script src="../assets/js/cart.js?v=1.1"></script>
     <script src="../assets/js/auth.js?v=1.1"></script>
     <script src="../assets/js/categorias.js"></script>
@@ -409,7 +409,7 @@
                 total += sub;
                 return `
                 <div class="cart-item-preview">
-                    <img src="${item.img || '/frontend/assets/img/logo2026.png'}" alt="${item.nome}" onerror="this.src='/frontend/assets/img/logo2026.png'">
+                    <img src="${item.img && !item.img.endsWith('/backend/upload/') && !item.img.endsWith('/backend/upload') ? item.img : '/frontend/assets/img/LogoKoketsu.jpg'}" alt="${item.nome}" onerror="this.src='/frontend/assets/img/LogoKoketsu.jpg'">
                     <div class="flex-1">
                         <p class="text-white text-xs font-bold uppercase tracking-wide leading-tight mb-1">${item.nome}</p>
                         <p class="text-gray-500 text-[10px] uppercase tracking-wider">
