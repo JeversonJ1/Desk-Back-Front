@@ -1,5 +1,5 @@
 <?php
-namespace App\koketsu\Config;
+namespace App\Koketsu\Config;
 
 class Mail{
     public static function get(){

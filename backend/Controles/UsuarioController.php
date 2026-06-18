@@ -88,8 +88,17 @@ class UsuarioController extends AdminController
         }
 
         $imagem = null;
-        if (isset($_FILES['foto_usuarios']) && $_FILES['foto_usuarios']['error'] == 0) {
-            $imagem = $this->gerenciarImagem->salvarArquivo($_FILES['foto_usuarios'], 'usuarios');
+        if (isset($_FILES['foto_usuarios']) && !empty($_FILES['foto_usuarios']['name'])) {
+            if ($_FILES['foto_usuarios']['error'] !== UPLOAD_ERR_OK) {
+                Redirect::redirecionarComMensagem("/usuario/criar", "error", "Erro ao fazer upload da imagem.");
+                return;
+            }
+            try {
+                $imagem = $this->gerenciarImagem->salvarArquivo($_FILES['foto_usuarios'], 'usuarios');
+            } catch (\Exception $e) {
+                Redirect::redirecionarComMensagem("/usuario/criar", "error", $e->getMessage());
+                return;
+            }
         }
 
         if (
@@ -113,20 +122,41 @@ class UsuarioController extends AdminController
             Redirect::redirecionarComMensagem("/usuario/listar", "error", "Usuario não encontrado.");
         }
 
+        // Clientes só podem editar o próprio perfil — admin não tem permissão
+        if (strtolower($usuario['nivel_acesso'] ?? '') === 'cliente') {
+            Redirect::redirecionarComMensagem("/usuario/listar", "error", "Clientes só podem editar o próprio perfil. O admin não tem permissão para editar dados de clientes.");
+            return;
+        }
+
         View::render("/usuario/edit", ["usuario" => $usuario]);
     }
 
     public function atualizarUsuario()
     {
         $id = (int) $_POST['id_usuarios'];
+
+        // Busca o usuário para verificar o nível antes de atualizar
+        $usuarioAtual = $this->usuario->buscarPorID($id);
+        if ($usuarioAtual && strtolower($usuarioAtual['nivel_acesso'] ?? '') === 'cliente') {
+            Redirect::redirecionarComMensagem("/usuario/listar", "error", "Clientes só podem editar o próprio perfil. Operação não permitida.");
+            return;
+        }
+
         $nome = $_POST['nome_usuarios'];
         $email = $_POST['email_usuarios'];
         $senha = $_POST['senha_usuarios'];
         $tipo = $_POST['nivel_acesso'];
         $imagem = null;
 
-        if (isset($_FILES['foto_usuarios']) && $_FILES['foto_usuarios']['error'] == 0) {
-            $imagem = $this->gerenciarImagem->salvarArquivo($_FILES['foto_usuarios'], 'usuarios');
+        if (isset($_FILES['foto_usuarios']) && !empty($_FILES['foto_usuarios']['name'])) {
+            if ($_FILES['foto_usuarios']['error'] !== UPLOAD_ERR_OK) {
+                Redirect::redirecionarComMensagem("/usuario/editar/" . $id, "error", "Erro ao fazer upload da imagem.");
+            }
+            try {
+                $imagem = $this->gerenciarImagem->salvarArquivo($_FILES['foto_usuarios'], 'usuarios');
+            } catch (\Exception $e) {
+                Redirect::redirecionarComMensagem("/usuario/editar/" . $id, "error", $e->getMessage());
+            }
         }
 
 

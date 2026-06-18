@@ -1,3 +1,17 @@
 {
-    "manutencao": false
+    "manutencao": false,
+    "whatsapp_numero": "5511985477260",
+    "whatsapp_ativo": true,
+    "banner_texto": "compre agora com 10% de desconto so na koketsu",
+    "banner_ativo": true,
+    "banner_cor": "dourado",
+    "seo_titulo": "",
+    "seo_descricao": "",
+    "cnpj": "",
+    "email_contato": "",
+    "endereco": "",
+    "social_instagram": "",
+    "social_tiktok": "",
+    "social_youtube": "",
+    "social_facebook": ""
 }

@@ -1,0 +1,136 @@
+<!-- ============================================================
+     NAVBAR KOKETSU — Header Global
+     ============================================================ -->
+<nav id="navbar" class="navbar d-flex align-items-center px-4 sticky-top">
+  <!-- Left: Menu button + Search -->
+  <div class="navbar-section d-flex align-items-center">
+    <button
+      class="btn btn-link text-white d-flex align-items-center p-0 me-4"
+      data-mega-menu-open
+      aria-label="Abrir menu"
+      id="mainMenuBtn"
+    >
+      <i class="bi bi-list fs-4"></i>
+      <span class="ms-1 d-none d-md-inline" style="font-size:13px;font-weight:600;letter-spacing:0.06em;">Menu</span>
+    </button>
+
+    <div class="search-container d-none d-lg-flex position-relative">
+      <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"></i>
+      <input type="text" id="globalSearch" class="search-input ps-5" placeholder="Buscar na Koketsu...">
+      <div id="searchResults" class="search-dropdown d-none"></div>
+    </div>
+  </div>
+
+  <!-- Center: Logo -->
+  <div class="navbar-center">
+    <a href="/frontend/index.html" aria-label="Página inicial">
+      <img src="/frontend/assets/img/logo2026.png" alt="Logo Koketsu Grife" class="logo" />
+    </a>
+  </div>
+
+  <!-- Right: Login + Cart -->
+  <div class="navbar-end d-flex justify-content-end align-items-center">
+    <!-- Deslogado -->
+    <a href="#" id="navLoginBtn" class="icon-button" aria-label="Fazer login">
+      <i class="bi bi-person"></i> <span class="d-none d-md-inline">Login</span>
+    </a>
+
+    <!-- Logado -->
+    <div id="navUserContainer" class="user-nav-container" style="display: none;">
+      <button id="userAvatarBtn" class="user-avatar-btn" aria-label="Menu do usuário">
+        <img id="userAvatarImg" src="" alt="Avatar" style="display: none;">
+        <i id="userAvatarFallback" class="bi bi-person-fill avatar-fallback"></i>
+      </button>
+      <span id="navUserName" class="user-nav-name d-none d-md-inline"></span>
+
+      <div id="userDropdown" class="user-dropdown">
+        <div class="user-dropdown-header">
+          <img id="ddAvatarImg" src="" alt="Avatar" style="display: none;">
+          <div id="ddAvatarFallback" class="avatar-fallback-lg"><i class="bi bi-person-fill"></i></div>
+          <div class="user-dropdown-info">
+            <div id="ddUserName" class="dd-name">Cliente</div>
+            <span class="dd-badge">Membro Koketsu</span>
+          </div>
+        </div>
+        <div class="user-dropdown-links">
+          <a id="ddProfileLink" href="/backend/cliente/meu-perfil/0"><i class="bi bi-person"></i> Meu Perfil</a>
+          <a href="/backend/cliente/pedidos"><i class="bi bi-bag-check"></i> Meus Pedidos</a>
+          <a href="/backend/configuracoes"><i class="bi bi-gear"></i> Preferências</a>
+          <div class="user-dropdown-divider"></div>
+          <a href="#" id="ddLogoutBtn" class="logout-link"><i class="bi bi-box-arrow-right"></i> Sair</a>
+        </div>
+      </div>
+    </div>
+
+    <a href="/frontend/pages/carrinho.html" class="icon-button ms-3">
+      <i class="bi bi-bag"></i> <span class="d-none d-md-inline">Carrinho</span>
+      <span class="cart-badge" style="display: none;">0</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ============================================================
+     MEGA MENU — Estilo CompSupply
+     ============================================================ -->
+
+<!-- Backdrop overlay -->
+<div id="megaMenuOverlay" class="mega-menu-overlay"></div>
+
+<!-- Menu container -->
+<div id="megaMenuContainer" class="mega-menu-container">
+
+  <!-- Header: tabs Menu / Fechar -->
+  <div class="mega-menu-header">
+    <span class="mega-menu-tab is-active">Menu</span>
+    <button id="megaMenuCloseBtn" class="mega-menu-tab tab-close">Fechar</button>
+  </div>
+
+  <!-- Body: left categories + right products -->
+  <div class="mega-menu-body">
+
+    <!-- Left: Category list -->
+    <div class="mega-menu-left">
+      <div id="megaMenuCategoryList">
+        <!-- Populated by mega-menu.js -->
+        <div class="menu-skeleton">
+          <div class="menu-skeleton-item" style="width:70%"></div>
+          <div class="menu-skeleton-item" style="width:55%"></div>
+          <div class="menu-skeleton-item" style="width:80%"></div>
+          <div class="menu-skeleton-item" style="width:60%"></div>
+          <div class="menu-skeleton-item" style="width:75%"></div>
+          <div class="menu-skeleton-item" style="width:50%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Featured products -->
+    <div class="mega-menu-right">
+      <div class="menu-products-title" id="megaMenuProductsTitle">
+        Produtos <span>em Destaque</span>
+      </div>
+
+      <div class="menu-products-grid" id="megaMenuProductsGrid">
+        <!-- Skeleton -->
+        <div class="menu-product-skeleton"><div class="skel-img"></div><div class="skel-text"><div class="skel-line"></div><div class="skel-line w-2-3"></div><div class="skel-line w-1-3"></div></div></div>
+        <div class="menu-product-skeleton"><div class="skel-img"></div><div class="skel-text"><div class="skel-line"></div><div class="skel-line w-2-3"></div><div class="skel-line w-1-3"></div></div></div>
+        <div class="menu-product-skeleton"><div class="skel-img"></div><div class="skel-text"><div class="skel-line"></div><div class="skel-line w-2-3"></div><div class="skel-line w-1-3"></div></div></div>
+        <div class="menu-product-skeleton"><div class="skel-img"></div><div class="skel-text"><div class="skel-line"></div><div class="skel-line w-2-3"></div><div class="skel-line w-1-3"></div></div></div>
+        <div class="menu-product-skeleton"><div class="skel-img"></div><div class="skel-text"><div class="skel-line"></div><div class="skel-line w-2-3"></div><div class="skel-line w-1-3"></div></div></div>
+        <div class="menu-product-skeleton"><div class="skel-img"></div><div class="skel-text"><div class="skel-line"></div><div class="skel-line w-2-3"></div><div class="skel-line w-1-3"></div></div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer links -->
+  <div class="mega-menu-footer">
+    <a href="/frontend/pages/sobre.html" onclick="MegaMenu.close()">Sobre a Koketsu</a>
+    <div class="footer-sep"></div>
+    <a href="/frontend/pages/politica.html" onclick="MegaMenu.close()">Privacidade</a>
+    <div class="footer-sep"></div>
+    <a href="/frontend/pages/duvidas.html" onclick="MegaMenu.close()">Suporte</a>
+    <div class="footer-sep"></div>
+    <a href="/frontend/pages/catalogo.html" onclick="MegaMenu.close()" style="color:#F2C84B;">Ver Catálogo Completo →</a>
+  </div>
+
+</div>

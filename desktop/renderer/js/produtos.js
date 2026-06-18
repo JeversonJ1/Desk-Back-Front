@@ -561,9 +561,9 @@ function renderizarTamanhos() {
   }
 
   const html = tamanhosAtuais.map((t, index) => `
-    <div class="d-flex justify-content-between align-items-center mb-2 p-3" style="background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%); border-radius: 8px; border: 1px solid #3a3a3a; color: #fff; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" onmouseover="this.style.borderColor='#ffd84d'; this.style.transform='translateX(4px)';" onmouseout="this.style.borderColor='#3a3a3a'; this.style.transform='translateX(0)';">
+    <div class="d-flex justify-content-between align-items-center mb-2 p-3" style="background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%); border-radius: 8px; border: 1px solid #3a3a3a; color: #fff; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);" onmouseover="this.style.borderColor='#F2C84B'; this.style.transform='translateX(4px)';" onmouseout="this.style.borderColor='#3a3a3a'; this.style.transform='translateX(0)';">
       <div style="display: flex; align-items: center; gap: 12px;">
-        <div style="background: #ffd84d; color: #000; width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; box-shadow: 0 2px 6px rgba(255,216,77,0.4);">${t.tamanho}</div>
+        <div style="background: #F2C84B; color: #000; width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; box-shadow: 0 2px 6px rgba(255,216,77,0.4);">${t.tamanho}</div>
         <div>
           <div style="font-size: 13px; color: #fff; font-weight: 500;">${t.quantidade} unidade${t.quantidade !== 1 ? 's' : ''}</div>
           <div style="font-size: 11px; color: #888;">em estoque</div>

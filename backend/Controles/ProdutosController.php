@@ -16,6 +16,7 @@ public $corModel;
 public $tamanhoModel;
 public $db;
  public $gerenciarImagem;
+ public $imagemModel;
 
 
 public function __construct() {
@@ -30,7 +31,37 @@ public function __construct() {
     $this->produtos = new Produtos($this->db);
     $this->corModel = new Cor($this->db);
     $this->tamanhoModel = new Tamanho($this->db);
+    $this->imagemModel = new \App\Koketsu\Models\Imagem($this->db);
     $this->gerenciarImagem = new FileManager(__DIR__ . '/../../backend/upload');
+
+    // Se a requisição enviar JSON, parseia para $_POST
+    if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+        if (is_array($data)) {
+            $_POST = array_merge($_POST, $data);
+        }
+    }
+}
+
+private function sendResponse($success, $message, $extra = [], $fallbackUrl = "/produtos/listar", $errorType = "error") {
+    $isAjax = isset($_GET['json']) || 
+              (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) ||
+              (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) ||
+              (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
+              
+    if ($isAjax) {
+        header('Content-Type: application/json');
+        echo json_encode(array_merge([
+            'success' => $success,
+            'message' => $message
+        ], $extra));
+        exit;
+    }
+    
+    $msgType = $success ? "success" : $errorType;
+    Redirect::redirecionarComMensagem($fallbackUrl, $msgType, $message);
+    exit;
 }
 // index
 public function index(){
@@ -39,7 +70,6 @@ public function index(){
 
  public function viewListarProduto($pagina = 1) {
     $produto = $this->produtos->categoriasProdu();
-    $total = $this->produtos->categoriasProdu();
     
     if (empty($pagina) || $pagina <= 0) $pagina = 1;
     
@@ -54,7 +84,6 @@ public function index(){
     View::render("produtos/index", [
         "produtos" => $dados['data'],
         "produto" => $produto,
-        "total" => $total,
         'paginacao' => $dados,
         'busca' => $nomeBusca
     ]);
@@ -76,7 +105,8 @@ public function viewProdutoUnico(int $id_produto) {
     }
     
 public function viewCriarProduto(){
- view::render("produtos/create");
+    $categorias = (new \App\Koketsu\Models\Categoria($this->db))->buscarCategorias();
+    View::render("produtos/create", ['categorias' => $categorias]);
 }
 
 
@@ -93,9 +123,9 @@ public function viewExcluirProduto(int $id) {
     public function ativarProduto(){
         $id = (int)$_POST['id_produto'];
         if ($this->produtos->ativarProduto($id)) {
-            Redirect::redirecionarComMensagem("/produtos/listar", "success", "Produto ativado com sucesso!");
+            $this->sendResponse(true, "Produto ativado com sucesso!");
         } else {
-            Redirect::redirecionarComMensagem("/produtos/listar", "error", "Erro ao ativar produto.");
+            $this->sendResponse(false, "Erro ao ativar produto.");
         }
     }
 
@@ -103,7 +133,9 @@ public function atualizarProdutos() {
     $id_produto = (int)$_POST['id_produto'];
     $nome = $_POST['nome_produtos'];
     $descricao = $_POST['descricao_produtos'];
-    $preco = $_POST['preco_produtos'];
+    $precoRaw = $_POST['preco_produtos'];
+    $preco = str_replace(['R$', '.', ' '], '', $precoRaw);
+    $preco = str_replace(',', '.', $preco);
     $estoque = $_POST['estoque_produtos'];
     $id_categoria = $_POST['id_categoria'];
     $imagem = null;
@@ -121,12 +153,12 @@ public function atualizarProdutos() {
                 if (!empty($corNome)) {
                     $qtd = $_POST['quantidade_cores'][$index] ?? 0;
                     
-                    // Verificar se já existe (para reativar e manter o ID vinculado a imagens)
+                    // Verificar se já existe (mesmo inativo) para reativar
                     $stmt = $this->db->prepare("SELECT id_cores FROM tbl_cores WHERE id_produto = ? AND cor_cores = ? LIMIT 1");
                     $stmt->execute([$id_produto, $corNome]);
-                    $existente = $stmt->fetch();
+                    $existente = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-                    if ($existente) {
+                    if (is_array($existente) && isset($existente['id_cores'])) {
                         $this->db->prepare("UPDATE tbl_cores SET quantidade_cores = ?, excluido_em = NULL, atualizado_em = NOW() WHERE id_cores = ?")
                                  ->execute([$qtd, $existente['id_cores']]);
                     } else {
@@ -143,16 +175,46 @@ public function atualizarProdutos() {
                 if (!empty($tamNome)) {
                     $qtd = $_POST['quantidade_tamanhos'][$index] ?? 0;
                     
-                    // Verificar se já existe
+                    // Verificar se já existe (mesmo inativo) para reativar
                     $stmt = $this->db->prepare("SELECT id_tamanhos FROM tbl_tamanhos WHERE id_produto = ? AND tamanho_tamanhos = ? LIMIT 1");
                     $stmt->execute([$id_produto, $tamNome]);
-                    $existente = $stmt->fetch();
+                    $existente = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-                    if ($existente) {
+                    if (is_array($existente) && isset($existente['id_tamanhos'])) {
                         $this->db->prepare("UPDATE tbl_tamanhos SET quantidade_tamanhos = ?, excluido_em = NULL, atualizado_em = NOW() WHERE id_tamanhos = ?")
                                  ->execute([$qtd, $existente['id_tamanhos']]);
                     } else {
                         $this->tamanhoModel->inserirTamanho($id_produto, $tamNome, $qtd);
+                    }
+                }
+            }
+        }
+
+        // Remover imagens da galeria solicitadas
+        if (!empty($_POST['remover_imagens']) && is_array($_POST['remover_imagens'])) {
+            foreach ($_POST['remover_imagens'] as $idImgRemover) {
+                $imgData = $this->imagemModel->buscarPorId($idImgRemover);
+                if ($imgData) {
+                    $this->gerenciarImagem->delete($imgData['caminho_imagem']);
+                    $this->imagemModel->excluirImagem($idImgRemover);
+                }
+            }
+        }
+
+        // Salvar Galeria Adicional
+        if (!empty($_FILES['galeria_produtos']['name'][0])) {
+            foreach ($_FILES['galeria_produtos']['name'] as $key => $name) {
+                if ($_FILES['galeria_produtos']['error'][$key] == 0) {
+                    $fileArray = [
+                        'name' => $_FILES['galeria_produtos']['name'][$key],
+                        'type' => $_FILES['galeria_produtos']['type'][$key],
+                        'tmp_name' => $_FILES['galeria_produtos']['tmp_name'][$key],
+                        'error' => $_FILES['galeria_produtos']['error'][$key],
+                        'size' => $_FILES['galeria_produtos']['size'][$key]
+                    ];
+                    $caminho = $this->gerenciarImagem->salvarArquivo($fileArray, 'produtos/galeria', ['image/jpeg', 'image/png', 'image/webp', 'video/mp4'], 52428800);
+                    if ($caminho) {
+                        $this->imagemModel->inserirImagem($id_produto, null, null, $caminho, 'Galeria');
                     }
                 }
             }
@@ -164,12 +226,85 @@ public function atualizarProdutos() {
     }
 }
 
-public function deletarProdutos(){
- $id = (int)$_POST['id_produto'];
+    public function deletarProdutos(){
+        $id = (int)$_POST['id_produto'];
         if ($this->produtos->deletarProdutos($id)) {
-            Redirect::redirecionarComMensagem("/produtos/listar", "success", "Produto inativado com sucesso!");
+            $this->sendResponse(true, "Produto inativado com sucesso!");
         } else {
-            Redirect::redirecionarComMensagem("/produtos/listar", "error", "Erro ao inativar produto.");
+            $this->sendResponse(false, "Erro ao inativar produto.");
+        }
+    }
+
+    public function excluirPermanente() {
+        $id = (int)($_POST['id_produto'] ?? 0);
+        if (!$id) {
+            $this->sendResponse(false, "ID do produto inválido.");
+        }
+        
+        // Buscar informações do produto para apagar a foto principal do disco
+        $prod = $this->produtos->buscarPorID($id);
+        if ($prod) {
+            if (!empty($prod['imagem_produtos'])) {
+                $this->gerenciarImagem->delete($prod['imagem_produtos']);
+            }
+        }
+
+        if ($this->produtos->excluirProdutoPermanente($id)) {
+            $this->sendResponse(true, "Produto excluído permanentemente do sistema!");
+        } else {
+            $this->sendResponse(false, "Erro ao excluir permanentemente o produto.");
+        }
+    }
+
+    public function acaoEmLote() {
+        $ids = $_POST['ids'] ?? [];
+        $acao = $_POST['acao'] ?? '';
+
+        if (empty($ids) || !is_array($ids)) {
+            $this->sendResponse(false, "Nenhum produto selecionado.");
+        }
+
+        if (!in_array($acao, ['inativar', 'ativar', 'excluir_permanente'])) {
+            $this->sendResponse(false, "Ação em lote inválida.");
+        }
+
+        $sucessos = 0;
+        $erros = 0;
+
+        foreach ($ids as $id) {
+            $id = (int)$id;
+            if ($acao === 'inativar') {
+                $prod = $this->produtos->buscarPorID($id);
+                if ($prod && empty($prod['excluido_em'])) {
+                    if ($this->produtos->deletarProdutos($id)) $sucessos++;
+                    else $erros++;
+                } else {
+                    $sucessos++; // já inativo
+                }
+            } elseif ($acao === 'ativar') {
+                $prod = $this->produtos->buscarPorID($id);
+                if ($prod && !empty($prod['excluido_em'])) {
+                    if ($this->produtos->ativarProduto($id)) $sucessos++;
+                    else $erros++;
+                } else {
+                    $sucessos++; // já ativo
+                }
+            } elseif ($acao === 'excluir_permanente') {
+                $prod = $this->produtos->buscarPorID($id);
+                if ($prod) {
+                    if (!empty($prod['imagem_produtos'])) {
+                        $this->gerenciarImagem->delete($prod['imagem_produtos']);
+                    }
+                    if ($this->produtos->excluirProdutoPermanente($id)) $sucessos++;
+                    else $erros++;
+                }
+            }
+        }
+
+        if ($erros > 0) {
+            $this->sendResponse(false, "Ação em lote concluída com alguns erros: {$sucessos} com sucesso, {$erros} falhas.");
+        } else {
+            $this->sendResponse(true, "Ação em lote executada com sucesso para todos os itens!");
         }
     }
 public function relatorioProduto($id, $data1, $data2){
@@ -212,6 +347,25 @@ if (empty($_POST["nome_produtos"]) || empty($_FILES['imagem_produtos']['name']))
                 }
             }
 
+            // Salvar Galeria Adicional
+            if (!empty($_FILES['galeria_produtos']['name'][0])) {
+                foreach ($_FILES['galeria_produtos']['name'] as $key => $name) {
+                    if ($_FILES['galeria_produtos']['error'][$key] == 0) {
+                        $fileArray = [
+                            'name' => $_FILES['galeria_produtos']['name'][$key],
+                            'type' => $_FILES['galeria_produtos']['type'][$key],
+                            'tmp_name' => $_FILES['galeria_produtos']['tmp_name'][$key],
+                            'error' => $_FILES['galeria_produtos']['error'][$key],
+                            'size' => $_FILES['galeria_produtos']['size'][$key]
+                        ];
+                        $caminho = $this->gerenciarImagem->salvarArquivo($fileArray, 'produtos/galeria', ['image/jpeg', 'image/png', 'image/webp', 'video/mp4'], 52428800);
+                        if ($caminho) {
+                            $this->imagemModel->inserirImagem($id_produto, null, null, $caminho, 'Galeria');
+                        }
+                    }
+                }
+            }
+
             Redirect::redirecionarComMensagem("/produtos/listar", "success", "Produtos cadastrado com sucesso!");
         } else {
             Redirect::redirecionarComMensagem("/produtos/criar", "error", "Erro ao cadastrar produtos.");
@@ -226,11 +380,15 @@ if (empty($_POST["nome_produtos"]) || empty($_FILES['imagem_produtos']['name']))
         
         $cores = $this->corModel->buscarCoresPorIdProduto($id);
         $tamanhos = $this->tamanhoModel->buscarTamanhosPorIdProduto($id);
+        $categorias = (new \App\Koketsu\Models\Categoria($this->db))->buscarCategorias();
+        $galeria = $this->imagemModel->buscarPorProduto($id);
         
         View::render("produtos/edit", [
             "produtos" => $produtos,
             "cores" => $cores,
-            "tamanhos" => $tamanhos
+            "tamanhos" => $tamanhos,
+            "categorias" => $categorias,
+            "galeria" => $galeria
         ]);
     }
 }

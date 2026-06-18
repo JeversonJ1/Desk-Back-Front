@@ -118,19 +118,20 @@ function buscarPerfisInativos() {
   }
 
   // Inserir novo perfil
-  function inserirPerfil($telefone, 
-  $endereco, 
-  $data_cadastro, 
-  $id_usuarios) {
-    $sql = "INSERT INTO tbl_perfil (telefone_perfil, endereco_perfil, data_cadastro, id_usuarios) 
-            VALUES (:telefone, :endereco, :data_cadastro, :id_usuarios)";
+  function inserirPerfil($telefone, $endereco, $data_cadastro, $id_usuarios) {
+    $stmtMax = $this->db->query("SELECT COALESCE(MAX(id_perfil), 0) + 1 AS next_id FROM tbl_perfil");
+    $nextId = (int) $stmtMax->fetch(PDO::FETCH_ASSOC)['next_id'];
+
+    $sql = "INSERT INTO tbl_perfil (id_perfil, telefone_perfil, endereco_perfil, data_cadastro, id_usuarios) 
+            VALUES (:id_perfil, :telefone, :endereco, :data_cadastro, :id_usuarios)";
     $stmt = $this->db->prepare($sql);
+    $stmt->bindParam(':id_perfil', $nextId, PDO::PARAM_INT);
     $stmt->bindParam(':telefone', $telefone);
     $stmt->bindParam(':endereco', $endereco);
     $stmt->bindParam(':data_cadastro', $data_cadastro);
     $stmt->bindParam(':id_usuarios', $id_usuarios);
     if ($stmt->execute()) {
-      return $this->db->lastInsertId();
+      return $nextId;
     } else {
       return false;
     }

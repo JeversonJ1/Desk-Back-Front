@@ -56,11 +56,11 @@ function createWindow() {
     Logger.log('Carregando arquivo de produção');
   }
 
-  // Abrir DevTools apenas em desenvolvimento
-  if (isDev) {
-    mainWindow.webContents.openDevTools();
-    Logger.debug('DevTools aberto (modo desenvolvimento)');
-  }
+  // DevTools desativado — remova o comentário abaixo para reativar ao depurar
+  // if (isDev) {
+  //   mainWindow.webContents.openDevTools();
+  //   Logger.debug('DevTools aberto (modo desenvolvimento)');
+  // }
 
   mainWindow.on('closed', () => {
     mainWindow = null;

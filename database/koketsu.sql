@@ -913,6 +913,31 @@ ALTER TABLE `tbl_produtos`
 --
 ALTER TABLE `tbl_tamanhos`
   ADD CONSTRAINT `fk_tamanho_produto` FOREIGN KEY (`id_produto`) REFERENCES `tbl_produtos` (`id_produto`) ON DELETE CASCADE ON UPDATE CASCADE;
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `tbl_recuperacao_senha`
+--
+
+CREATE TABLE IF NOT EXISTS `tbl_recuperacao_senha` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_usuarios` int(11) NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `expiracao` datetime NOT NULL,
+  `usado` tinyint(1) NOT NULL DEFAULT 0,
+  `criado_em` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `token` (`token`),
+  KEY `idx_token` (`token`),
+  KEY `idx_usuario` (`id_usuarios`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Restrições para tabelas `tbl_recuperacao_senha`
+--
+ALTER TABLE `tbl_recuperacao_senha`
+  ADD CONSTRAINT `fk_recuperacao_usuario` FOREIGN KEY (`id_usuarios`) REFERENCES `tbl_usuarios` (`id_usuarios`) ON DELETE CASCADE ON UPDATE CASCADE;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

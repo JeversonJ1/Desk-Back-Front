@@ -15,6 +15,24 @@ class NewsletterController {
 
     public function __construct() {
         $this->db = Database::getInstance();
+        
+        try {
+            $sql = "CREATE TABLE IF NOT EXISTS `tbl_newsletter` (
+                `id_newsletter` INT(11) NOT NULL AUTO_INCREMENT,
+                `email_newsletter` VARCHAR(150) NOT NULL,
+                `data_inscricao` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                `status_newsletter` VARCHAR(50) NOT NULL DEFAULT 'Ativo',
+                `criado_em` DATETIME DEFAULT NULL,
+                `atualizado_em` DATETIME DEFAULT NULL,
+                `excluido_em` DATETIME DEFAULT NULL,
+                PRIMARY KEY (`id_newsletter`),
+                UNIQUE KEY `uq_email_newsletter` (`email_newsletter`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;";
+            $this->db->exec($sql);
+        } catch (\Exception $e) {
+            // Silently ignore
+        }
+
         $this->newsletterModel = new Newsletter($this->db);
     }
 
@@ -55,42 +73,51 @@ class NewsletterController {
     }
 
     /**
-     * Lista os inscritos no Painel Admin
+     * Lista os clientes ativos no Painel Admin
      */
     public function listar() {
-        $inscritos = $this->newsletterModel->listarTodos();
-        View::render('admin/newsletter/index', ['inscritos' => $inscritos]);
+        $sql = "SELECT id_usuarios, nome_usuarios, email_usuarios, criado_em 
+                FROM tbl_usuarios 
+                WHERE nivel_acesso = 'cliente' AND excluido_em IS NULL 
+                ORDER BY id_usuarios DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        $clientes = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        
+        View::render('admin/newsletter/index', ['clientes' => $clientes]);
     }
 
     /**
-     * Exclui um inscrito do banco (Painel Admin)
+     * Bloqueia exclusão direta a partir deste módulo
      */
     public function excluir(int $id) {
-        if ($this->newsletterModel->excluir($id)) {
-            Redirect::redirecionarComMensagem('/admin/newsletter', 'success', 'E-mail removido da lista.');
-        } else {
-            Redirect::redirecionarComMensagem('/admin/newsletter', 'error', 'Erro ao remover e-mail.');
-        }
+        Redirect::redirecionarComMensagem('/admin/newsletter', 'error', 'Operação não permitida. Clientes devem ser gerenciados no módulo de Clientes.');
     }
 
     /**
-     * Exporta a lista para CSV
+     * Exporta a lista de clientes para CSV
      */
     public function exportar() {
-        $inscritos = $this->newsletterModel->listarTodos();
+        $sql = "SELECT id_usuarios, nome_usuarios, email_usuarios, criado_em 
+                FROM tbl_usuarios 
+                WHERE nivel_acesso = 'cliente' AND excluido_em IS NULL 
+                ORDER BY id_usuarios DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        $clientes = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         
         header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename=lista_newsletter_koketsu_' . date('Y-m-d') . '.csv');
+        header('Content-Disposition: attachment; filename=lista_clientes_koketsu_' . date('Y-m-d') . '.csv');
         
         $output = fopen('php://output', 'w');
-        fputcsv($output, ['ID', 'E-mail', 'Data de Inscrição', 'Status']);
+        fputcsv($output, ['ID', 'Nome', 'E-mail', 'Data de Cadastro']);
         
-        foreach ($inscritos as $row) {
+        foreach ($clientes as $row) {
             fputcsv($output, [
-                $row['id_newsletter'],
-                $row['email_newsletter'],
-                $row['data_inscricao'],
-                $row['status_newsletter']
+                $row['id_usuarios'],
+                $row['nome_usuarios'],
+                $row['email_usuarios'],
+                $row['criado_em']
             ]);
         }
         fclose($output);
@@ -98,7 +125,7 @@ class NewsletterController {
     }
 
     /**
-     * Dispara e-mail para todos os inscritos com suporte a imagem e design premium
+     * Dispara e-mail para todos ou um cliente específico com suporte a imagem e design premium
      */
     public function enviarFila() {
         $assunto = $_POST['assunto'] ?? '';
@@ -120,7 +147,7 @@ class NewsletterController {
                 
                 $localPath = $baseUploadDir . '/' . $caminhoRelativo;
 
-                // Constrói a URL absoluta (opcional, mantida para compatibilidade se necessário)
+                // Constrói a URL absoluta
                 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
                 $host = $_SERVER['HTTP_HOST'] ?? 'localhost:4000';
                 $imagemUrl = $protocol . "://" . $host . "/backend/upload/" . $caminhoRelativo;
@@ -131,18 +158,38 @@ class NewsletterController {
             }
         }
 
-        $inscritos = $this->newsletterModel->listarTodos();
-        $total = count($inscritos);
-        $enviados = 0;
-
-        $emailService = new NotificacaoEmail();
-
-        foreach ($inscritos as $inscrito) {
-            if ($emailService->enviarPromocao($inscrito['email_newsletter'], $assunto, $mensagem, $imagemUrl, $localPath)) {
-                $enviados++;
+        $destinatario = $_POST['destinatario'] ?? 'todos';
+        if ($destinatario === 'custom') {
+            $destinatario = $_POST['email_personalizado'] ?? '';
+            if (empty($destinatario) || !filter_var($destinatario, FILTER_VALIDATE_EMAIL)) {
+                Redirect::redirecionarComMensagem('/admin/newsletter', 'error', 'Por favor, informe um e-mail válido para envio exclusivo.');
+                return;
             }
         }
 
-        Redirect::redirecionarComMensagem('/admin/newsletter', 'success', "Disparo concluído: $enviados de $total e-mails enviados com sucesso!");
+        $emailService = new NotificacaoEmail();
+
+        if ($destinatario === 'todos') {
+            $sql = "SELECT email_usuarios FROM tbl_usuarios WHERE nivel_acesso = 'cliente' AND excluido_em IS NULL";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $clientes = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $total = count($clientes);
+            $enviados = 0;
+
+            foreach ($clientes as $cliente) {
+                if ($emailService->enviarPromocao($cliente['email_usuarios'], $assunto, $mensagem, $imagemUrl, $localPath)) {
+                    $enviados++;
+                }
+            }
+
+            Redirect::redirecionarComMensagem('/admin/newsletter', 'success', "Disparo concluído: $enviados de $total e-mails enviados com sucesso!");
+        } else {
+            if ($emailService->enviarPromocao($destinatario, $assunto, $mensagem, $imagemUrl, $localPath)) {
+                Redirect::redirecionarComMensagem('/admin/newsletter', 'success', "Comunicado enviado com sucesso para " . htmlspecialchars($destinatario) . "!");
+            } else {
+                Redirect::redirecionarComMensagem('/admin/newsletter', 'error', "Erro ao enviar o e-mail para " . htmlspecialchars($destinatario) . ".");
+            }
+        }
     }
 }

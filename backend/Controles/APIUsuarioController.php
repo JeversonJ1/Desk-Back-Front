@@ -6,7 +6,7 @@ use App\Koketsu\Models\Usuario;
 
 class APIUsuarioController
 {
-    private $usuarioModel;
+    private Usuario $usuarioModel;
     private $chaveAPI = "9D67A537A9329E0F1E9D088A1C991F1CC728EA87D3D154B409ED3320EA940303";
     public function __construct()
     {

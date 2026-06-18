@@ -1,6 +1,6 @@
 <?php
 /**
- * View: Detalhes do Pedido (cliente) - Versão Premium
+ * View: Detalhes do Pedido (cliente) - Versão Premium v2
  */
 ?>
 
@@ -9,11 +9,17 @@
 <div class="order-container">
     <div class="page-header">
         <h2 class="title"><i class="fa fa-receipt text-gold"></i> Detalhes do Pedido <span class="order-id">#<?= htmlspecialchars($pedido['id_pedido']) ?></span></h2>
-        <a class="btn-back" href="/backend/cliente/pedidos">
-            <i class="fa fa-arrow-left"></i> Voltar para Lista
-        </a>
+        <div class="header-actions">
+            <button id="btn-recomprar-wpp" class="btn-wpp-reorder" onclick="recomprarViaWhatsApp()">
+                <i class="fab fa-whatsapp"></i> Repetir Pedido
+            </button>
+            <a class="btn-back" href="/backend/cliente/pedidos">
+                <i class="fa fa-arrow-left"></i> Voltar
+            </a>
+        </div>
     </div>
 
+    <!-- Stats Grid -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon"><i class="fa fa-calendar-day"></i></div>
@@ -22,7 +28,6 @@
                 <h3><?= date('d/m/Y H:i', strtotime($pedido['data_pedido'])) ?></h3>
             </div>
         </div>
-
         <div class="stat-card">
             <div class="stat-icon"><i class="fa fa-circle-check"></i></div>
             <div class="stat-info">
@@ -32,7 +37,6 @@
                 </h3>
             </div>
         </div>
-
         <div class="stat-card gold-card">
             <div class="stat-icon"><i class="fa fa-wallet"></i></div>
             <div class="stat-info">
@@ -42,27 +46,72 @@
         </div>
     </div>
 
-    <div class="info-section">
-        <div class="section-title">
-            <i class="fa fa-location-dot"></i> Endereço de Entrega
+    <!-- Timeline de Status -->
+    <?php
+    $statusOrder = ['pendente', 'processando', 'enviado', 'entregue'];
+    $currentStatus = strtolower($pedido['status_pedido']);
+    $currentIdx = array_search($currentStatus, $statusOrder);
+    if ($currentStatus === 'pago' || $currentStatus === 'concluido') $currentIdx = 3;
+    if ($currentStatus === 'cancelado') $currentIdx = -1;
+    $statusLabels = [
+        'pendente'    => ['label' => 'Pedido Recebido', 'icon' => 'fa-check', 'desc' => 'Seu pedido foi confirmado'],
+        'processando' => ['label' => 'Em Preparação',   'icon' => 'fa-box',   'desc' => 'Separando seus itens'],
+        'enviado'     => ['label' => 'Enviado',          'icon' => 'fa-truck', 'desc' => 'A caminho de você'],
+        'entregue'    => ['label' => 'Entregue',         'icon' => 'fa-home',  'desc' => 'Chegou até você!'],
+    ];
+    ?>
+    <?php if ($currentStatus !== 'cancelado'): ?>
+    <div class="order-timeline-card">
+        <div class="section-title"><i class="fa fa-map-marker-alt"></i> Acompanhamento do Pedido</div>
+        <div class="order-timeline">
+            <?php foreach ($statusOrder as $i => $step):
+                $info = $statusLabels[$step];
+                $isDone    = $i < $currentIdx;
+                $isCurrent = $i === $currentIdx;
+                $stateClass = $isDone ? 'done' : ($isCurrent ? 'current' : 'pending');
+            ?>
+            <div class="timeline-node <?= $stateClass ?>">
+                <div class="tl-dot">
+                    <i class="fa <?= $isDone ? 'fa-check' : $info['icon'] ?>"></i>
+                </div>
+                <div class="tl-info">
+                    <span class="tl-label"><?= $info['label'] ?></span>
+                    <span class="tl-desc"><?= $info['desc'] ?></span>
+                </div>
+            </div>
+            <?php if ($i < count($statusOrder) - 1): ?>
+            <div class="tl-connector <?= $isDone ? 'done' : '' ?>"></div>
+            <?php endif; ?>
+            <?php endforeach; ?>
         </div>
+    </div>
+    <?php else: ?>
+    <div class="order-timeline-card cancelled-box">
+        <i class="fa fa-times-circle fa-2x mb-2" style="color:#e74c3c;"></i>
+        <p style="color:#e74c3c; font-weight:700; margin:0;">Este pedido foi cancelado.</p>
+        <a href="/pages/catalogo.html" class="btn-back mt-3" style="display:inline-flex;">Explorar Loja</a>
+    </div>
+    <?php endif; ?>
+
+    <!-- Endereço -->
+    <div class="info-section">
+        <div class="section-title"><i class="fa fa-location-dot"></i> Endereço de Entrega</div>
         <div class="address-box">
             <?= htmlspecialchars($pedido['endereco_perfil'] ?? 'Endereço não informado') ?>
         </div>
     </div>
 
+    <!-- Itens -->
     <div class="items-section">
-        <div class="section-title">
-            <i class="fa fa-boxes-stacked"></i> Itens do Pedido
-        </div>
-        
+        <div class="section-title"><i class="fa fa-boxes-stacked"></i> Itens do Pedido</div>
+
         <?php if (!empty($itens)): ?>
             <div class="table-responsive">
-                <table class="custom-table">
+                <table class="custom-table" id="order-items-table">
                     <thead>
                         <tr>
                             <th>Produto</th>
-                            <th class="text-center">Quantidade</th>
+                            <th class="text-center">Qtd</th>
                             <th class="text-right">Preço Unit.</th>
                             <th class="text-right">Subtotal</th>
                         </tr>
@@ -96,6 +145,33 @@
         <?php endif; ?>
     </div>
 </div>
+
+<script>
+// Dados do pedido para o botão de recompra
+const _orderItems = <?= json_encode(array_map(function($it) {
+    return ['nome' => $it['nome_produtos'] ?? 'Produto', 'qtd' => $it['quantidade'] ?? 1, 'preco' => $it['preco_unitario'] ?? 0];
+}, $itens ?? [])) ?>;
+const _orderId = <?= (int)($pedido['id_pedido'] ?? 0) ?>;
+const _orderTotal = <?= (float)($pedido['total_pedido'] ?? 0) ?>;
+
+async function recomprarViaWhatsApp() {
+    try {
+        const cfg = await fetch('/api/config.php').then(r => r.json());
+        const num = cfg.whatsapp_numero || '5511985477260';
+
+        let msg = `🛒 *Quero repetir meu Pedido #${_orderId}*\n\n`;
+        _orderItems.forEach(it => {
+            msg += `▸ *${it.nome}* × ${it.qtd} — R$ ${parseFloat(it.preco).toFixed(2).replace('.', ',')}\n`;
+        });
+        msg += `\n*Total original: R$ ${_orderTotal.toFixed(2).replace('.', ',')}*\n\nPoderia me ajudar a refazer este pedido?`;
+
+        window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank');
+    } catch(e) {
+        window.open('https://wa.me/5511985477260', '_blank');
+    }
+}
+</script>
+
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Montserrat:wght@300;400;600&display=swap');
@@ -293,5 +369,122 @@
         .page-header { flex-direction: column; align-items: flex-start; gap: 15px; }
         .stats-grid { grid-template-columns: 1fr; }
         .btn-back { width: 100%; justify-content: center; }
+        .header-actions { width: 100%; flex-direction: column; }
+        .btn-wpp-reorder { width: 100%; justify-content: center; }
     }
-</style>
+
+    /* Header Actions */
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+
+    /* WhatsApp Reorder Button */
+    .btn-wpp-reorder {
+        background: #25D366;
+        color: #000;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 800;
+        font-size: 0.78rem;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        cursor: pointer;
+        display: flex; align-items: center; gap: 8px;
+        transition: 0.3s;
+        box-shadow: 0 4px 12px rgba(37,211,102,0.3);
+    }
+    .btn-wpp-reorder:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37,211,102,0.4); }
+
+    /* Order Timeline */
+    .order-timeline-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 15px;
+        padding: 28px 30px;
+        margin-bottom: 25px;
+    }
+    .cancelled-box {
+        text-align: center;
+        padding: 40px;
+    }
+
+    .order-timeline {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .timeline-node {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+        min-width: 100px;
+    }
+
+    .tl-dot {
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1rem;
+        border: 2px solid transparent;
+        transition: all 0.3s;
+    }
+
+    .timeline-node.done .tl-dot {
+        background: #2ecc71;
+        color: #000;
+        border-color: #2ecc71;
+        box-shadow: 0 0 16px rgba(46,204,113,0.3);
+    }
+    .timeline-node.current .tl-dot {
+        background: var(--gold);
+        color: #000;
+        border-color: var(--gold);
+        box-shadow: 0 0 20px rgba(242,204,125,0.4);
+        animation: pulseDot 2s ease infinite;
+    }
+    .timeline-node.pending .tl-dot {
+        background: rgba(255,255,255,0.05);
+        color: rgba(255,255,255,0.2);
+        border-color: rgba(255,255,255,0.1);
+    }
+
+    @keyframes pulseDot {
+        0%, 100% { box-shadow: 0 0 20px rgba(242,204,125,0.4); }
+        50% { box-shadow: 0 0 32px rgba(242,204,125,0.7); }
+    }
+
+    .tl-info { text-align: center; }
+    .tl-label {
+        display: block;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-color);
+    }
+    .timeline-node.pending .tl-label { color: var(--text-gray); }
+    .tl-desc {
+        display: block;
+        font-size: 0.62rem;
+        color: var(--text-gray);
+        margin-top: 2px;
+    }
+
+    .tl-connector {
+        flex: 1;
+        height: 2px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 2px;
+        min-width: 20px;
+        margin-top: -24px; /* align with dots vertically */
+    }
+    .tl-connector.done { background: #2ecc71; }
+
+    .mt-3 { margin-top: 12px; }
+    .mb-2 { margin-bottom: 8px; }
+</style>

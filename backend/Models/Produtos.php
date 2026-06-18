@@ -33,7 +33,7 @@ class Produtos
 
   function buscarProdutoPorId($id)
   {
-    $sql = "SELECT * FROM tbl_produtos
+    $sql = "SELECT id_produto, nome_produtos, descricao_produtos, preco_produtos, estoque_produtos, imagem_produtos, id_categoria, criado_em, atualizado_em, excluido_em FROM tbl_produtos
             WHERE id_produto = :id_produto AND excluido_em IS NULL";
     $stmt = $this->db->prepare($sql);
     $stmt->bindParam(':id_produto', $id, PDO::PARAM_INT);
@@ -43,7 +43,7 @@ class Produtos
 
   public function buscarPorID(int $id)
   {
-    $sql = "SELECT * FROM tbl_produtos WHERE id_produto = :id";
+    $sql = "SELECT id_produto, nome_produtos, descricao_produtos, preco_produtos, estoque_produtos, imagem_produtos, id_categoria, criado_em, atualizado_em, excluido_em FROM tbl_produtos WHERE id_produto = :id";
     $stmt = $this->db->prepare($sql);
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
@@ -55,8 +55,9 @@ class Produtos
     $offset = ($pagina - 1) * $porPagina;
 
     if ($nomeBusca) {
-      $sql = "SELECT * FROM tbl_produtos
-                    WHERE nome_produtos LIKE :nome
+      $sql = "SELECT p.id_produto, p.nome_produtos, p.descricao_produtos, p.preco_produtos, p.estoque_produtos, p.imagem_produtos, p.id_categoria, p.criado_em, p.atualizado_em, p.excluido_em, c.nome_categorias AS categoria FROM tbl_produtos p
+                    LEFT JOIN tbl_categorias c ON p.id_categoria = c.id_categorias
+                    WHERE p.nome_produtos LIKE :nome
                     LIMIT :offset, :porPagina";
       $stmt = $this->db->prepare($sql);
       $nomeBuscaFormatado = '%' . $nomeBusca . '%';
@@ -69,7 +70,8 @@ class Produtos
       $totalStmt->bindParam(':nome', $nomeBuscaFormatado);
       $totalStmt->execute();
     } else {
-      $sql = "SELECT * FROM tbl_produtos
+      $sql = "SELECT p.id_produto, p.nome_produtos, p.descricao_produtos, p.preco_produtos, p.estoque_produtos, p.imagem_produtos, p.id_categoria, p.criado_em, p.atualizado_em, p.excluido_em, c.nome_categorias AS categoria FROM tbl_produtos p
+                    LEFT JOIN tbl_categorias c ON p.id_categoria = c.id_categorias
                     LIMIT :offset, :porPagina";
       $stmt = $this->db->prepare($sql);
       $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
@@ -102,15 +104,10 @@ class Produtos
   // Inserir novo produto
   function inserirProduto(string $nome, string $descricao, float $preco, int $estoque, int $categoria, string $imagem)
   {
-    // Gerar próximo ID manualmente (workaround para tabelas sem AUTO_INCREMENT)
-    $stmtMax = $this->db->query("SELECT COALESCE(MAX(id_produto), 0) + 1 AS next_id FROM tbl_produtos");
-    $nextId = (int) $stmtMax->fetch(PDO::FETCH_ASSOC)['next_id'];
-
     $sql = "INSERT INTO tbl_produtos 
-            (id_produto, nome_produtos, descricao_produtos, preco_produtos, estoque_produtos, id_categoria, imagem_produtos, excluido_em, criado_em)
-            VALUES (:id, :nome, :descricao, :preco, :estoque, :categoria, :imagem, NULL, NOW())";
+            (nome_produtos, descricao_produtos, preco_produtos, estoque_produtos, id_categoria, imagem_produtos, excluido_em, criado_em)
+            VALUES (:nome, :descricao, :preco, :estoque, :categoria, :imagem, NULL, NOW())";
     $stmt = $this->db->prepare($sql);
-    $stmt->bindParam(':id', $nextId, PDO::PARAM_INT);
     $stmt->bindParam(':nome', $nome);
     $stmt->bindParam(':descricao', $descricao);
     $stmt->bindParam(':preco', $preco);
@@ -118,7 +115,7 @@ class Produtos
     $stmt->bindParam(':categoria', $categoria, PDO::PARAM_INT);
     $stmt->bindParam(':imagem', $imagem);
     if ($stmt->execute()) {
-      return $nextId;
+      return (int) $this->db->lastInsertId();
     } else {
       return false;
     }
@@ -188,7 +185,7 @@ class Produtos
 
   public function deletarProdutos(int $id)
   {
-    $agora = date("Y-m-d h:m:s");
+    $agora = date("Y-m-d H:i:s");
     $status = $this->buscarPorID($id);
     $status = $status['excluido_em'] != NULL ? NULL : $agora;
 
@@ -203,10 +200,50 @@ class Produtos
 
   public function categoriasProdu()
   {
-    $sql = "SELECT COUNT(*) as total,nome_produtos as produto FROM `tbl_produtos` GROUP BY id_categoria";
+    $sql = "SELECT COUNT(p.id_produto) as total, c.nome_categorias as categoria
+            FROM tbl_produtos p
+            LEFT JOIN tbl_categorias c ON p.id_categoria = c.id_categorias
+            WHERE p.excluido_em IS NULL
+            GROUP BY p.id_categoria, c.nome_categorias";
     $stmt = $this->db->prepare($sql);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  public function excluirProdutoPermanente(int $id)
+  {
+    try {
+      $this->db->beginTransaction();
+
+      // 1. Deletar avaliações
+      $stmt = $this->db->prepare("DELETE FROM tbl_avaliacoes WHERE id_produto = :id");
+      $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+      $stmt->execute();
+
+      // 2. Deletar imagens associadas na galeria
+      $stmt = $this->db->prepare("DELETE FROM tbl_imagem WHERE id_produto = :id");
+      $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+      $stmt->execute();
+
+      // 3. Deletar itens de pedidos
+      $stmt = $this->db->prepare("DELETE FROM tbl_itens_pedidos WHERE id_produto = :id");
+      $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+      $stmt->execute();
+
+      // 4. Deletar produto (cascades cores, tamanhos, estoque_movimentacao)
+      $stmt = $this->db->prepare("DELETE FROM tbl_produtos WHERE id_produto = :id");
+      $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+      $stmt->execute();
+
+      $this->db->commit();
+      return true;
+    } catch (\Exception $e) {
+      if ($this->db->inTransaction()) {
+        $this->db->rollBack();
+      }
+      error_log("Erro ao excluir permanentemente o produto #{$id}: " . $e->getMessage());
+      return false;
+    }
   }
 
   public static function contarProdutos($db)

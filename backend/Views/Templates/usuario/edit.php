@@ -1,3 +1,6 @@
+<?php
+/** @var array $usuario */
+?>
 <div class="page-wrapper">
     <h3 class="page-title">
         <i class="fa fa-pencil" style="color: #f2cc7d;"></i> 
@@ -15,11 +18,16 @@
             <div class="photo-container">
                 <img id="photoPreview" 
                      src="<?php 
-                        // CAMINHO CORRIGIDO: pasta onde as fotos são salvas
-                        $caminho_base = '/backend/upload/usuarios/';
-                        echo (!empty($usuario['foto_usuarios'])) 
-                             ? $caminho_base . htmlspecialchars($usuario['foto_usuarios']) 
-                             : '/img/logoperf.jpg'; 
+                        $fotoRaw = $usuario['foto_usuarios'] ?? '';
+                        if (!empty($fotoRaw)) {
+                            if (filter_var($fotoRaw, FILTER_VALIDATE_URL) || str_starts_with($fotoRaw, '/img/')) {
+                                echo htmlspecialchars($fotoRaw);
+                            } else {
+                                echo '/backend/upload/' . htmlspecialchars($fotoRaw);
+                            }
+                        } else {
+                            echo '/img/logoperf.jpg';
+                        }
                      ?>" 
                      alt="Foto de perfil"
                      class="profile-photo"
@@ -52,7 +60,14 @@
 
         <div class="form-group">
             <label for="senha_usuarios">Nova Senha (deixe vazio para manter):</label>
-            <input type="password" id="senha_usuarios" name="senha_usuarios" placeholder="••••••••"> 
+            <div style="position:relative;">
+                <input type="password" id="senha_usuarios" name="senha_usuarios" placeholder="••••••••" style="padding-right:46px;width:100%;box-sizing:border-box;">
+                 <button type="button" onclick="toggleEditPwd()" title="Mostrar/ocultar senha"
+                    style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);font-size:16px;cursor:pointer;transition:color 0.2s;padding:4px;"
+                    id="btnToggleEditPwd">
+                    <i class="fa fa-eye" id="iconEditPwd"></i>
+                </button>
+            </div>
         </div>
 
         <div class="form-group">
@@ -82,8 +97,8 @@
         padding: 40px 20px;
         width: 100%;
         min-height: 100vh;
-        background-color: #0c0c0c;
-        font-family: 'Segoe UI', sans-serif;
+        background-color: var(--bg-main);
+        font-family: Arial, sans-serif;
         display: flex;
         flex-direction: column;
         align-items: center; 
@@ -92,32 +107,34 @@
     }
 
     .page-title {
-        font-size: 24px;
+        font-size: 26px;
         font-weight: 800;
-        color: #ffffff;
+        color: var(--text-main);
         text-transform: uppercase;
         margin-bottom: 5px;
         text-align: center;
+        width: 100%;
+        max-width: 520px;
     }
 
     .header-breadcrumb {
-        color: #888;
-        margin-bottom: 25px;
-        border-bottom: 1px solid #222;
-        padding-bottom: 15px;
+        color: var(--text-muted);
+        margin-bottom: 28px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 14px;
         text-align: center;
         width: 100%;
-        max-width: 500px;
+        max-width: 520px;
     }
 
     .form-card {
-        background: #111;
-        padding: 30px;
-        border-radius: 15px;
+        background: linear-gradient(135deg, #1a1a1a, #0f0f0f);
+        padding: 36px;
+        border-radius: 16px;
         width: 100%;
-        max-width: 500px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.7);
-        border: 1px solid #333;
+        max-width: 520px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        border: 2px solid var(--border-color);
     }
 
     .profile-photo-section {
@@ -129,7 +146,7 @@
         padding: 20px;
         background: rgba(255, 255, 255, 0.02);
         border-radius: 12px;
-        border: 1px dashed #444;
+        border: 1px dashed var(--border-hover);
     }
 
     .photo-container {
@@ -142,78 +159,120 @@
         height: 100%;
         border-radius: 50%;
         object-fit: cover;
-        border: 3px solid #f2cc7d;
+        border: 3px solid var(--accent);
         box-shadow: 0 0 15px rgba(242, 204, 125, 0.3);
     }
 
     .upload-label {
-        background: #f2cc7d;
+        background: linear-gradient(135deg, var(--accent), #d4a800);
         color: #000;
         padding: 10px 20px;
         border-radius: 30px;
         cursor: pointer;
-        font-weight: 700;
+        font-weight: 800;
         font-size: 12px;
         text-transform: uppercase;
         transition: 0.3s ease;
+        box-shadow: 0 4px 12px rgba(242,200,75,.3);
     }
 
-    .upload-label:hover { background: #fff; }
+    .upload-label:hover { 
+        background: #fff; 
+        transform: translateY(-2px);
+    }
     .file-input { display: none; }
-    .upload-hint { font-size: 11px; color: #555; margin-top: 5px; }
+    .upload-hint { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
 
     .form-group {
         display: flex;
         flex-direction: column;
-        margin-bottom: 18px;
+        margin-bottom: 20px;
     }
 
     .form-group label {
         margin-bottom: 8px;
-        font-size: 12px;
-        font-weight: 700;
-        color: #f2cc7d;
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--accent);
         text-transform: uppercase;
+        letter-spacing: 1px;
     }
 
     .form-group input, .form-group select {
-        background: #1a1a1a;
-        border: 1px solid #333;
-        padding: 12px;
-        border-radius: 8px;
-        color: #fff;
+        background: var(--input-bg);
+        border: 2px solid var(--border-color);
+        padding: 14px 16px;
+        border-radius: var(--radius-md);
+        color: var(--text-main);
+        font-size: 15px;
+        font-family: Arial, sans-serif;
+        transition: border-color .2s, box-shadow .2s;
         outline: none;
     }
 
-    .form-group input:focus { border-color: #f2cc7d; }
+    .form-group input:focus, .form-group select:focus { 
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    /* Autofill override to preserve dark theme */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px var(--input-bg) inset !important;
+        -webkit-text-fill-color: var(--text-main) !important;
+    }
 
     .actions-container {
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        margin-top: 20px;
+        gap: 12px;
+        margin-top: 16px;
     }
 
     .btn-save {
-        background: #f2cc7d;
-        color: #000;
+        width: 100%;
+        background: linear-gradient(135deg, var(--accent), #d4a800);
         padding: 15px;
+        color: #000;
         border: none;
+        font-size: 13px;
         font-weight: 800;
         text-transform: uppercase;
-        border-radius: 8px;
+        letter-spacing: .5px;
+        border-radius: var(--radius-md);
         cursor: pointer;
-        transition: 0.3s;
+        transition: transform .2s, box-shadow .2s;
+        box-shadow: 0 4px 12px rgba(242,200,75,.3);
     }
 
-    .btn-save:hover { background: #fff; transform: translateY(-2px); }
+    .btn-save:hover { 
+        background: #fff; 
+        transform: translateY(-3px); 
+        box-shadow: 0 8px 24px rgba(242,200,75,.45); 
+    }
 
     .btn-cancelar {
+        display: block;
+        width: 100%;
         text-align: center;
+        background: transparent;
         padding: 12px;
-        color: #666;
-        text-decoration: none;
+        color: var(--text-muted);
         font-size: 13px;
+        font-weight: 600;
+        border-radius: var(--radius-md);
+        transition: .25s;
+        text-decoration: none;
+        border: 2px solid var(--border-color);
+        box-sizing: border-box;
+    }
+
+    .btn-cancelar:hover {
+        background: var(--border-color);
+        color: var(--text-main);
+        border-color: var(--border-hover);
     }
 </style>
 
@@ -230,6 +289,21 @@ function previewPhoto(event) {
             document.getElementById('photoPreview').src = e.target.result;
         };
         reader.readAsDataURL(file);
+    }
+}
+
+function toggleEditPwd() {
+    const input = document.getElementById('senha_usuarios');
+    const icon  = document.getElementById('iconEditPwd');
+    const btn   = document.getElementById('btnToggleEditPwd');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+        btn.style.color = '#f2cc7d';
+    } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+        btn.style.color = '';
     }
 }
 </script>

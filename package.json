@@ -1,0 +1,36 @@
+{
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "openai": "^6.29.0"
+  },
+  "name": "desk-back-front",
+  "version": "1.0.0",
+  "description": "Este projeto é um Sistema E-commerce completo com uma arquitetura tripla: uma **plataforma de apresentação de produtos (Vitrine Virtual Web)**, um **backend robusto em PHP MVC** e uma **interface administrativa Desktop** desenvolvida em Electron.",
+  "main": "ai-server.js",
+  "directories": {
+    "test": "tests"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.2.2",
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/forms": "^0.5.11",
+    "tailwindcss": "^4.2.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JeversonJ1/Desk-Back-Front.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/JeversonJ1/Desk-Back-Front/issues"
+  },
+  "homepage": "https://github.com/JeversonJ1/Desk-Back-Front#readme"
+}

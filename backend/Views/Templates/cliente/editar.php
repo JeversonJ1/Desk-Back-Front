@@ -18,8 +18,20 @@
                     <div class="k-avatar-outer">
                         <div class="k-avatar-container">
                             <div class="avatar-overlay"></div>
+                            <?php
+                            $fotoRaw = $usuario['foto_usuarios'] ?? '';
+                            if (!empty($fotoRaw)) {
+                                if (filter_var($fotoRaw, FILTER_VALIDATE_URL) || str_starts_with($fotoRaw, '/img/')) {
+                                    $fotoExibir = $fotoRaw;
+                                } else {
+                                    $fotoExibir = '/backend/upload/' . $fotoRaw;
+                                }
+                            } else {
+                                $fotoExibir = '/img/logoperf.jpg';
+                            }
+                            ?>
                             <img id="preview-foto" 
-                                 src="<?= !empty($usuario['foto_usuarios']) ? '/backend/upload/usuarios/' . htmlspecialchars($usuario['foto_usuarios']) : '/img/logoperf.jpg' ?>" 
+                                 src="<?= htmlspecialchars($fotoExibir) ?>" 
                                  alt="Foto Perfil" class="k-avatar-main">
                             
                             <label class="k-upload-trigger" for="foto_usuarios">

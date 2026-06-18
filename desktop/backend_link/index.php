@@ -30,10 +30,7 @@ $router->get('/api/database/produtos', 'DatabaseController@getProdutos');
 $router->get('/api/database/clientes', 'DatabaseController@getClientes');
 $router->get('/api/database/pedidos', 'DatabaseController@getPedidos');
 $router->get('/api/database/categorias', 'DatabaseController@getCategorias');
-
-$router->get('/backend/relatorios', 'RelatoriosController@exibirRelatorios');
 $router->get('/backend/register', 'AuthController@register');
-$router->get('/admin/relatorios', 'RelatoriosController@index');
 $router->post('/backend/pedido/listar', 'PedidosController@pesquisarPedido'); // Rota POST para Busca
 $router->get('/backend/pedido/listar', 'PedidosController@viewListarPedido');
 
@@ -121,7 +118,6 @@ $rotas = [
         "/produto/editar/{id}" => "ProdutosController@viewEditarProdutos",
         "/produto/excluir/{id}" => "ProdutosController@viewExcluirProduto",
         "/produto/{id}/relatorio/{data1}/{data2}" => "ProdutosController@relatorioProduto",
-        "/relatorios" => "RelatoriosController@exibirRelatorios",
         '/api/produtos' => 'PublicApiController@getProdutos',
         '/api/produtos/{pagina}' => 'PublicApiController@getProdutos',
         '/api/vitrine' => 'PublicApiController@getProdutosParaVitrineFormatados'

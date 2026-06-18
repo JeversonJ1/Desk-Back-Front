@@ -34,8 +34,13 @@
 
                 <div class="form-group">
 
-                    <label for="id_categoria">ID da Categoria:</label>
-                    <input type="number" id="id_categoria" name="id_categoria" required>
+                    <label for="id_categoria">Categoria:</label>
+                    <select id="id_categoria" name="id_categoria" required>
+                        <option value="">Selecione uma Categoria...</option>
+                        <?php foreach($categorias as $c): ?>
+                            <option value="<?= $c['id_categorias'] ?>"><?= htmlspecialchars($c['nome_categorias']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
             </div>
 
@@ -62,6 +67,19 @@
                         <img id="previewOriginal" />
                         <p id="infoOriginal"></p>
                     </div>
+                </div>
+
+                <!-- Galeria Adicional -->
+                <div class="form-group" style="margin-top:20px;">
+                    <label>Galeria de Mídias Extras (Imagens e Vídeos MP4):</label>
+                    <label class="upload-area" for="galeria_produtos" style="height:120px; border-style:dashed;">
+                        <div class="upload-placeholder">
+                            <i class="fa fa-images"></i>
+                            <span>Clique para adicionar mais fotos ou vídeos</span>
+                        </div>
+                        <input id="galeria_produtos" name="galeria_produtos[]" type="file" accept="image/*,video/mp4" multiple>
+                    </label>
+                    <div id="galeria-preview" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;"></div>
                 </div>
             </div>
         </div>
@@ -148,8 +166,8 @@
         padding: 40px 20px;
         width: 100%;
         min-height: 100vh;
-        background-color: #0c0c0c;
-        font-family: 'Segoe UI', sans-serif;
+        background-color: var(--bg-main);
+        font-family: Arial, sans-serif;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -168,9 +186,9 @@
     }
 
     .header-breadcrumb {
-        color: #888;
+        color: var(--text-muted);
         margin-bottom: 25px;
-        border-bottom: 1px solid #222;
+        border-bottom: 1px solid var(--border-color);
         padding-bottom: 15px;
         text-align: center;
         width: 100%;
@@ -179,13 +197,13 @@
 
     /* Card Expandido para acomodar duas colunas */
     .form-card {
-        background: #111;
-        padding: 30px;
-        border-radius: 15px;
+        background: linear-gradient(135deg, #1a1a1a, #0f0f0f);
+        padding: 32px;
+        border-radius: 16px;
         width: 100%;
         max-width: 850px;
         box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        border: 1px solid #333;
+        border: 2px solid var(--border-color);
     }
 
     .form-grid {
@@ -203,27 +221,33 @@
 
     .form-group label {
         margin-bottom: 8px;
-        font-size: 13px;
-        font-weight: 700;
-        color: #f2cc7d;
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--accent);
         text-transform: uppercase;
+        letter-spacing: 1px;
     }
 
     .form-group input, .form-group textarea, .form-group select {
-        background: #1a1a1a;
-        border: 1px solid #333;
-        padding: 12px;
-        border-radius: 8px;
-        color: #fff;
+        background: var(--input-bg);
+        border: 2px solid var(--border-color);
+        padding: 12px 14px;
+        border-radius: var(--radius-md);
+        color: var(--text-main);
         font-size: 14px;
-        transition: 0.3s;
+        font-family: Arial, sans-serif;
+        transition: border-color .2s, box-shadow .2s;
+        outline: none;
     }
 
-    .form-group input:focus { border-color: #f2cc7d; outline: none; background: #222; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+    }
 
     /* Área de Upload Estilizada */
     .upload-area {
-        border: 2px dashed #444;
+        border: 2px dashed var(--border-hover);
         border-radius: 12px;
         height: 250px;
         display: flex;
@@ -233,11 +257,11 @@
         cursor: pointer;
         position: relative;
         overflow: hidden;
-        transition: 0.3s;
-        background: #151515;
+        transition: .3s;
+        background: var(--input-bg);
     }
 
-    .upload-area:hover { border-color: #f2cc7d; background: #1a1a1a; }
+    .upload-area:hover { border-color: var(--accent); background: #1a1a1a; }
     .upload-area input { display: none; }
 
     .upload-placeholder { text-align: center; color: #666; }
@@ -255,11 +279,11 @@
     .image-meta {
         margin-top: 15px;
         padding: 12px;
-        background: #1a1a1a;
-        border-radius: 8px;
+        background: var(--bg-card-flat);
+        border-radius: var(--radius-sm);
         font-size: 12px;
-        color: #999;
-        border-left: 3px solid #f2cc7d;
+        color: var(--text-muted);
+        border-left: 3px solid var(--accent);
     }
 
     /* Esconde os detalhes técnicos para manter a beleza, mas mantém funcional */
@@ -274,22 +298,24 @@
     }
 
     .btn-save {
-        background: #f2cc7d;
+        background: linear-gradient(135deg, #F2C84B, #d4a800);
         color: #000;
         padding: 15px;
         border: none;
         font-weight: 800;
         text-transform: uppercase;
-        border-radius: 10px;
+        letter-spacing: .5px;
+        border-radius: var(--radius-md);
         cursor: pointer;
-        transition: 0.3s;
+        transition: transform .2s, box-shadow .2s;
+        box-shadow: 0 4px 12px rgba(242,200,75,.3);
     }
 
-    .btn-save:hover { background: #fff; transform: translateY(-2px); }
+    .btn-save:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(242,200,75,.45); }
 
     .btn-cancelar {
         text-align: center;
-        color: #888;
+        color: var(--text-muted);
         text-decoration: none;
         font-size: 13px;
         padding: 10px;
@@ -336,6 +362,54 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Erro ao processar imagem.");
         }
     });
+
+    // Lógica da Galeria Adicional
+    const galeriaInput = document.getElementById('galeria_produtos');
+    const galeriaPreview = document.getElementById('galeria-preview');
+    let galeriaArquivos = []; // manter o controle de arquivos da galeria
+
+    galeriaInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files);
+        if (!files.length) return;
+
+        files.forEach(file => {
+            galeriaArquivos.push(file);
+            const isVideo = file.type.startsWith('video');
+            const url = URL.createObjectURL(file);
+            
+            const div = document.createElement('div');
+            div.className = 'galeria-item';
+            div.style.cssText = 'position:relative; width:80px; height:80px; border-radius:8px; overflow:hidden; border:1px solid #555;';
+
+            if (isVideo) {
+                div.innerHTML = `<video src="${url}" style="width:100%; height:100%; object-fit:cover;" muted></video>
+                                 <i class="fa fa-play" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#fff; text-shadow:0 0 5px #000;"></i>`;
+            } else {
+                div.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover;">`;
+            }
+
+            const removeBtn = document.createElement('button');
+            removeBtn.innerHTML = '<i class="fa fa-times"></i>';
+            removeBtn.style.cssText = 'position:absolute; top:2px; right:2px; background:rgba(255,0,0,0.8); color:white; border:none; border-radius:50%; width:20px; height:20px; font-size:10px; cursor:pointer;';
+            removeBtn.onclick = (ev) => {
+                ev.preventDefault();
+                galeriaArquivos = galeriaArquivos.filter(f => f !== file);
+                div.remove();
+                atualizarGaleriaInput();
+            };
+
+            div.appendChild(removeBtn);
+            galeriaPreview.appendChild(div);
+        });
+
+        atualizarGaleriaInput();
+    });
+
+    function atualizarGaleriaInput() {
+        const dt = new DataTransfer();
+        galeriaArquivos.forEach(f => dt.items.add(f));
+        galeriaInput.files = dt.files;
+    }
 });
 
 function addCor() {

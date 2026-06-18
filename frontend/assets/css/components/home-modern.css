@@ -18,6 +18,60 @@
     object-fit: cover;
     height: 100%;
     width: 100%;
+    filter: brightness(0.85);
+    transition: filter 0.5s;
+}
+
+.banner-hero-new .carousel-item.active img {
+    filter: brightness(1);
+}
+
+.carousel-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.6);
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    z-index: 10;
+    max-width: 80%;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.carousel-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 700;
+    color: var(--color-light);
+    margin-bottom: 15px;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+    text-transform: uppercase;
+}
+
+.carousel-subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: var(--color-gray-light);
+    margin-bottom: 25px;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+}
+
+.carousel-btn {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    padding: 12px 30px;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.carousel-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(248, 211, 70, 0.4);
 }
 
 .carousel-caption-custom {
@@ -71,7 +125,7 @@
     display: inline-flex;
     align-items: center;
     padding: 18px 40px;
-    background: linear-gradient(135deg, var(--color-primary), #d4a853);
+    background: linear-gradient(135deg, var(--color-primary), #F2C84B);
     color: #000;
     font-weight: 700;
     font-size: 0.9rem;
@@ -266,7 +320,7 @@
     display: inline-flex;
     align-items: center;
     padding: 18px 40px;
-    background: linear-gradient(135deg, var(--color-primary), #d4a853);
+    background: linear-gradient(135deg, var(--color-primary), #F2C84B);
     color: #000;
     font-weight: 700;
     font-size: 0.9rem;

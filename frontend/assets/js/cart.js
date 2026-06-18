@@ -1,6 +1,57 @@
 const CartManager = (() => {
   const CART_STORAGE_KEY = 'koketsu_cart';
 
+  // ─── Config de WhatsApp (carregado da API) ───────────────────────────────
+  let _wppConfig = { numero: '5511985477260', ativo: true };
+
+  const fetchWhatsappConfig = async () => {
+    try {
+      const res = await fetch('/api/config.php');
+      const data = await res.json();
+      if (data.success) {
+        _wppConfig.numero = data.whatsapp_numero || '5511985477260';
+        _wppConfig.ativo  = data.whatsapp_ativo !== false;
+      }
+    } catch (e) {
+      console.warn('[CartManager] Não foi possível carregar config de WhatsApp. Usando padrão.');
+    }
+  };
+
+  /**
+   * Monta a mensagem e abre o WhatsApp
+   */
+  const sendToWhatsapp = (cart, user = null, profile = null) => {
+    const linhas = cart.map(item => {
+      const subtotal = (item.preco * item.quantidade).toFixed(2).replace('.', ',');
+      const tam = item.size ? ` | Tam: ${item.size}` : '';
+      return `▸ *${item.nome}*${tam} × ${item.quantidade} — R$ ${subtotal}`;
+    });
+    const total = cart
+      .reduce((acc, i) => acc + i.preco * i.quantidade, 0)
+      .toFixed(2).replace('.', ',');
+      
+    let textoArr = [
+      '🛒 *Pedido Koketsu Grife*',
+      '',
+      ...linhas,
+      '',
+      `*Total: R$ ${total}*`,
+      ''
+    ];
+    
+    if (user && profile) {
+      textoArr.push(`👤 *Cliente:* ${user.nome}`);
+      textoArr.push(`📍 *Endereço:* ${profile.endereco}`);
+      textoArr.push('');
+    }
+    
+    textoArr.push(`📅 ${new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' })}`);
+
+    const texto = textoArr.join('\n');
+    const url = `https://wa.me/${_wppConfig.numero}?text=${encodeURIComponent(texto)}`;
+    window.open(url, '_blank');
+  };
+
   /**
    * Obtém e migra o carrinho do localStorage
    */
@@ -110,61 +161,65 @@ const CartManager = (() => {
    * Sistema de Notificação Toast
    */
   const showToast = (message) => {
-    let toastContainer = document.querySelector('.toast-container');
+    let toastContainer = document.querySelector('#tw-toast-container');
     if (!toastContainer) {
       toastContainer = document.createElement('div');
-      toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-      toastContainer.style.zIndex = '9999';
+      toastContainer.id = 'tw-toast-container';
+      toastContainer.className = 'fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none';
       document.body.appendChild(toastContainer);
     }
 
-    const toastId = 'toast-' + Date.now();
-    const toastHtml = `
-        <div id="${toastId}" class="toast align-items-center text-white bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true" style="border: 1px solid var(--color-primary) !important;">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <i class="bi bi-check-circle-fill text-primary me-2"></i> ${message}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
+    const toast = document.createElement('div');
+    toast.className = 'pointer-events-auto flex items-center gap-3 bg-black text-white px-4 py-3 rounded-lg shadow-lg shadow-black/50 transform transition-all duration-300 translate-y-4 opacity-0';
+    toast.innerHTML = `
+        <i class="bi bi-check-circle-fill" style="color:#F2C84B;"></i>
+        <span class="text-sm font-medium">${message}</span>
+        <button class="ml-auto text-gray-400 hover:text-white transition" onclick="this.parentElement.remove()">
+            <i class="bi bi-x-lg"></i>
+        </button>
     `;
 
-    toastContainer.insertAdjacentHTML('beforeend', toastHtml);
-    const toastElement = document.getElementById(toastId);
-    if (window.bootstrap) {
-      const bsToast = new bootstrap.Toast(toastElement, { delay: 3000 });
-      bsToast.show();
-    }
-    toastElement.addEventListener('hidden.bs.toast', () => toastElement.remove());
+    toastContainer.appendChild(toast);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+      toast.classList.remove('translate-y-4', 'opacity-0');
+    });
+
+    // Auto remove
+    setTimeout(() => {
+      toast.classList.add('translate-y-4', 'opacity-0');
+      toast.addEventListener('transitionend', () => toast.remove());
+    }, 3000);
   };
 
   /**
    * Sistema de Mini-Carrinho (Drawer)
    */
   const injectMiniCartHTML = () => {
-    if (document.getElementById('miniCartOffcanvas')) return;
+    if (document.getElementById('miniCartDrawer')) return;
 
     const html = `
-      <div class="offcanvas offcanvas-end mini-cart-drawer" tabindex="-1" id="miniCartOffcanvas" aria-labelledby="miniCartLabel">
-        <div class="offcanvas-header border-bottom border-dark">
-          <h5 class="offcanvas-title fw-bold text-white" id="miniCartLabel">MEU CARRINHO</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      <div id="miniCartBackdrop" class="fixed inset-0 bg-black/50 z-[1040] hidden backdrop-blur-sm transition-opacity opacity-0" onclick="CartManager.closeDrawer()"></div>
+      <div id="miniCartDrawer" class="fixed top-0 right-0 h-full w-[350px] max-w-full bg-[#0a0a0a] border-l border-white/10 z-[1050] transform translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+        <div class="p-4 border-b border-white/10 flex justify-between items-center bg-black">
+          <h5 class="text-white font-bold tracking-widest uppercase m-0 text-sm">MEU CARRINHO</h5>
+          <button type="button" class="text-white/70 hover:text-white transition p-2" onclick="CartManager.closeDrawer()" aria-label="Close">
+             <i class="bi bi-x-lg text-lg"></i>
+          </button>
         </div>
-        <div class="offcanvas-body p-0 d-flex flex-column">
-          <div id="miniCartItems" class="flex-grow-1 overflow-auto p-3">
-            <!-- Itens injetados via JS -->
+        <div class="flex-1 overflow-y-auto p-4 custom-scrollbar" id="miniCartItems">
+          <!-- Itens injetados via JS -->
+        </div>
+        <div class="p-4 border-t border-white/10 bg-[#111]">
+          <div class="flex justify-between items-center mb-4 text-white">
+            <span class="uppercase text-xs tracking-wider text-gray-400">Subtotal</span>
+            <span id="miniCartSubtotal" class="font-bold text-lg" style="color:#F2C84B;">R$ 0,00</span>
           </div>
-          <div class="mini-cart-footer border-top border-dark p-4 bg-dark-secondary">
-            <div class="d-flex justify-content-between mb-3 text-white">
-              <span class="text-uppercase small">Subtotal</span>
-              <span id="miniCartSubtotal" class="fw-bold gold-text">R$ 0,00</span>
-            </div>
-            <a href="carrinho.html" class="btn btn-outline-light w-100 py-3 fw-bold">VER CARRINHO</a>
-            <button id="btn-finalizar-pedido" class="btn btn-primary-gold w-100 py-3 mt-2 fw-bold">
-              <i class="bi bi-check-circle-fill me-2"></i> FINALIZAR PEDIDO
-            </button>
-          </div>
+          <a href="/pages/carrinho.html" class="block w-full py-3 px-4 border border-white/20 text-white text-center rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition mb-3">VER CARRINHO</a>
+          <button id="btn-finalizar-pedido" class="w-full py-3 px-4 text-black rounded-lg text-xs font-bold uppercase tracking-widest hover:brightness-110 transition flex items-center justify-center gap-2 shadow-lg" style="background-color:#F2C84B; box-shadow:0 4px 15px rgba(242,200,75,0.35);">
+            <i class="bi bi-whatsapp"></i> FINALIZAR PEDIDO
+          </button>
         </div>
       </div>
     `;
@@ -178,7 +233,7 @@ const CartManager = (() => {
 
     const cart = getCart();
     if (cart.length === 0) {
-      itemsContainer.innerHTML = '<div class="text-center py-5 opacity-50"><i class="bi bi-bag-x fs-1 mb-3 d-block"></i>Carrinho vazio</div>';
+      itemsContainer.innerHTML = '<div class="text-center py-10 opacity-50 flex flex-col items-center justify-center h-full"><i class="bi bi-bag-x text-4xl mb-3 text-white"></i><span class="text-white text-sm uppercase tracking-wider">Carrinho vazio</span></div>';
       if (subtotalEl) subtotalEl.textContent = 'R$ 0,00';
       return;
     }
@@ -188,19 +243,20 @@ const CartManager = (() => {
       const itemSubtotal = item.preco * item.quantidade;
       subtotal += itemSubtotal;
       return `
-        <div class="mini-cart-item d-flex gap-3 mb-4">
-          <div class="item-img-mini">
-            <img src="${item.img}" alt="${item.nome}" width="70" height="90" style="object-fit: cover; border-radius: 4px;">
+        <div class="flex gap-4 p-3 mb-4 relative group bg-[#050505] rounded-xl border border-white/5 transition-all duration-300 hover:border-[#F2C84B]/30 hover:bg-[#111] hover:shadow-[0_10px_20px_rgba(242,200,75,0.1)]">
+          <div class="w-[80px] h-[100px] shrink-0 rounded-md overflow-hidden bg-[#111] relative">
+            <img src="${item.img}" alt="${item.nome}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-90 group-hover:opacity-100">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-60 pointer-events-none"></div>
           </div>
-          <div class="item-info-mini flex-grow-1">
-            <h6 class="text-white small fw-bold mb-1">${item.nome}</h6>
-            <p class="text-secondary small mb-2">Tam: ${item.size} ${item.color ? `| Cor: ${item.color}` : ''} | Qtd: ${item.quantidade}</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="gold-text small fw-bold">R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
-              <button class="btn-remove-mini text-danger bg-transparent p-0" onclick="CartManager.removeFromCart('${item.cartItemId}')">
-                <i class="bi bi-trash small"></i>
-              </button>
+          <div class="flex-1 flex flex-col py-1">
+            <h6 class="text-white text-xs font-bold mb-1 uppercase tracking-wider pr-6 leading-tight group-hover:text-[#F2C84B] transition-colors">${item.nome}</h6>
+            <p class="text-gray-500 text-[10px] mb-2 uppercase tracking-widest font-bold">Tam: <span class="text-white">${item.size}</span> ${item.color ? `<span class="mx-1">|</span> Cor: <span class="text-white">${item.color}</span>` : ''} <span class="mx-1">|</span> Qtd: <span class="text-white">${item.quantidade}</span></p>
+            <div class="flex justify-between items-center mt-auto">
+              <span class="text-[#F2C84B] text-sm font-black tracking-wider">R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
             </div>
+            <button class="absolute top-3 right-3 text-white/30 hover:text-red-500 transition p-1 group-hover:text-red-500/70" onclick="CartManager.removeFromCart('${item.cartItemId}')">
+              <i class="bi bi-trash"></i>
+            </button>
           </div>
         </div>
       `;
@@ -210,10 +266,29 @@ const CartManager = (() => {
   };
 
   const openDrawer = () => {
-    const offcanvasEl = document.getElementById('miniCartOffcanvas');
-    if (offcanvasEl && window.bootstrap) {
-      const bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(offcanvasEl);
-      bsOffcanvas.show();
+    const drawer = document.getElementById('miniCartDrawer');
+    const backdrop = document.getElementById('miniCartBackdrop');
+    if (drawer && backdrop) {
+      backdrop.classList.remove('hidden');
+      // small delay to allow display:block before opacity transition
+      requestAnimationFrame(() => {
+        backdrop.classList.remove('opacity-0');
+        drawer.classList.remove('translate-x-full');
+      });
+      document.body.style.overflow = 'hidden';
+    }
+  };
+
+  const closeDrawer = () => {
+    const drawer = document.getElementById('miniCartDrawer');
+    const backdrop = document.getElementById('miniCartBackdrop');
+    if (drawer && backdrop) {
+      drawer.classList.add('translate-x-full');
+      backdrop.classList.add('opacity-0');
+      setTimeout(() => {
+        backdrop.classList.add('hidden');
+        document.body.style.overflow = '';
+      }, 300);
     }
   };
 
@@ -263,40 +338,62 @@ const CartManager = (() => {
 
         // Validação simples: não nulo e não vazio
         if (telefone && endereco && telefone.trim() !== '' && endereco.trim() !== '') {
-          return { ok: true, id_perfil: id_perfil };
+          return { ok: true, id_perfil: id_perfil, telefone, endereco };
         }
       }
 
       // Se faltar dados
-      // Substituindo Alert nativo por Modal Bootstrap
       const modalId = 'profileIncompleteModal';
       let modalEl = document.getElementById(modalId);
       if (modalEl) modalEl.remove();
 
       const modalHtml = `
-          <div class="modal fade" id="${modalId}" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-              <div class="modal-dialog modal-dialog-centered">
-                  <div class="modal-content bg-dark text-white border-secondary">
-                      <div class="modal-header border-secondary">
-                          <h5 class="modal-title fw-bold text-warning"><i class="bi bi-exclamation-triangle me-2"></i>Falta Pouco!</h5>
-                          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body text-center py-4">
-                          <p class="mb-3">Para garantir que seu pedido chegue certinho, precisamos que você preencha seu <strong>Telefone</strong> e <strong>Endereço</strong>.</p>
-                          <p class="text-secondary small">Você será redirecionado para completar seu perfil.</p>
-                          <button id="btnRedirectProfile" class="btn btn-primary-gold w-100 fw-bold mt-3">PREENCHER AGORA</button>
-                      </div>
+          <div id="${modalId}" class="fixed inset-0 z-[2000] hidden items-center justify-center p-4 sm:p-0">
+              <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" id="${modalId}-backdrop"></div>
+              <div class="bg-[#111] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md p-6 relative z-10 transform scale-95 opacity-0 transition-all duration-300 pointer-events-auto flex flex-col items-center text-center" id="${modalId}-content">
+                  <div class="w-full flex justify-between items-start mb-6">
+                      <h5 class="font-bold uppercase tracking-wider text-xl flex items-center gap-2" style="color:#F2C84B;">
+                          <i class="bi bi-exclamation-triangle"></i> Falta Pouco!
+                      </h5>
+                      <button type="button" class="text-gray-400 hover:text-white transition" id="btnCloseProfileModal">
+                          <i class="bi bi-x-lg"></i>
+                      </button>
+                  </div>
+                  <div class="text-center w-full">
+                      <p class="text-gray-300 text-sm mb-4 leading-relaxed">Para garantir que seu pedido chegue certinho, precisamos que você preencha seu <strong class="text-white">Telefone</strong> e <strong class="text-white">Endereço</strong>.</p>
+                      <p class="text-gray-500 text-xs mb-6">Você será redirecionado para completar seu perfil no painel de cliente.</p>
+                      <button id="btnRedirectProfile" class="w-full text-black py-4 rounded-xl font-bold uppercase tracking-widest text-sm hover:brightness-110 transition shadow-lg" style="background-color:#F2C84B; box-shadow:0 4px 15px rgba(242,200,75,0.35);">PREENCHER AGORA</button>
                   </div>
               </div>
           </div>
       `;
       document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-      const bsModal = new bootstrap.Modal(document.getElementById(modalId));
-      bsModal.show();
+      const modalWrap = document.getElementById(modalId);
+      const content = document.getElementById(`${modalId}-content`);
+      const btnClose = document.getElementById('btnCloseProfileModal');
+      const btnRedirect = document.getElementById('btnRedirectProfile');
 
-      document.getElementById('btnRedirectProfile').addEventListener('click', () => {
-        bsModal.hide();
+      modalWrap.classList.remove('hidden');
+      modalWrap.classList.add('flex');
+      
+      requestAnimationFrame(() => {
+          content.classList.remove('scale-95', 'opacity-0');
+          content.classList.add('scale-100', 'opacity-100');
+      });
+
+      const hideModal = () => {
+          content.classList.remove('scale-100', 'opacity-100');
+          content.classList.add('scale-95', 'opacity-0');
+          setTimeout(() => {
+              if(modalWrap) modalWrap.remove();
+          }, 300);
+      };
+
+      btnClose.addEventListener('click', hideModal);
+
+      btnRedirect.addEventListener('click', () => {
+        hideModal();
         if (userId) {
           window.location.href = `/backend/cliente/meu-perfil/${userId}`;
         } else {
@@ -369,7 +466,24 @@ const CartManager = (() => {
       return;
     }
 
-    // Marcar como processando
+    // ── Verificar auth primeiro; se não logado → WhatsApp ─────────────────
+    const checkAuthQuick = async () => {
+      try {
+        const r = await fetch('/api/check_auth.php', { credentials: 'same-origin' });
+        if (!r.ok) return { authenticated: false };
+        return await r.json();
+      } catch { return { authenticated: false }; }
+    };
+    const auth = await checkAuthQuick();
+
+    if (!auth.authenticated) {
+      showToast('Faça login para finalizar seu pedido.');
+      setTimeout(() => window.location.href = '/backend/login', 1500);
+      return;
+    }
+
+
+    // Marcar como processando (fluxo autenticado)
     isProcessingCheckout = true;
 
     // Desabilitar botão e mostrar feedback visual
@@ -419,8 +533,7 @@ const CartManager = (() => {
         }
 
         setTimeout(() => {
-          const isPages = window.location.pathname.includes('/pages/');
-          window.location.href = isPages ? '../backend/login' : '/backend/login';
+          window.location.href = '/backend/login';
         }, 1500);
         return;
       }
@@ -478,15 +591,21 @@ const CartManager = (() => {
       }
 
       // Sucesso: Limpar Carrinho e Redirecionar
+      // Salvar cópia para exibir na página de sucesso
+      localStorage.setItem('koketsu_last_order', JSON.stringify(cart));
       localStorage.removeItem(CART_STORAGE_KEY);
       updateCartBadge(); // Zera badge visualmente
 
-      showToast('Pedido realizado com sucesso! Redirecionando...');
+      showToast('Pedido salvo! Redirecionando para confirmar via WhatsApp... 📲');
 
-      // Redireciona para lista de pedidos do cliente (SEM WHATSAPP)
+      // Se WhatsApp ativo, abre a janela e depois redireciona para pedidos
+      if (_wppConfig.ativo) {
+        sendToWhatsapp(cart, authStatus.user, profileCheck);
+      }
+
       setTimeout(() => {
         window.location.href = '/backend/cliente/pedidos';
-      }, 2000); // 2s delay para ler o toast
+      }, 2000);
 
     } catch (error) {
       console.error('Erro inesperado no checkout:', error);
@@ -503,10 +622,11 @@ const CartManager = (() => {
     }
   };
 
-  document.addEventListener('DOMContentLoaded', () => {
+  const init = () => {
     injectMiniCartHTML();
     initAddToCartButtons();
     updateCartBadge();
+    fetchWhatsappConfig(); // Carrega número de WhatsApp da API
 
     // Listener para botão checkout
     document.body.addEventListener('click', (e) => {
@@ -517,9 +637,11 @@ const CartManager = (() => {
     });
 
     window.addEventListener('cartUpdated', updateCartBadge);
-  });
+  };
 
-  const instance = { getCart, addToCart, removeFromCart, updateQuantity, getItemCount, handleCheckout };
+  document.addEventListener('DOMContentLoaded', init);
+
+  const instance = { getCart, addToCart, removeFromCart, updateQuantity, getItemCount, handleCheckout, init, openDrawer, closeDrawer };
   window.CartManager = instance;
   return instance;
 })();

@@ -24,24 +24,20 @@ class Pedidos
     // Buscar todos os pedidos ativos
     function buscarPedidos()
     {
-        $sql = "SELECT * FROM tbl_pedidos WHERE excluido_em IS NULL"; // Corrigido SELECT * FROM tbl_pedidos
+        $sql = "SELECT id_pedido, id_perfil, data_pedido, total_pedido, status_pedido, criado_em, atualizado_em, excluido_em FROM tbl_pedidos WHERE excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function buscarPedidosAtivos()
     {
-        $sql = "SELECT * FROM tbl_pedidos WHERE excluido_em IS NULL";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $this->buscarPedidos();
     }
 
-    // Buscar pedido por ID
     public function buscarPedidoPorId(int $id)
     {
 
-        $sql = "SELECT tbl_pedidos.*, tbl_perfil.endereco_perfil, tbl_perfil.id_usuarios, tbl_usuarios.nome_usuarios AS nome_cliente
+        $sql = "SELECT tbl_pedidos.*, tbl_perfil.endereco_perfil, tbl_perfil.telefone_perfil, tbl_perfil.data_cadastro AS data_cadastro_perfil, tbl_perfil.id_usuarios, tbl_usuarios.nome_usuarios AS nome_cliente
                 FROM tbl_pedidos
                 LEFT JOIN tbl_perfil ON tbl_pedidos.id_perfil = tbl_perfil.id_perfil
                 LEFT JOIN tbl_usuarios ON tbl_perfil.id_usuarios = tbl_usuarios.id_usuarios
@@ -65,7 +61,7 @@ class Pedidos
     // Buscar pedidos de um perfil específico
     function buscarPedidosPorCliente($id_perfil)
     {
-        $sql = "SELECT * FROM tbl_pedidos 
+        $sql = "SELECT id_pedido, id_perfil, data_pedido, total_pedido, status_pedido, criado_em, atualizado_em, excluido_em FROM tbl_pedidos 
                 WHERE id_perfil = :id_perfil AND excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':id_perfil', $id_perfil);
@@ -79,7 +75,7 @@ class Pedidos
      */
     public function buscarPedidosPorUsuario(int $id_usuario): array
     {
-        $sql = "SELECT p.* FROM tbl_pedidos p
+        $sql = "SELECT p.id_pedido, p.id_perfil, p.data_pedido, p.total_pedido, p.status_pedido, p.criado_em, p.atualizado_em, p.excluido_em FROM tbl_pedidos p
                 JOIN tbl_perfil pf ON p.id_perfil = pf.id_perfil
                 WHERE pf.id_usuarios = :id_usuario AND p.excluido_em IS NULL";
         $stmt = $this->db->prepare($sql);
@@ -260,7 +256,7 @@ class Pedidos
         $totalStmt = $this->db->query($totalQuery);
         $total_de_registros = $totalStmt->fetchColumn();
         $offset = ($pagina - 1) * $por_pagina;
-        $dataQuery = "SELECT * FROM `tbl_pedidos` LIMIT :limit OFFSET :offset";
+        $dataQuery = "SELECT id_pedido, id_perfil, data_pedido, total_pedido, status_pedido, criado_em, atualizado_em, excluido_em FROM `tbl_pedidos` LIMIT :limit OFFSET :offset";
         $dataStmt = $this->db->prepare($dataQuery);
         $dataStmt->bindValue(':limit', $por_pagina, PDO::PARAM_INT);
         $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -270,7 +266,10 @@ class Pedidos
 
         return [
             'data' => $dados,
-
+            'total' => (int) $total_de_registros,
+            'por_pagina' => (int) $por_pagina,
+            'pagina_atual' => (int) $pagina,
+            'ultima_pagina' => (int) $lastPage,
         ];
     }
 
@@ -278,20 +277,23 @@ class Pedidos
     // Inserir novo pedido
     function inserirPedido($id_perfil, $data_pedido, $total_pedido, $status_pedido)
     {
+        $stmtMax = $this->db->query("SELECT COALESCE(MAX(id_pedido), 0) + 1 AS next_id FROM tbl_pedidos");
+        $nextId = (int) $stmtMax->fetch(PDO::FETCH_ASSOC)['next_id'];
 
         $sql = "INSERT INTO tbl_pedidos
-        (id_perfil, data_pedido, total_pedido, status_pedido, criado_em) 
-        VALUES (:id_perfil, :data_pedido, :total_pedido, :status_pedido, NOW())";
+        (id_pedido, id_perfil, data_pedido, total_pedido, status_pedido, criado_em) 
+        VALUES (:id_pedido, :id_perfil, :data_pedido, :total_pedido, :status_pedido, NOW())";
 
         $stmt = $this->db->prepare($sql);
 
+        $stmt->bindParam(':id_pedido', $nextId, PDO::PARAM_INT);
         $stmt->bindParam(':id_perfil', $id_perfil, PDO::PARAM_INT);
         $stmt->bindParam(':data_pedido', $data_pedido);
         $stmt->bindParam(':total_pedido', $total_pedido);
         $stmt->bindParam(':status_pedido', $status_pedido);
 
         if ($stmt->execute()) {
-            return $this->db->lastInsertId();
+            return $nextId;
         } else {
             error_log("Erro ao inserir pedido: " . json_encode($stmt->errorInfo()));
             return false;

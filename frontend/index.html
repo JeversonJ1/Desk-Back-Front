@@ -1,521 +1,526 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-
+<html class="scroll-smooth" lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Koketsu Grife - Roupas e acessórios exclusivos" />
-  <title>Koketsu Grife | Streetwear Premium</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Outfit:wght@400;700;900&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/global/variables.css">
-  <link rel="stylesheet" href="assets/css/global/main.css">
-  <link rel="stylesheet" href="assets/css/global/footer.css">
-  <link rel="stylesheet" href="assets/css/components/home.css">
-  <link rel="stylesheet" href="assets/css/components/home-modern.css">
-  <link rel="stylesheet" href="assets/css/components/reviews.css">
-  <link rel="stylesheet" href="assets/css/components/auth.css">
-  <link rel="icon" type="image/png" href="assets/img/logo2026.png">
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Koketsu Grife | Drop Exclusivo para Colecionadores</title>
+    <meta content="Koketsu Grife - Drops exclusivos de streetwear de alto padrão. Edições limitadas para colecionadores." name="description"/>
+    <link rel="icon" type="image/png" href="assets/img/logo2026.png">
+    
+    <!-- Tailwind CSS with no preflight to avoid breaking Bootstrap injected modais -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false,
+            }
+        }
+    </script>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;800&family=Oswald:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Required Bootstrap CSS overrides for Modals to work without conflict -->
+    <link rel="stylesheet" href="assets/css/global/main.css">
+    <link rel="stylesheet" href="assets/css/components/auth.css">
+    <link rel="stylesheet" href="assets/css/components/home-modern.css">
+    <link rel="stylesheet" href="assets/css/components/menu-modal.css">
+    
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Custom Global Styles (Internal styles moved to main.css) -->
+    <link rel="stylesheet" href="assets/css/global/main.css">
+    <link rel="stylesheet" href="assets/css/global/footer.css">
+    <style type="text/tailwindcss">
+        /* Tailwind-specific overrides that must stay in HTML for JIT engine if not using a build tool */
+        :root {
+            --brand-yellow: #F2C84B;
+            --brand-dark: #0A0A0A;
+            --brand-grey: #1A1A1A;
+        }
+        body {
+            @apply bg-[var(--brand-dark)] text-white overflow-x-hidden font-sans;
+            --bs-body-bg: var(--brand-dark);
+            --bs-body-color: #FFFFFF;
+        }
+    </style>
 </head>
+<body class="font-sans" data-page="home-tailwind">
 
-<body>
-  <header>
-    <nav id="navbar" class="navbar d-flex align-items-center px-4 sticky-top d-flex scrolled">
-      <div class="navbar-section d-flex align-items-center">
-        <button class="btn btn-link text-white d-flex align-items-center p-0 me-4" data-bs-toggle="offcanvas"
-          data-bs-target="#menuOffcanvas" aria-label="Abrir menu">
-          <i class="bi bi-list fs-4"></i> <span class="ms-1 d-none d-md-inline">Menu</span>
-        </button>
-        <div class="search-container d-none d-lg-flex position-relative">
-          <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"></i>
-          <input type="text" id="globalSearch" class="search-input ps-5" placeholder="Buscar na Koketsu...">
-          <div id="searchResults" class="search-dropdown d-none"></div>
-        </div>
-      </div>
-
-      <div class="navbar-center">
-        <a href="index.html" aria-label="Página inicial">
-          <img src="assets/img/logo2026.png" alt="Logo Koketsu Grife" class="logo" />
-        </a>
-      </div>
-
-      <div class="navbar-end d-flex justify-content-end align-items-center">
-        <!-- Estado: Deslogado -->
-        <a href="#" id="navLoginBtn" class="icon-button" aria-label="Fazer login">
-          <i class="bi bi-person"></i> <span class="d-none d-md-inline">Login</span>
-        </a>
-
-        <!-- Estado: Logado -->
-        <div id="navUserContainer" class="user-nav-container" style="display: none;">
-          <button id="userAvatarBtn" class="user-avatar-btn" aria-label="Menu do usuário">
-            <img id="userAvatarImg" src="" alt="Avatar" style="display: none;">
-            <i id="userAvatarFallback" class="bi bi-person-fill avatar-fallback"></i>
-          </button>
-          <span id="navUserName" class="user-nav-name d-none d-md-inline"></span>
-
-          <!-- Dropdown do usuário -->
-          <div id="userDropdown" class="user-dropdown">
-            <div class="user-dropdown-header">
-              <img id="ddAvatarImg" src="" alt="Avatar" style="display: none;">
-              <div id="ddAvatarFallback" class="avatar-fallback-lg"><i class="bi bi-person-fill"></i></div>
-              <div class="user-dropdown-info">
-                <div id="ddUserName" class="dd-name">Cliente</div>
-                <span class="dd-badge">Membro Koketsu</span>
-              </div>
+<header></header><!-- Hero Banner Swiper -->
+<section class="hero-swiper-container relative h-[600px] w-full overflow-hidden pt-24" data-purpose="hero-banner">
+    <div class="swiper heroSwiper h-full">
+        <div class="swiper-wrapper">
+            <!-- Slide 1 -->
+            <div class="swiper-slide relative">
+                <img src="assets/img/banner1.png" class="absolute inset-0 w-full h-full object-cover" alt="Banner 1">
             </div>
-            <div class="user-dropdown-links">
-              <a id="ddProfileLink" href="/backend/cliente/meu-perfil/0"><i class="bi bi-person"></i> Meu Perfil</a>
-              <a href="/backend/cliente/pedidos"><i class="bi bi-bag-check"></i> Meus Pedidos</a>
-              <a href="/backend/configuracoes"><i class="bi bi-gear"></i> Preferências</a>
-              <div class="user-dropdown-divider"></div>
-              <a href="#" id="ddLogoutBtn" class="logout-link"><i class="bi bi-box-arrow-right"></i> Sair</a>
+            <!-- Slide 2 -->
+            <div class="swiper-slide relative">
+                <img src="assets/img/banner2.png" class="absolute inset-0 w-full h-full object-cover" alt="Banner 2">
             </div>
-          </div>
-        </div>
+    </div>
+</section>
 
-        <a href="pages/carrinho.html" class="icon-button ms-3">
-          <i class="bi bi-bag"></i> <span class="d-none d-md-inline">Carrinho</span>
-          <span class="cart-badge" style="display: none;">0</span>
-        </a>
-      </div>
-    </nav>
-
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="menuOffcanvas" aria-labelledby="menuOffcanvasLabel">
-      <div class="offcanvas-header border-bottom border-dark">
-        <h5 class="offcanvas-title fw-bold text-yellow" id="menuOffcanvasLabel">CATEGORIAS</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-      </div>
-
-      <div class="offcanvas-body p-0">
-        <div class="accordion accordion-flush" id="accordionMenu">
-          <div class="accordion-item bg-transparent">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                data-bs-target="#itemsCamisetas">
-                CAMISETAS
-              </button>
-            </h2>
-            <div id="itemsCamisetas" class="accordion-collapse collapse" data-bs-parent="#accordionMenu">
-              <div class="accordion-body">
-                <a href="pages/catalogo.html?cat=Camisetas Oversized">Oversized</a>
-                <a href="pages/catalogo.html?cat=Camisetas Streetwear">Streetwear</a>
-                <a href="pages/catalogo.html?cat=Camisetas">Ver Todas</a>
-              </div>
+<!-- Setores de Benefícios (4 cards) -->
+<section class="py-12 bg-black border-t border-[var(--brand-grey)]">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- Benefício 1 -->
+            <div class="bg-[#111111] p-6 text-center rounded-xl border border-white/5 flex flex-col justify-center items-center h-full">
+                <span class="material-symbols-outlined text-[var(--brand-yellow)] text-3xl mb-3">local_shipping</span>
+                <h4 class="text-white text-[11px] font-bold uppercase tracking-[0.1em] mb-2">Entrega Expressa</h4>
+                <p class="text-gray-500 text-[10px] leading-tight">Enviamos para todo o Brasil com rapidez</p>
             </div>
-          </div>
-          <div class="accordion-item bg-transparent">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                data-bs-target="#itemsMoletons">
-                MOLETONS
-              </button>
-            </h2>
-            <div id="itemsMoletons" class="accordion-collapse collapse" data-bs-parent="#accordionMenu">
-              <div class="accordion-body">
-                <a href="pages/catalogo.html?cat=Moletons">Todos os Moletons</a>
-              </div>
+            <!-- Benefício 2 -->
+            <div class="bg-[#111111] p-6 text-center rounded-xl border border-white/5 flex flex-col justify-center items-center h-full">
+                <span class="material-symbols-outlined text-[var(--brand-yellow)] text-3xl mb-3">security</span>
+                <h4 class="text-white text-[11px] font-bold uppercase tracking-[0.1em] mb-2">Compra Segura</h4>
+                <p class="text-gray-500 text-[10px] leading-tight">Seus dados estão 100% protegidos</p>
             </div>
-          </div>
-          <div class="accordion-item bg-transparent">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                data-bs-target="#itemsCalcas">
-                CALÇAS
-              </button>
-            </h2>
-            <div id="itemsCalcas" class="accordion-collapse collapse" data-bs-parent="#accordionMenu">
-              <div class="accordion-body">
-                <a href="pages/catalogo.html?cat=Calças">Todas as Calças</a>
-              </div>
+            <!-- Benefício 3 -->
+            <div class="bg-[#111111] p-6 text-center rounded-xl border border-white/5 flex flex-col justify-center items-center h-full">
+                <span class="material-symbols-outlined text-[var(--brand-yellow)] text-3xl mb-3">swap_horiz</span>
+                <h4 class="text-white text-[11px] font-bold uppercase tracking-[0.1em] mb-2">Troca Fácil</h4>
+                <p class="text-gray-500 text-[10px] leading-tight">Até 7 dias para devolução</p>
             </div>
-          </div>
-          <div class="accordion-item bg-transparent">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                data-bs-target="#itemsAcessorios">
-                CHAPÉUS & BONÉS
-              </button>
-            </h2>
-            <div id="itemsAcessorios" class="accordion-collapse collapse" data-bs-parent="#accordionMenu">
-              <div class="accordion-body">
-                <a href="pages/catalogo.html?cat=Chapéus e Bonés">Chapéus e Bonés</a>
-                <a href="pages/catalogo.html?cat=Chapéus e Bonés">Bonés Exclusivos</a>
-              </div>
+            <!-- Benefício 4 -->
+            <div class="bg-[#111111] p-6 text-center rounded-xl border border-white/5 flex flex-col justify-center items-center h-full">
+                <span class="material-symbols-outlined text-[var(--brand-yellow)] text-3xl mb-3">support_agent</span>
+                <h4 class="text-white text-[11px] font-bold uppercase tracking-[0.1em] mb-2">Atendimento</h4>
+                <p class="text-gray-500 text-[10px] leading-tight">Suporte Focado em Você</p>
             </div>
-          </div>
-          <div class="accordion-item bg-transparent">
-            <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                data-bs-target="#itemsTenis">
-                TÊNIS
-              </button>
-            </h2>
-            <div id="itemsTenis" class="accordion-collapse collapse" data-bs-parent="#accordionMenu">
-              <div class="accordion-body">
-                <a href="pages/catalogo.html?cat=Tenis">Coleção Tênis</a>
-              </div>
+        </div>
+    </div>
+</section>
+
+<!-- Nossas Categorias -->
+<section class="py-24 bg-black relative">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-10">
+            <h2 class="shimmer-title">NOSSAS CATEGORIAS</h2>
+            <p class="text-[#F2C84B] font-bold tracking-[0.5em] text-[10px] uppercase mt-2">Encontre a sua peça perfeita para todas as ocasiões.</p>
+        </div>
+        
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10" id="dynamic-categories-grid">
+            <!-- Categoria 1: Camisetas -->
+            <div class="relative rounded-2xl overflow-hidden flex flex-col group cursor-pointer transition-all duration-700 hover:-translate-y-2 shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(242,200,75,0.2)] h-[400px]" onclick="window.location.href='/pages/catalogo.html?categoria=camisetas'">
+                <img src="assets/img/camiseta off white.png" alt="Camisetas" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                <div class="absolute bottom-0 left-0 right-0 p-6 z-10 flex flex-col items-center transform transition-transform duration-500 translate-y-4 group-hover:translate-y-0">
+                    <h3 class="text-white font-black text-xl uppercase tracking-[0.2em] mb-2 group-hover:text-[#F2C84B] transition-colors duration-300 drop-shadow-md text-center">Camisetas</h3>
+                    <div class="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                        <span class="text-white/80 text-[10px] font-bold uppercase tracking-[0.2em]">Ver Coleção</span>
+                        <i class="bi bi-arrow-right text-[#F2C84B] text-[12px]"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 border border-white/10 rounded-2xl pointer-events-none group-hover:border-[#F2C84B]/30 transition-colors duration-700"></div>
             </div>
-          </div>
-          <div class="accordion-item bg-transparent">
-            <h2 class="accordion-header">
-              <a href="pages/catalogo.html" class="accordion-button no-arrow text-warning">CATÁLOGO COMPLETO</a>
-            </h2>
-          </div>
-        </div>
-        <div class="menu-footer mt-auto p-4">
-          <a href="pages/sobre.html" class="d-block text-secondary small py-1 text-decoration-none">Sobre a Koketsu</a>
-          <a href="pages/politica.html" class="d-block text-secondary small py-1 text-decoration-none">Privacidade</a>
-          <a href="pages/duvidas.html" class="d-block text-secondary small py-1 text-decoration-none">Suporte</a>
-        </div>
-      </div>
-    </div>
-  </header>
 
-  <!-- Banner Hero com Carousel -->
-  <section class="banner-hero-new">
-    <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-indicators">
-        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active"></button>
-        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1"></button>
-      </div>
-      <div class="carousel-inner">
-        <div class="carousel-item active" data-bs-interval="5000">
-          <img src="assets/img/banner1.png" class="d-block w-100" alt="Banner 1">
-        </div>
-        <div class="carousel-item" data-bs-interval="5000">
-          <img src="assets/img/banner2.png" class="d-block w-100" alt="Banner 2">
-        </div>
-      </div>
-    </div>
-  </section>
+            <!-- Categoria 2: Moletons -->
+            <div class="relative rounded-2xl overflow-hidden flex flex-col group cursor-pointer transition-all duration-700 hover:-translate-y-2 shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(242,200,75,0.2)] h-[400px]" onclick="window.location.href='/pages/catalogo.html?categoria=moletons'">
+                <img src="assets/img/moletom.png" alt="Moletons" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-  <!-- Scroll Indicator -->
-  <div class="scroll-indicator-section">
-    <div class="scroll-indicator">
-      <div class="mouse">
-        <div class="wheel"></div>
-      </div>
-      <span>Role para descobrir</span>
-    </div>
-  </div>
-
-  <!-- Seção de Benefícios Premium -->
-  <section class="benefits-premium">
-    <div class="container">
-      <div class="benefits-grid">
-        <div class="benefit-card reveal">
-          <div class="benefit-icon">
-            <i class="bi bi-truck"></i>
-          </div>
-          <h3>FRETE GRÁTIS</h3>
-          <p>Em compras acima de R$ 349</p>
-        </div>
-        <div class="benefit-card reveal reveal-delay-1">
-          <div class="benefit-icon">
-            <i class="bi bi-shield-check"></i>
-          </div>
-          <h3>COMPRA SEGURA</h3>
-          <p>Proteção total em suas compras</p>
-        </div>
-        <div class="benefit-card reveal reveal-delay-2">
-          <div class="benefit-icon">
-            <i class="bi bi-arrow-repeat"></i>
-          </div>
-          <h3>TROCA FÁCIL</h3>
-          <p>Até 7 dias para trocar</p>
-        </div>
-        <div class="benefit-card reveal reveal-delay-3">
-          <div class="benefit-icon">
-            <i class="bi bi-credit-card"></i>
-          </div>
-          <h3>4X SEM JUROS</h3>
-          <p>Parcele suas compras</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- Seção de Categorias Modernizada -->
-  <section class="categories-modern">
-    <div class="container-fluid px-lg-5">
-      <div class="section-header text-center mb-5">
-        <span class="section-tag">EXPLORE</span>
-        <h2 class="section-title">NOSSAS CATEGORIAS</h2>
-        <div class="gold-divider mx-auto"></div>
-        <p class="section-subtitle">Descubra a coleção perfeita para o seu estilo</p>
-      </div>
-
-      <div class="categories-grid-new">
-        <a href="pages/catalogo.html?cat=Camisetas Oversized" class="category-card-new reveal">
-          <div class="category-image">
-            <img src="assets/img/comp-polo-branca-frente.webp" alt="Camisetas">
-            <div class="category-overlay">
-              <div class="category-hover-content">
-                <i class="bi bi-arrow-right-circle"></i>
-                <span>VER COLEÇÃO</span>
-              </div>
+                <div class="absolute bottom-0 left-0 right-0 p-6 z-10 flex flex-col items-center transform transition-transform duration-500 translate-y-4 group-hover:translate-y-0">
+                    <h3 class="text-white font-black text-xl uppercase tracking-[0.2em] mb-2 group-hover:text-[#F2C84B] transition-colors duration-300 drop-shadow-md text-center">Moletons</h3>
+                    <div class="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                        <span class="text-white/80 text-[10px] font-bold uppercase tracking-[0.2em]">Ver Coleção</span>
+                        <i class="bi bi-arrow-right text-[#F2C84B] text-[12px]"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 border border-white/10 rounded-2xl pointer-events-none group-hover:border-[#F2C84B]/30 transition-colors duration-700"></div>
             </div>
-          </div>
-          <div class="category-info">
-            <span class="category-tag">ESSENTIALS</span>
-            <h3 class="category-name">CAMISETAS OVERSIZED</h3>
-            <p class="category-desc">Conforto e estilo urbano</p>
-          </div>
-        </a>
 
-        <a href="pages/catalogo.html?cat=Moletons" class="category-card-new reveal reveal-delay-1">
-          <div class="category-image">
-            <img src="assets/img/moletom.png" alt="Moletons">
-            <div class="category-overlay">
-              <div class="category-hover-content">
-                <i class="bi bi-arrow-right-circle"></i>
-                <span>VER COLEÇÃO</span>
-              </div>
+            <!-- Categoria 3: Calças -->
+            <div class="relative rounded-2xl overflow-hidden flex flex-col group cursor-pointer transition-all duration-700 hover:-translate-y-2 shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(242,200,75,0.2)] h-[400px]" onclick="window.location.href='/pages/catalogo.html?categoria=calcas'">
+                <img src="assets/img/calca-cargo.png" alt="Calças" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                <div class="absolute bottom-0 left-0 right-0 p-6 z-10 flex flex-col items-center transform transition-transform duration-500 translate-y-4 group-hover:translate-y-0">
+                    <h3 class="text-white font-black text-xl uppercase tracking-[0.2em] mb-2 group-hover:text-[#F2C84B] transition-colors duration-300 drop-shadow-md text-center">Calças</h3>
+                    <div class="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                        <span class="text-white/80 text-[10px] font-bold uppercase tracking-[0.2em]">Ver Coleção</span>
+                        <i class="bi bi-arrow-right text-[#F2C84B] text-[12px]"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 border border-white/10 rounded-2xl pointer-events-none group-hover:border-[#F2C84B]/30 transition-colors duration-700"></div>
             </div>
-          </div>
-          <div class="category-info">
-            <span class="category-tag">WINTER 26</span>
-            <h3 class="category-name">COLEÇÃO MOLETONS</h3>
-            <p class="category-desc">Aquecimento com atitude</p>
-          </div>
-        </a>
 
-        <a href="pages/catalogo.html?cat=Calças" class="category-card-new reveal reveal-delay-2">
-          <div class="category-image">
-            <img src="assets/img/calca-cargo.png" alt="Calças">
-            <div class="category-overlay">
-              <div class="category-hover-content">
-                <i class="bi bi-arrow-right-circle"></i>
-                <span>VER COLEÇÃO</span>
-              </div>
+            <!-- Categoria 4: Tênis -->
+            <div class="relative rounded-2xl overflow-hidden flex flex-col group cursor-pointer transition-all duration-700 hover:-translate-y-2 shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(242,200,75,0.2)] h-[400px]" onclick="window.location.href='/pages/catalogo.html?categoria=calcados'">
+                <img src="assets/img/dn.png" alt="Tênis" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                <div class="absolute bottom-0 left-0 right-0 p-6 z-10 flex flex-col items-center transform transition-transform duration-500 translate-y-4 group-hover:translate-y-0">
+                    <h3 class="text-white font-black text-xl uppercase tracking-[0.2em] mb-2 group-hover:text-[#F2C84B] transition-colors duration-300 drop-shadow-md text-center">Tênis</h3>
+                    <div class="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                        <span class="text-white/80 text-[10px] font-bold uppercase tracking-[0.2em]">Ver Coleção</span>
+                        <i class="bi bi-arrow-right text-[#F2C84B] text-[12px]"></i>
+                    </div>
+                </div>
+                <div class="absolute inset-0 border border-white/10 rounded-2xl pointer-events-none group-hover:border-[#F2C84B]/30 transition-colors duration-700"></div>
             </div>
-          </div>
-          <div class="category-info">
-            <span class="category-tag">STREETSTYLE</span>
-            <h3 class="category-name">CALÇAS CARGO</h3>
-            <p class="category-desc">Funcionalidade premium</p>
-          </div>
-        </a>
+        </div>
+        
+        <div class="text-center">
+            <a href="/pages/catalogo.html" class="inline-block border border-[var(--brand-yellow)] text-[var(--brand-yellow)] px-8 py-3 rounded-full text-xs font-bold uppercase tracking-[0.1em] hover:bg-[var(--brand-yellow)] hover:text-black transition">
+                Ver Catálogo Completo
+            </a>
+        </div>
+    </div>
+</section>
 
+    <!-- VITRINE DINÂMICA (SUBSTITUI SEÇÕES ESTÁTICAS) -->
+    <div id="vitrineTailwind">
+        <div class="py-24 text-center">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--brand-yellow)]"></div>
+        </div>
+    </div>
 
+    <!-- Brand Story Section -->
+    <section class="brand-story-section">
+        <div class="brand-story-content">
+            <h2 class="brand-story-quote">O essencial é invisível aos olhos</h2>
+            <p class="brand-story-text">
+                "A Koketsu nasceu da necessidade de expressar a alma urbana através do luxo silencioso. 
+                Não fazemos apenas roupas, criamos armaduras para quem domina a cidade com elegância e atitude."
+            </p>
+        </div>
+    </section>
 
-        <a href="pages/catalogo.html?cat=Tenis" class="category-card-new reveal reveal-delay-4">
-          <div class="category-image">
-            <img src="assets/img/TN.png" alt="Tênis">
-            <div class="category-overlay">
-              <div class="category-hover-content">
-                <i class="bi bi-arrow-right-circle"></i>
-                <span>VER COLEÇÃO</span>
-              </div>
+    <!-- ─── SEÇÃO DE AVALIAÇÕES ────────────────────────────────────── -->
+    <section id="home-reviews-section" class="py-24 px-4" style="background: linear-gradient(180deg, #000 0%, #080808 100%);">
+        <div class="max-w-6xl mx-auto">
+
+            <!-- Heading -->
+            <div class="text-center mb-16">
+                <span class="inline-block text-[9px] font-black uppercase tracking-[0.5em] text-[var(--brand-yellow)] mb-4 opacity-70">O QUE NOSSOS CLIENTES DIZEM</span>
+                <h2 class="text-white font-black uppercase tracking-[0.15em] text-3xl md:text-4xl" style="font-family: 'Oswald', sans-serif;">
+                    AVALIAÇÕES
+                    <span style="background: linear-gradient(135deg, #F2C84B, #b8880b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">REAIS</span>
+                </h2>
+                <div class="flex items-center justify-center gap-3 mt-5">
+                    <div class="h-px flex-1 max-w-[80px]" style="background: rgba(255,255,255,0.08);"></div>
+                    <div class="flex gap-1" id="home-avg-stars">
+                        <i class="bi bi-star-fill text-[var(--brand-yellow)] text-sm"></i>
+                        <i class="bi bi-star-fill text-[var(--brand-yellow)] text-sm"></i>
+                        <i class="bi bi-star-fill text-[var(--brand-yellow)] text-sm"></i>
+                        <i class="bi bi-star-fill text-[var(--brand-yellow)] text-sm"></i>
+                        <i class="bi bi-star-fill text-[var(--brand-yellow)] text-sm"></i>
+                    </div>
+                    <span id="home-avg-text" class="text-[var(--brand-yellow)] text-xs font-bold">5.0</span>
+                    <div class="h-px flex-1 max-w-[80px]" style="background: rgba(255,255,255,0.08);"></div>
+                </div>
             </div>
-          </div>
-          <div class="category-info">
-            <span class="category-tag">FOOTWEAR</span>
-            <h3 class="category-name">TÊNIS PREMIUM</h3>
-            <p class="category-desc">Pisada com exclusividade</p>
-          </div>
-        </a>
-      </div>
 
-      <div class="text-center mt-5">
-        <a href="pages/catalogo.html" class="btn-view-all">
-          <span>VER CATÁLOGO COMPLETO</span>
-          <i class="bi bi-arrow-right ms-2"></i>
-        </a>
-      </div>
-    </div>
-  </section>
+            <!-- Carousel Wrapper -->
+            <div class="relative group" id="home-reviews-carousel-wrapper">
+                <!-- Seta Esquerda -->
+                <button id="carousel-prev-btn" class="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full border border-[var(--brand-yellow)]/20 bg-black/60 text-white flex items-center justify-center hover:bg-[var(--brand-yellow)] hover:text-black hover:border-[var(--brand-yellow)] transition-all duration-300 opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-20 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                    <i class="bi bi-chevron-left text-lg"></i>
+                </button>
+                
+                <!-- Viewport -->
+                <div class="overflow-hidden cursor-grab active:cursor-grabbing rounded-2xl" id="home-reviews-viewport">
+                    <div class="flex transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]" id="home-reviews-track" style="transform: translateX(0px);">
+                        <!-- Skeleton loader -->
+                        <div class="flex gap-6 w-full shrink-0" id="reviews-skeleton">
+                            <div class="review-skeleton-card flex-1" style="height:220px;"></div>
+                            <div class="review-skeleton-card flex-1 hidden md:block" style="height:220px;"></div>
+                            <div class="review-skeleton-card flex-1 hidden lg:block" style="height:220px;"></div>
+                        </div>
+                    </div>
+                </div>
 
-  <main class="container-fluid px-lg-5 py-5">
-    <div id="vitrine"></div>
-  </main>
+                <!-- Seta Direita -->
+                <button id="carousel-next-btn" class="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full border border-[var(--brand-yellow)]/20 bg-black/60 text-white flex items-center justify-center hover:bg-[var(--brand-yellow)] hover:text-black hover:border-[var(--brand-yellow)] transition-all duration-300 opacity-0 group-hover:opacity-100 focus:opacity-100 disabled:opacity-20 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                    <i class="bi bi-chevron-right text-lg"></i>
+                </button>
+            </div>
 
-  <section class="brand-story">
-    <div class="story-content">
-      <h2 class="story-title">O essencial é invisível aos olhos</h2>
-      <div class="gold-divider mx-auto mb-4"></div>
-      <p class="story-text">
-        "A Koketsu nasceu da necessidade de expressar a alma urbana através do luxo silencioso.
-        Não fazemos apenas roupas, criamos armaduras para quem domina a cidade com elegância e atitude."
-      </p>
-    </div>
-  </section>
+            <!-- Carousel Pagination Dots -->
+            <div class="flex justify-center gap-2 mt-8" id="home-reviews-dots"></div>
 
-  <div class="top-bar">
-    <div class="info-box">
-      <i class="bi bi-clock"></i>
-      <div>
-        <h4>ATENDIMENTO</h4>
-        <p>SEG A SEX DAS 08H-11:30 E DAS 13H-17:30H</p>
-      </div>
-    </div>
 
-    <div class="info-box">
-      <i class="bi bi-box-seam"></i>
-      <div>
-        <h4>TROCAS E DEVOLUÇÕES</h4>
-        <p>ATÉ 7 DIAS PARA TROCAS OU DEVOLUÇÕES</p>
-      </div>
-    </div>
-
-    <div class="info-box">
-      <i class="bi bi-truck"></i>
-      <div>
-        <h4>FRETE</h4>
-        <p>GRÁTIS PARA COMPRAS ACIMA DE R$349<br>PARA TODO O BRASIL</p>
-      </div>
-    </div>
-
-    <div class="info-box">
-      <i class="bi bi-credit-card"></i>
-      <div>
-        <h4>PARCELAMENTO</h4>
-        <p>EM ATÉ 4X SEM JUROS NO CARTÃO</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Review Carousel Section -->
-  <section class="review-carousel-section py-5 pb-5 mt-5">
-    <div class="container py-5">
-      <div class="text-center mb-5">
-        <span class="catalog-badge mb-3">ELITE KOKETSU</span>
-        <h2 class="h2-titulo mt-2">O QUE DIZEM NOSSOS CLIENTES</h2>
-        <div class="gold-divider mx-auto"></div>
-      </div>
-
-      <div id="home-reviews-container">
-        <!-- Loaded via JS -->
-        <div class="text-center py-5">
-          <div class="spinner-border text-warning" role="status">
-            <span class="visually-hidden">Carregando...</span>
-          </div>
+            <!-- CTA -->
+            <div class="text-center mt-14" id="reviews-cta" style="display:none;">
+                <a href="/pages/catalogo.html" class="inline-flex items-center gap-3 border border-[var(--brand-yellow)]/30 text-[var(--brand-yellow)] px-8 py-3 rounded-full text-xs font-bold uppercase tracking-[0.2em] hover:bg-[var(--brand-yellow)] hover:text-black transition-all duration-300">
+                    <i class="bi bi-bag-plus-fill"></i> Comprar e Avaliar
+                </a>
+            </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Ticker Premium (Movido para baixo) -->
-  <div class="announcement-ticker">
-    <div class="ticker-content">
-      <div class="ticker-item"><i class="bi bi-truck"></i> FRETE GRÁTIS ACIMA DE R$349</div>
-      <div class="ticker-item"><i class="bi bi-lightning-charge"></i> NOVIDADES TODA SEMANA</div>
-      <div class="ticker-item"><i class="bi bi-credit-card"></i> 4X SEM JUROS</div>
-      <div class="ticker-item"><i class="bi bi-shield-check"></i> COMPRA 100% SEGURA</div>
-      <!-- Repetição para o loop infinito -->
-      <div class="ticker-item"><i class="bi bi-truck"></i> FRETE GRÁTIS ACIMA DE R$349</div>
-      <div class="ticker-item"><i class="bi bi-lightning-charge"></i> NOVIDADES TODA SEMANA</div>
-      <div class="ticker-item"><i class="bi bi-credit-card"></i> 4X SEM JUROS</div>
-      <div class="ticker-item"><i class="bi bi-shield-check"></i> COMPRA 100% SEGURA</div>
-    </div>
-  </div>
+    <style>
+    /* ── Review Skeleton ──────────────────────────────── */
+    .review-skeleton-card {
+        background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
+        background-size: 200% 100%;
+        animation: shimmerSkeleton 1.5s infinite;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    @keyframes shimmerSkeleton {
+        0%   { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
 
-  <footer>
-    <div class="container">
-      <div class="coluna-footer newsletter">
-        <h3 class="titulo">Faça parte da nossa família e receba acessos exclusivos e novidades.</h3>
-        <p>Inscreva-se para ter acesso a exclusivo á venda antecipada, novidades promoções.</p>
-        <form class="form-email" id="formNewsletter">
-          <div class="input-group">
-            <input type="email" id="newsletterEmail" name="email_newsletter" placeholder="Seu e-mail" required />
-            <button type="submit" id="btnNewsletter">OK</button>
-          </div>
-        </form>
-        <div class="redes-sociais-icones mt-4">
-          <a href="#"><i class="bi bi-instagram me-3"></i></a>
-          <a href="#"><i class="bi bi-facebook me-3"></i></a>
-          <a href="#"><i class="bi bi-tiktok"></i></a>
+    /* ── Review Carousel ──────────────────────────────── */
+    #home-reviews-track {
+        display: flex;
+        gap: 24px;
+        width: 100%;
+        will-change: transform;
+    }
+
+    .carousel-item-review {
+        flex-shrink: 0;
+        width: 100%;
+        transition: opacity 0.4s ease;
+    }
+    @media (min-width: 641px) {
+        .carousel-item-review {
+            width: calc((100% - 24px) / 2); /* 2 itens em tablets */
+        }
+    }
+    @media (min-width: 1025px) {
+        .carousel-item-review {
+            width: calc((100% - 48px) / 3); /* 3 itens em desktop */
+        }
+    }
+
+    /* Paginação por pílula premium */
+    .carousel-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .carousel-dot.active {
+        background: var(--brand-yellow);
+        width: 24px;
+        border-radius: 4px;
+        box-shadow: 0 0 10px rgba(242, 200, 75, 0.4);
+    }
+
+    @media (hover: none) {
+        #carousel-prev-btn, #carousel-next-btn {
+            opacity: 0.8 !important;
+        }
+    }
+
+    /* ── Review Cards (Grid Layout) ───────────────────── */
+    .home-review-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+    }
+    @media (max-width: 900px) { .home-review-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .home-review-grid { grid-template-columns: 1fr; } }
+
+    .home-review-card {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 20px;
+        padding: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .home-review-card::before {
+        content: '"';
+        position: absolute;
+        top: -10px; right: 20px;
+        font-size: 8rem;
+        font-family: Georgia, serif;
+        color: rgba(242,200,75,0.04);
+        line-height: 1;
+        pointer-events: none;
+    }
+    .home-review-card:hover {
+        border-color: rgba(242,200,75,0.2);
+        background: rgba(255,255,255,0.04);
+        transform: translateY(-6px);
+        box-shadow: 0 20px 50px rgba(242,200,75,0.08);
+    }
+
+    .hrc-stars { display: flex; gap: 3px; font-size: 0.8rem; color: #F2C84B; }
+
+    .hrc-comment {
+        font-size: 0.88rem;
+        color: rgba(255,255,255,0.6);
+        line-height: 1.7;
+        font-style: italic;
+        flex: 1;
+    }
+
+    .hrc-footer {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .hrc-avatar {
+        width: 40px; height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #F2C84B, #b8880b);
+        color: #000;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 900;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .hrc-name {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .hrc-product {
+        font-size: 0.68rem;
+        color: rgba(255,255,255,0.3);
+        margin-top: 2px;
+    }
+
+    .hrc-badge {
+        margin-left: auto;
+        background: rgba(37,211,102,0.1);
+        color: #25D366;
+        border: 1px solid rgba(37,211,102,0.2);
+        border-radius: 20px;
+        padding: 3px 10px;
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        flex-shrink: 0;
+    }
+    </style>
+
+<footer></footer>
+
+
+<!-- Modals Container: Utilizado pelo utils.js para injetar os modais do Bootstrap -->
+<!-- <header> is intentionally omitted here to prevent injection of the default Bootstrap header by utils.js, as controlled below -->
+
+<!-- Bootstrap JS needed for offcanvas and modals -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Global scripts -->
+<script src="assets/js/utils.js?v=2.0"></script>
+<script>
+
+    
+    document.addEventListener("DOMContentLoaded", () => {
+        // Inicializa parciais normais
+        window.Utils.loadPartials();
+        
+        // Initialize Search Manager with Tailwind IDs
+        if(window.SearchManager) {
+            window.SearchManager.init("globalSearchTailwind", "searchResultsTailwind");
+        }
+        
+        // Newsletter
+        const nsForm = document.getElementById('newsletterFormTailwind');
+        if(nsForm) {
+            nsForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('newsletterEmailTailwind').value;
+                const msgEl = document.getElementById('newsletterMessageTailwind');
+                msgEl.classList.remove('d-none', 'text-success', 'text-danger');
+                
+                try {
+                    const response = await fetch('/api/newsletter/inscrever', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email_newsletter: email })
+                    });
+                    const result = await response.json();
+                    msgEl.textContent = result.message || 'Membro adicionado à Whitelist!';
+                    msgEl.classList.add(result.success ? 'text-success' : 'text-danger');
+                    if(result.success) nsForm.reset();
+                } catch (error) {
+                    msgEl.textContent = 'Erro ao processar. Tente novamente.';
+                    msgEl.classList.add('text-danger');
+                }
+            });
+        }
+    });
+</script>
+
+<!-- AI Assistant Widget -->
+<div id="ai-chat-widget" class="fixed bottom-6 right-6">
+    <!-- Floating Button -->
+    <button id="ai-toggle-btn" class="w-14 h-14 bg-black text-[var(--brand-yellow)] rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform animate-pulse-yellow border-2 border-[var(--brand-yellow)]">
+        <i class="bi bi-stars text-2xl"></i>
+    </button>
+
+    <!-- Chat Window -->
+    <div id="ai-chat-window" class="chat-window absolute bottom-20 right-0 w-[350px] bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.2)] border border-gray-100 overflow-hidden">
+        <!-- Header -->
+        <div class="bg-black p-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-[var(--brand-yellow)] rounded-full flex items-center justify-center">
+                    <i class="bi bi-stars text-black"></i>
+                </div>
+                <div>
+                    <h4 class="text-white text-xs font-bold uppercase tracking-wider">Concierge Koketsu</h4>
+                    <p class="text-[10px] text-gray-400">Estilista Pessoal AI</p>
+                </div>
+            </div>
+            <button id="ai-close-btn" class="text-gray-400 hover:text-white transition">
+                <i class="bi bi-x-lg"></i>
+            </button>
         </div>
-      </div>
 
-      <div class="coluna-footer">
-        <h3 class="titulo">INSTITUCIONAL</h3>
-        <a href="pages/sobre.html">Sobre a Koketsu</a>
-        <a href="pages/politica.html">Política de Privacidade</a>
-        <a href="pages/fidelidade.html">Programa de Fidelidade</a>
-      </div>
-
-      <div class="coluna-footer">
-        <h3 class="titulo">AJUDA</h3>
-        <a href="pages/duvidas.html">Dúvidas Frequentes</a>
-        <a href="pages/Trocas.html">Trocas e Devoluções</a>
-        <a href="pages/frete.html">Frete e Entrega</a>
-      </div>
-
-      <div class="coluna-footer">
-        <h3 class="titulo">FALE CONOSCO</h3>
-        <p class="small">Seg a Sáb (exceto feriados)<br>09h às 19h</p>
-        <p class="email-sac">sac@koketsu.com.br</p>
-        <a href="https://WhatsApp.com" target="_blank" class="btn-whatsapp-footer">
-          WHATSAPP <i class="bi bi-whatsapp"></i>
-        </a>
-      </div>
-    </div>
-
-    <div class="copyright-container">
-      <div class="container text-center">
-        <p>© 2026 KOKETSU GRIFE. TODOS OS DIREITOS RESERVADOS.</p>
-        <div class="pagamentos">
-          <i class="bi bi-credit-card-2-back mx-1"></i>
-          <i class="bi bi-qr-code mx-1"></i>
-          <i class="bi bi-bank mx-1"></i>
+        <!-- Messages Area -->
+        <div id="ai-chat-messages" class="h-80 overflow-y-auto p-4 space-y-4 bg-gray-50/50">
+            <div class="message-ai p-3 text-xs leading-relaxed max-w-[85%]">
+                Olá! Sou seu Concierge Koketsu. Como posso ajudar você a elevar seu estilo hoje?
+            </div>
         </div>
-      </div>
-    </div>
-  </footer>
 
-  <!-- Modal de Login -->
-  <div id="loginModalOverlay" class="login-modal-overlay">
-    <div class="login-modal-card">
-      <button id="loginModalClose" class="login-modal-close" aria-label="Fechar">&times;</button>
-      <img src="assets/img/logo2026.png" alt="Koketsu" class="login-modal-logo">
-      <h2 class="login-modal-title">BEM-VINDO</h2>
-      <p class="login-modal-subtitle">Acesse sua área exclusiva</p>
-
-      <div id="loginModalError" class="login-modal-error"></div>
-
-      <form id="loginModalForm" class="login-modal-form">
-        <div class="form-group-auth">
-          <input type="email" id="loginModalEmail" placeholder="E-mail de acesso" required autocomplete="email">
-          <i class="bi bi-envelope"></i>
+        <!-- Input Area -->
+        <div class="p-4 border-t border-gray-100 bg-white">
+            <form id="ai-chat-form" class="flex items-center space-x-2">
+                <input type="text" id="ai-user-input" placeholder="Pergunte sobre estilo..." class="flex-1 bg-gray-100 border-none rounded-xl px-4 py-2 text-xs focus:ring-1 focus:ring-[var(--brand-yellow)] transition">
+                <button type="submit" class="bg-black text-white w-9 h-9 rounded-xl flex items-center justify-center hover:bg-gray-800 transition">
+                    <i class="bi bi-send-fill text-sm"></i>
+                </button>
+            </form>
         </div>
-        <div class="form-group-auth">
-          <input type="password" id="loginModalSenha" placeholder="Sua senha secreta" required
-            autocomplete="current-password">
-          <i class="bi bi-lock"></i>
-        </div>
-        <button type="submit" id="loginModalSubmit" class="login-modal-btn">
-          <span class="spinner"></span> Entrar
-        </button>
-      </form>
-
-      <div class="login-modal-links">
-        Não faz parte da elite? <a href="/backend/register">Cadastre-se</a>
-      </div>
     </div>
-  </div>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/js/utils.js?v=1.1"></script>
-  <script src="assets/js/animations.js?v=1.1"></script>
-  <script src="assets/js/navbar.js?v=1.1"></script>
-  <script src="assets/js/search.js?v=1.1"></script>
-  <script src="assets/js/accordion.js?v=1.1"></script>
-  <script src="assets/js/cart.js?v=1.1"></script>
-  <script src="assets/js/products.js?v=1.1"></script>
-  <script src="assets/js/reviews.js?v=1.1"></script>
-  <script src="assets/js/auth.js?v=1.1"></script>
-  <script src="assets/js/newsletter.js?v=1.1"></script>
+<!-- Scripts do site -->
+<script src="assets/js/animations.js?v=2.0"></script>
+<script src="assets/js/navbar.js?v=2.0"></script>
+<script src="assets/js/search.js?v=2.1"></script>
+<script src="assets/js/cart.js?v=2.0"></script>
+<script src="assets/js/products.js?v=2.2"></script>
+<script src="assets/js/auth.js?v=2.0"></script>
+<script src="assets/js/ai-assistant.js?v=2.0"></script>
+<script src="assets/js/mega-menu.js?v=1.1"></script>
+<script src="assets/js/reviews.js?v=1.1"></script>
 
-<script src="assets/js/categorias.js"></script>
 </body>
-
 </html>
-
-

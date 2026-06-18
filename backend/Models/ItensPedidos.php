@@ -93,20 +93,24 @@ function buscarItensPorPedido($id_pedido)
     }
    
 function inserirItemPedido($id_pedido, $id_produto, $quantidade, $preco_unitario) {
+        $stmtMax = $this->db->query("SELECT COALESCE(MAX(id_itens_pedidos), 0) + 1 AS next_id FROM tbl_itens_pedidos");
+        $nextId = (int) $stmtMax->fetch(PDO::FETCH_ASSOC)['next_id'];
+
         $sql = "INSERT INTO tbl_itens_pedidos 
-                (id_pedido, id_produto, quantidade, preco_unitario, criado_em)
-                VALUES (:id_pedido, :id_produto, :quantidade, :preco_unitario, NOW())";
+                (id_itens_pedidos, id_pedido, id_produto, quantidade, preco_unitario, criado_em)
+                VALUES (:id_itens_pedidos, :id_pedido, :id_produto, :quantidade, :preco_unitario, NOW())";
                 
         try {
             $stmt = $this->db->prepare($sql);
 
+            $stmt->bindParam(':id_itens_pedidos', $nextId, PDO::PARAM_INT);
             $stmt->bindParam(':id_pedido', $id_pedido);
             $stmt->bindParam(':id_produto', $id_produto);
             $stmt->bindParam(':quantidade', $quantidade);
             $stmt->bindParam(':preco_unitario', $preco_unitario);
 
             if($stmt->execute()) {
-                return $this->db->lastInsertId();
+                return $nextId;
             } else {
                 return false;
             }

@@ -31,19 +31,45 @@ class PublicApiController
     public function getProdutos()
     {
         $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
-        $registros_por_pagina = 10;
+        $registros_por_pagina = isset($_GET['limit']) ? max(1, (int) $_GET['limit']) : 10;
         $offset = ($page - 1) * $registros_por_pagina;
 
+        $categoria_id = isset($_GET['categoria_id']) ? (int)$_GET['categoria_id'] : null;
+        $categoryIdsList = [];
+        if ($categoria_id !== null) {
+            // Buscar nome da categoria
+            $stmtCatName = $this->db->prepare("SELECT nome_categorias FROM tbl_categorias WHERE id_categorias = ?");
+            $stmtCatName->execute([$categoria_id]);
+            $catName = $stmtCatName->fetchColumn();
+            if ($catName) {
+                // Buscar todas as categorias com o mesmo nome
+                $stmtAllCats = $this->db->prepare("SELECT id_categorias FROM tbl_categorias WHERE nome_categorias = ? AND excluido_em IS NULL");
+                $stmtAllCats->execute([$catName]);
+                $categoryIdsList = $stmtAllCats->fetchAll(\PDO::FETCH_COLUMN);
+            }
+            if (empty($categoryIdsList)) {
+                $categoryIdsList = [$categoria_id];
+            }
+        }
+
+        $whereCategory = "";
+        if (!empty($categoryIdsList)) {
+            $inClause = implode(',', array_map('intval', $categoryIdsList));
+            $whereCategory = " AND id_categoria IN ($inClause)";
+        }
+
         // Total de registros
-        $sqlCount = "SELECT COUNT(*) as total FROM tbl_produtos WHERE excluido_em IS NULL";
+        $sqlCount = "SELECT COUNT(*) as total FROM tbl_produtos WHERE excluido_em IS NULL" . $whereCategory;
         $stmtCount = $this->db->prepare($sqlCount);
         $stmtCount->execute();
         $total = $stmtCount->fetch(\PDO::FETCH_ASSOC)['total'];
         $total_paginas = ceil($total / $registros_por_pagina);
 
         // Dados paginados
-        $sql = "SELECT * FROM tbl_produtos WHERE excluido_em IS NULL LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
+        $sql = "SELECT * FROM tbl_produtos WHERE excluido_em IS NULL" . $whereCategory . " LIMIT :limit OFFSET :offset";
         $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', $registros_por_pagina, \PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
         $stmt->execute();
         $dados = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
@@ -125,56 +151,60 @@ class PublicApiController
         header('Content-Type: application/json; charset=utf-8');
 
         try {
-            // 1. Buscar todas as categorias ativas
-            $sqlCat = "SELECT id_categorias, nome_categorias FROM tbl_categorias WHERE excluido_em IS NULL";
-            $stmtCat = $this->db->prepare($sqlCat);
-            $stmtCat->execute();
-            $categorias = $stmtCat->fetchAll(\PDO::FETCH_ASSOC);
-
             $resultado = [];
 
-            foreach ($categorias as $cat) {
-                $itemCategoria = [
-                    'categoria' => $cat['nome_categorias'],
-                    'itens' => []
-                ];
+            // 1. MAIS VENDIDOS (Top 8 baseado em quantidade vendida)
+            $sqlBest = "SELECT p.id_produto, p.nome_produtos, p.preco_produtos, p.imagem_produtos, p.descricao_produtos, SUM(ip.quantidade) as total_vendas
+                        FROM tbl_produtos p
+                        JOIN tbl_itens_pedidos ip ON p.id_produto = ip.id_produto
+                        WHERE p.excluido_em IS NULL
+                        GROUP BY p.id_produto
+                        ORDER BY total_vendas DESC
+                        LIMIT 8";
+            $stmtBest = $this->db->prepare($sqlBest);
+            $stmtBest->execute();
+            $bestSellers = $stmtBest->fetchAll(\PDO::FETCH_ASSOC);
 
-                // 2. Buscar produtos da categoria
-                $sqlProd = "SELECT id_produto, nome_produtos, preco_produtos, imagem_produtos, estoque_produtos 
-                           FROM tbl_produtos 
-                           WHERE id_categoria = ? AND excluido_em IS NULL AND estoque_produtos > 0";
-                $stmtProd = $this->db->prepare($sqlProd);
-                $stmtProd->execute([$cat['id_categorias']]);
-                $produtos = $stmtProd->fetchAll(\PDO::FETCH_ASSOC);
-
-                foreach ($produtos as $prod) {
-                    // 3. Buscar Tamanhos
-                    $sqlTamanhos = "SELECT tamanho_tamanhos FROM tbl_tamanhos WHERE id_produto = ? AND excluido_em IS NULL";
-                    $stmtT = $this->db->prepare($sqlTamanhos);
-                    $stmtT->execute([$prod['id_produto']]);
-                    $tamanhos = $stmtT->fetchAll(\PDO::FETCH_COLUMN);
-
-                    // 4. Buscar Cores
-                    $sqlCores = "SELECT cor_cores FROM tbl_cores WHERE id_produto = ? AND excluido_em IS NULL";
-                    $stmtC = $this->db->prepare($sqlCores);
-                    $stmtC->execute([$prod['id_produto']]);
-                    $cores = $stmtC->fetchAll(\PDO::FETCH_COLUMN);
-
-                    // 5. Formatar item
-                    $itemCategoria['itens'][] = [
-                        'id' => (int) $prod['id_produto'],
-                        'nome' => $prod['nome_produtos'],
-                        'preco' => (float) $prod['preco_produtos'],
-                        'img' => $this->converterParaBase64('backend/upload/' . $prod['imagem_produtos']),
-                        'tamanhos' => $tamanhos,
-                        'cores' => $cores,
-                        'oferta' => null, // Opcional, se tiver lógica futura
-                        'desconto' => null
-                    ];
+            if (!empty($bestSellers)) {
+                $sectionBest = ['categoria' => 'MAIS VENDIDOS', 'tag' => 'O FAVORITO DO ACERVO', 'itens' => []];
+                foreach ($bestSellers as $prod) {
+                    $sectionBest['itens'][] = $this->formatarProdutoVitrine($prod);
                 }
+                $resultado[] = $sectionBest;
+            }
 
-                if (!empty($itemCategoria['itens'])) {
-                    $resultado[] = $itemCategoria;
+            // 2. CATEGORIAS ESPECÍFICAS (CAMISAS, CALÇAS, ACESSÓRIOS)
+            $categoriasAlvo = [
+                'CAMISAS' => ['tag' => 'ESSENTIALS', 'filtros' => ['camisa', 'camiseta', 't-shirt']],
+                'CALÇAS' => ['tag' => 'STREETSTYLE', 'filtros' => ['calça', 'calca', 'jeans']],
+                'ACESSÓRIOS' => ['tag' => 'DETALHES', 'filtros' => ['acessório', 'acessorio', 'boné', 'cinto', 'carteira']]
+            ];
+
+            foreach ($categoriasAlvo as $label => $config) {
+                $filtros = array_map(fn($f) => "nome_categorias LIKE '%$f%'", $config['filtros']);
+                $whereFiltro = "(" . implode(" OR ", $filtros) . ")";
+
+                $sqlCat = "SELECT id_categorias FROM tbl_categorias WHERE $whereFiltro AND excluido_em IS NULL LIMIT 1";
+                $stmtCat = $this->db->prepare($sqlCat);
+                $stmtCat->execute();
+                $catId = $stmtCat->fetchColumn();
+
+                if ($catId) {
+                    $sqlProd = "SELECT id_produto, nome_produtos, preco_produtos, imagem_produtos, descricao_produtos 
+                                FROM tbl_produtos 
+                                WHERE id_categoria = ? AND excluido_em IS NULL AND estoque_produtos > 0
+                                LIMIT 12";
+                    $stmtProd = $this->db->prepare($sqlProd);
+                    $stmtProd->execute([$catId]);
+                    $produtos = $stmtProd->fetchAll(\PDO::FETCH_ASSOC);
+
+                    if (!empty($produtos)) {
+                        $section = ['categoria' => $label, 'tag' => $config['tag'], 'itens' => []];
+                        foreach ($produtos as $prod) {
+                            $section['itens'][] = $this->formatarProdutoVitrine($prod);
+                        }
+                        $resultado[] = $section;
+                    }
                 }
             }
 
@@ -184,6 +214,63 @@ class PublicApiController
             echo json_encode(['error' => $e->getMessage()]);
         }
         exit;
+    }
+
+    private function formatarProdutoVitrine($prod)
+    {
+        // Buscar galeria
+        $galeriaUrls = [];
+        $stmtGaleria = $this->db->prepare("SELECT caminho_imagem FROM tbl_imagem WHERE id_produto = ?");
+        $stmtGaleria->execute([$prod['id_produto']]);
+        $imagens = $stmtGaleria->fetchAll(\PDO::FETCH_ASSOC);
+        foreach ($imagens as $img) {
+            $caminho = $img['caminho_imagem'];
+            if (!str_starts_with($caminho, 'http') && !str_starts_with($caminho, '/')) {
+                $caminho = '/backend/upload/' . $caminho;
+            }
+            $galeriaUrls[] = $caminho;
+        }
+
+        // Determinar imagem principal correta
+        $imgPrincipal = $prod['imagem_produtos'];
+        if (!str_starts_with($imgPrincipal, 'http') && !str_starts_with($imgPrincipal, '/')) {
+            $imgPrincipal = '/backend/upload/' . $imgPrincipal;
+        }
+
+        // Buscar cores vinculadas ao produto
+        $cores = [];
+        $stmtCores = $this->db->prepare("SELECT cor_cores FROM tbl_cores WHERE id_produto = ? AND excluido_em IS NULL");
+        $stmtCores->execute([$prod['id_produto']]);
+        $coresResult = $stmtCores->fetchAll(\PDO::FETCH_ASSOC);
+        foreach ($coresResult as $c) {
+            if (!empty($c['cor_cores'])) {
+                $cores[] = trim($c['cor_cores']);
+            }
+        }
+
+        // Buscar tamanhos vinculados ao produto
+        $tamanhos = [];
+        $stmtTamanhos = $this->db->prepare("SELECT tamanho_tamanhos FROM tbl_tamanhos WHERE id_produto = ? AND excluido_em IS NULL");
+        $stmtTamanhos->execute([$prod['id_produto']]);
+        $tamanhosResult = $stmtTamanhos->fetchAll(\PDO::FETCH_ASSOC);
+        foreach ($tamanhosResult as $t) {
+            if (!empty($t['tamanho_tamanhos'])) {
+                $tamanhos[] = trim($t['tamanho_tamanhos']);
+            }
+        }
+
+        return [
+            'id' => (int) $prod['id_produto'],
+            'nome' => $prod['nome_produtos'],
+            'descricao' => $prod['descricao_produtos'] ?? '',
+            'preco' => (float) $prod['preco_produtos'],
+            'img' => $imgPrincipal, // Não usar base64 para evitar peso excessivo, URLs funcionam
+            'galeria' => $galeriaUrls,
+            'cores' => $cores,
+            'tamanhos' => $tamanhos,
+            'oferta' => null,
+            'desconto' => null
+        ];
     }
 
     // ==================== PEDIDOS ====================
@@ -254,7 +341,6 @@ class PublicApiController
 
         $id_perfil = $data['id_perfil'] ?? null;
         $data_pedido = $data['data_pedido'] ?? date('Y-m-d H:i:s');
-        $total_pedido = $data['total_pedido'] ?? 0;
         $status_pedido = $data['status_pedido'] ?? 'pendente';
         $itens = $data['itens'] ?? [];
 
@@ -264,17 +350,45 @@ class PublicApiController
             exit;
         }
 
+        // ==========================================
+        // SECURITY FIX: Calculate true total from DB
+        // ==========================================
+        $total_pedido = 0;
+        $produtosModel = new \App\Koketsu\Models\Produtos($this->db);
+        $itensValidados = [];
+
+        if (!empty($itens) && is_array($itens)) {
+            foreach ($itens as $item) {
+                $id_produto = $item['id_produto'];
+                $quantidade = (int) $item['quantidade'];
+                
+                $produtoDB = $produtosModel->buscarProdutoPorId($id_produto);
+                
+                if ($produtoDB) {
+                    $preco_real = (float) $produtoDB['preco_produtos'];
+                    $total_pedido += ($preco_real * $quantidade);
+                    
+                    // Store validated item to insert later
+                    $itensValidados[] = [
+                        'id_produto' => $id_produto,
+                        'quantidade' => $quantidade,
+                        'preco_unitario' => $preco_real
+                    ];
+                }
+            }
+        }
+
         $id_pedido = $this->pedidosModel->inserirPedido($id_perfil, $data_pedido, $total_pedido, $status_pedido);
 
         if ($id_pedido) {
-            if (!empty($itens) && is_array($itens)) {
+            if (!empty($itensValidados)) {
                 $itensModel = new ItensPedidos($this->db);
-                foreach ($itens as $item) {
+                foreach ($itensValidados as $itemVal) {
                     $itensModel->inserirItemPedido(
                         $id_pedido,
-                        $item['id_produto'],
-                        $item['quantidade'],
-                        $item['preco_unitario']
+                        $itemVal['id_produto'],
+                        $itemVal['quantidade'],
+                        $itemVal['preco_unitario']
                     );
                 }
             }
@@ -392,14 +506,22 @@ class PublicApiController
         $offset = ($page - 1) * $registros_por_pagina;
 
         // Total de registros
-        $sqlCount = "SELECT COUNT(*) as total FROM tbl_categorias WHERE excluido_em IS NULL";
+        $sqlCount = "SELECT COUNT(DISTINCT c.nome_categorias) as total 
+                     FROM tbl_categorias c
+                     INNER JOIN tbl_produtos p ON c.id_categorias = p.id_categoria
+                     WHERE c.excluido_em IS NULL AND p.excluido_em IS NULL";
         $stmtCount = $this->db->prepare($sqlCount);
         $stmtCount->execute();
         $total = $stmtCount->fetch(\PDO::FETCH_ASSOC)['total'];
         $total_paginas = ceil($total / $registros_por_pagina);
 
         // Dados paginados
-        $sql = "SELECT id_categorias, nome_categorias FROM tbl_categorias WHERE excluido_em IS NULL LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
+        $sql = "SELECT MIN(c.id_categorias) AS id_categorias, c.nome_categorias 
+                FROM tbl_categorias c
+                INNER JOIN tbl_produtos p ON c.id_categorias = p.id_categoria
+                WHERE c.excluido_em IS NULL AND p.excluido_em IS NULL
+                GROUP BY c.nome_categorias
+                LIMIT " . intval($registros_por_pagina) . " OFFSET " . intval($offset);
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         $categorias = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -730,6 +852,15 @@ class PublicApiController
         $avaliacaoModel = new \App\Koketsu\Models\Avaliacao(Database::getInstance());
         $avaliacoes = $avaliacaoModel->buscarAvaliacoes();
 
+        if ($avaliacoes) {
+            foreach ($avaliacoes as &$avaliacao) {
+                if (isset($avaliacao['comentario_avaliacoes'])) {
+                    $avaliacao['comentario_avaliacoes'] = htmlspecialchars($avaliacao['comentario_avaliacoes'] ?? '', ENT_QUOTES, 'UTF-8');
+                }
+            }
+            unset($avaliacao);
+        }
+
         header('Content-Type: application/json');
         echo json_encode(['status' => 'success', 'data' => $avaliacoes]);
         exit;
@@ -750,6 +881,15 @@ class PublicApiController
         $avaliacaoModel = new \App\Koketsu\Models\Avaliacao(Database::getInstance());
         $avaliacoes = $avaliacaoModel->buscarPorProduto($id_produto);
 
+        if ($avaliacoes) {
+            foreach ($avaliacoes as &$avaliacao) {
+                if (isset($avaliacao['comentario_avaliacoes'])) {
+                    $avaliacao['comentario_avaliacoes'] = htmlspecialchars($avaliacao['comentario_avaliacoes'] ?? '', ENT_QUOTES, 'UTF-8');
+                }
+            }
+            unset($avaliacao);
+        }
+
         header('Content-Type: application/json');
         echo json_encode(['status' => 'success', 'data' => $avaliacoes]);
         exit;
@@ -759,6 +899,15 @@ class PublicApiController
     {
         $avaliacaoModel = new \App\Koketsu\Models\Avaliacao(Database::getInstance());
         $avaliacoes = $avaliacaoModel->buscarUltimasAvaliacoes(6);
+
+        if ($avaliacoes) {
+            foreach ($avaliacoes as &$avaliacao) {
+                if (isset($avaliacao['comentario_avaliacoes'])) {
+                    $avaliacao['comentario_avaliacoes'] = htmlspecialchars($avaliacao['comentario_avaliacoes'] ?? '', ENT_QUOTES, 'UTF-8');
+                }
+            }
+            unset($avaliacao);
+        }
 
         header('Content-Type: application/json');
         echo json_encode(['status' => 'success', 'data' => $avaliacoes]);
@@ -772,6 +921,9 @@ class PublicApiController
 
         header('Content-Type: application/json');
         if ($avaliacao) {
+            if (isset($avaliacao['comentario_avaliacoes'])) {
+                $avaliacao['comentario_avaliacoes'] = htmlspecialchars($avaliacao['comentario_avaliacoes'] ?? '', ENT_QUOTES, 'UTF-8');
+            }
             echo json_encode(['status' => 'success', 'data' => $avaliacao]);
         } else {
             http_response_code(404);
@@ -787,13 +939,22 @@ class PublicApiController
 
         if (!$data || !isset($data['id_produto']) || !isset($data['id_usuarios']) || !isset($data['nota_avaliacoes'])) {
             http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Dados incompletos']);
+            echo json_encode(['status' => 'error', 'message' => 'Dados incompletos. Envie id_produto, id_usuarios e nota_avaliacoes.']);
+            exit;
+        }
+
+        // Validar nota entre 1 e 5
+        $nota = (int) $data['nota_avaliacoes'];
+        if ($nota < 1 || $nota > 5) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'A nota deve ser entre 1 e 5.']);
             exit;
         }
 
         $db = Database::getInstance();
         $avaliacaoModel = new \App\Koketsu\Models\Avaliacao($db);
 
+        // Buscar perfil do usuário
         $stmt = $db->prepare("SELECT id_perfil FROM tbl_perfil WHERE id_usuarios = :id_usuario LIMIT 1");
         $stmt->bindParam(':id_usuario', $data['id_usuarios']);
         $stmt->execute();
@@ -801,22 +962,48 @@ class PublicApiController
 
         if (!$perfil) {
             http_response_code(403);
-            echo json_encode(['status' => 'error', 'message' => 'Perfil do usuário não encontrado']);
+            echo json_encode(['status' => 'error', 'message' => 'Perfil do usuário não encontrado. Complete seu cadastro primeiro.']);
             exit;
         }
 
-        $res = $avaliacaoModel->inserirAvaliacao(
-            $data['id_produto'],
-            $perfil['id_perfil'],
-            $data['nota_avaliacoes'],
-            $data['comentario_avaliacoes'] ?? ''
-        );
+        // Verificar se o usuário comprou o produto
+        $comprou = $avaliacaoModel->verificarCompraConfirmada($data['id_produto'], $perfil['id_perfil']);
+        if (!$comprou) {
+            http_response_code(403);
+            echo json_encode(['status' => 'error', 'message' => 'Apenas clientes que compraram este produto podem avaliá-lo.']);
+            exit;
+        }
+
+        // Sanitizar comentário
+        $comentario = htmlspecialchars(trim($data['comentario_avaliacoes'] ?? ''), ENT_QUOTES, 'UTF-8');
+
+        // Verificar se já existe avaliação para editar, ou se deve criar nova
+        $existente = $avaliacaoModel->verificarAvaliacaoExistente($data['id_produto'], $perfil['id_perfil']);
+        
+        if ($existente) {
+            // Editar
+            $res = $avaliacaoModel->atualizarAvaliacao(
+                $existente['id_avaliacoes'],
+                $nota,
+                $comentario
+            );
+            $msg = 'Avaliação atualizada com sucesso!';
+        } else {
+            // Inserir nova
+            $res = $avaliacaoModel->inserirAvaliacao(
+                $data['id_produto'],
+                $perfil['id_perfil'],
+                $nota,
+                $comentario
+            );
+            $msg = 'Avaliação enviada com sucesso!';
+        }
 
         if ($res) {
-            echo json_encode(['status' => 'success', 'message' => 'Avaliação enviada!']);
+            echo json_encode(['status' => 'success', 'message' => $msg]);
         } else {
             http_response_code(500);
-            echo json_encode(['status' => 'error', 'message' => 'Erro ao salvar avaliação. Certifique-se de que o produto já foi entregue.']);
+            echo json_encode(['status' => 'error', 'message' => 'Erro ao salvar avaliação. Tente novamente.']);
         }
         exit;
     }

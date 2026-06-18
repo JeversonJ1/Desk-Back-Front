@@ -4,7 +4,7 @@
 // Carrega autoload do Composer
 require __DIR__ . '/../../vendor/autoload.php';
 
-use App\Koketsu\Controles\Api\AuthApiController;
+
 
 // URI e método da requisição
 $uri = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
@@ -37,11 +37,7 @@ $router = new class {
 require __DIR__ . '/../routes/web.php';
 require __DIR__ . '/../routes/api.php';
 
-// Rota de API de login especial (se existir)
-if ($uri === '/api/login' && $method === 'POST') {
-    AuthApiController::login();
-    exit;
-}
+
 
 // Dispara a rota registrada
 try {

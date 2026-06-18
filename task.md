@@ -1,0 +1,5 @@
+- [x] Criar função de exclusão permanente no Model `Produtos.php`
+- [x] Adicionar novas rotas de exclusão e lote em `rotas.php`
+- [x] Implementar novas funções de exclusão e lote no Controller `ProdutosController.php`
+- [/] Atualizar o template `index.php` do painel de produtos (Checkboxes, Lote, Exclusão permanente e requisições AJAX)
+- [ ] Validar o funcionamento de todas as interações e estatísticas sem recarregar a página

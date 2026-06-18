@@ -47,7 +47,7 @@ body {
 
 .menu a.active,
 .menu a:hover {
-  background: #f5c400;
+  background: #F2C84B;
   color: #000;
 }
 
@@ -86,13 +86,13 @@ body {
 
 .mobile-topbar .mobile-title {
   font-weight: 700;
-  color: #ffd84d;
+  color: #F2C84B;
   font-size: 14px;
 }
 
 .sidebar-toggle {
   border: none;
-  background: #ffd84d;
+  background: #F2C84B;
   color: #000;
   border-radius: 8px;
   padding: 8px 12px;
@@ -129,7 +129,7 @@ select.form-control option {
 input.form-control:focus,
 select.form-control:focus {
   outline: none;
-  border-color: #ffd84d;
+  border-color: #F2C84B;
   box-shadow: 0 0 0 3px rgba(255, 216, 77, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.3);
   background: #1a1a1a;
   color: #fff;
@@ -155,7 +155,7 @@ input.form-control::placeholder {
   font-size: 28px;
   font-weight: 800;
   margin-bottom: 5px;
-  color: #ffd84d;
+  color: #F2C84B;
 }
 
 .dashboard-header p {
@@ -165,7 +165,7 @@ input.form-control::placeholder {
 }
 
 .btn-gold {
-  background: linear-gradient(135deg, #ffd84d 0%, #f5c400 100%);
+  background: linear-gradient(135deg, #F2C84B 0%, #F2C84B 100%);
   color: #000;
   padding: 12px 28px;
   border: none;
@@ -191,7 +191,7 @@ h2 {
 }
 
 h3 {
-  color: #ffd84d;
+  color: #F2C84B;
   font-weight: 600;
 }
 
@@ -226,7 +226,7 @@ p {
 }
 
 .card h3 {
-  color: #ffd84d;
+  color: #F2C84B;
   margin-bottom: 15px;
   font-size: 18px;
   font-weight: 700;
@@ -347,7 +347,7 @@ p {
   font-size: 32px;
   font-weight: 800;
   margin: 0;
-  color: #ffd84d;
+  color: #F2C84B;
 }
 
 .metric-card {
@@ -370,7 +370,7 @@ p {
 
 .metric-card:hover {
   transform: translateY(-5px);
-  border-color: #ffd84d !important;
+  border-color: #F2C84B !important;
   box-shadow: 0 8px 24px rgba(255, 216, 77, 0.2) !important;
 }
 
@@ -434,7 +434,7 @@ p {
 }
 
 .products-list::-webkit-scrollbar-thumb {
-  background: #ffd84d;
+  background: #F2C84B;
   border-radius: 3px;
 }
 
@@ -445,7 +445,7 @@ p {
   padding: 12px;
   margin-bottom: 8px;
   background: rgba(255, 216, 77, 0.1);
-  border-left: 3px solid #f5c400;
+  border-left: 3px solid #F2C84B;
   border-radius: 4px;
   font-size: 0.95rem;
 }
@@ -466,7 +466,7 @@ p {
 }
 
 .alerts-container::-webkit-scrollbar-thumb {
-  background: #ffd84d;
+  background: #F2C84B;
   border-radius: 3px;
 }
 
@@ -476,7 +476,7 @@ p {
 }
 
 .product-item .qtd {
-  color: #ffd84d;
+  color: #F2C84B;
   font-weight: bold;
   min-width: 50px;
   text-align: right;
@@ -543,7 +543,7 @@ p {
 }
 
 .produtos-grid::-webkit-scrollbar-thumb {
-  background: #ffd84d;
+  background: #F2C84B;
   border-radius: 4px;
 }
 
@@ -575,7 +575,7 @@ p {
 }
 
 .produto-card:hover {
-  border-color: #ffd84d;
+  border-color: #F2C84B;
   transform: translateY(-5px);
   box-shadow: 0 8px 20px rgba(255, 216, 77, 0.2);
 }
@@ -592,7 +592,7 @@ p {
 }
 
 .produto-card:hover .produto-imagem {
-  border-color: #ffd84d;
+  border-color: #F2C84B;
   transform: scale(1.05);
 }
 
@@ -617,7 +617,7 @@ p {
 }
 
 .produto-card .preco {
-  color: #ffd84d;
+  color: #F2C84B;
   font-size: 22px;
   font-weight: bold;
   margin: 10px 0;
@@ -649,7 +649,7 @@ p {
 
 .produto-card input:focus {
   outline: none;
-  border-color: #ffd84d;
+  border-color: #F2C84B;
   color: #fff;
   box-shadow: 0 0 8px rgba(255, 216, 77, 0.3);
 }
@@ -658,7 +658,7 @@ p {
   width: 100%;
   margin-top: 8px;
   padding: 10px;
-  background: linear-gradient(135deg, #ffd84d 0%, #ffbe33 100%);
+  background: linear-gradient(135deg, #F2C84B 0%, #F2C84B 100%);
   color: #000;
   border: none;
   border-radius: 8px;
@@ -705,7 +705,7 @@ p {
 }
 
 .carrinho-container::-webkit-scrollbar-thumb {
-  background: #ffd84d;
+  background: #F2C84B;
   border-radius: 3px;
 }
 
@@ -715,7 +715,7 @@ p {
   align-items: center;
   padding: 16px 14px;
   background: linear-gradient(135deg, rgba(255, 216, 77, 0.12), rgba(255, 216, 77, 0.08));
-  border-left: 4px solid #ffd84d;
+  border-left: 4px solid #F2C84B;
   border-radius: 8px;
   margin-bottom: 12px;
   transition: all 0.3s;
@@ -725,7 +725,7 @@ p {
 
 .carrinho-item:hover {
   background: linear-gradient(135deg, rgba(255, 216, 77, 0.16), rgba(255, 216, 77, 0.12));
-  border-left-color: #ffbe33;
+  border-left-color: #F2C84B;
   box-shadow: 0 4px 12px rgba(255, 216, 77, 0.2);
 }
 
@@ -741,7 +741,7 @@ p {
 }
 
 .carrinho-item-preco {
-  color: #ffd84d;
+  color: #F2C84B;
   font-size: 13px;
   font-weight: 600;
 }
@@ -761,7 +761,7 @@ p {
 }
 
 .carrinho-item-qtd:focus {
-  border-color: #ffd84d;
+  border-color: #F2C84B;
   outline: none;
   box-shadow: 0 0 8px rgba(255, 216, 77, 0.3);
 }
@@ -829,7 +829,7 @@ p {
 }
 
 .historico-container::-webkit-scrollbar-thumb {
-  background: #ffd84d;
+  background: #F2C84B;
   border-radius: 3px;
 }
 
@@ -857,7 +857,7 @@ p {
 }
 
 .pedido-item-valor {
-  color: #ffd84d;
+  color: #F2C84B;
   font-weight: bold;
   text-shadow: 0 2px 4px rgba(255, 216, 77, 0.3);
 }
@@ -897,7 +897,7 @@ td {
 }
 
 th {
-  color: #f5c400;
+  color: #F2C84B;
   text-align: left;
   font-weight: 600;
 }
@@ -921,7 +921,7 @@ th {
 }
 
 .btn-gold {
-  background: #f5c400;
+  background: #F2C84B;
   color: #000;
 }
 
@@ -971,7 +971,7 @@ th {
 }
 
 .modal-content h3 {
-  color: #f5c400;
+  color: #F2C84B;
   margin-bottom: 20px;
 }
 
@@ -994,7 +994,7 @@ th {
 
 .modal-content input:focus {
   outline: none;
-  border-color: #f5c400;
+  border-color: #F2C84B;
 }
 
 .modal-actions {
@@ -1144,7 +1144,7 @@ canvas {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #ffd84d 0%, #f5c400 100%);
+  background: linear-gradient(90deg, #F2C84B 0%, #F2C84B 100%);
   transform: scaleX(0);
   transition: transform 0.4s ease;
 }
@@ -1154,7 +1154,7 @@ canvas {
 }
 
 .card-estoque-produto:hover {
-  border-color: #ffd84d;
+  border-color: #F2C84B;
   transform: translateY(-8px) scale(1.02);
   box-shadow: 0 12px 24px rgba(255, 216, 77, 0.3), 0 8px 16px rgba(0, 0, 0, 0.4);
 }
@@ -1265,7 +1265,7 @@ canvas {
 }
 
 .card-estoque-produto:hover .info-produto h5 {
-  color: #ffd84d;
+  color: #F2C84B;
 }
 
 .info-produto .categoria {
@@ -1295,7 +1295,7 @@ canvas {
   align-items: center;
   justify-content: center;
   padding: 4px 10px;
-  background: linear-gradient(135deg, #ffd84d 0%, #f5c400 100%);
+  background: linear-gradient(135deg, #F2C84B 0%, #F2C84B 100%);
   color: #000;
   border-radius: 16px;
   font-size: 11px;
@@ -1328,7 +1328,7 @@ canvas {
 .preco {
   font-size: 22px;
   font-weight: 800;
-  color: #ffd84d;
+  color: #F2C84B;
   letter-spacing: -0.5px;
 }
 
@@ -1372,7 +1372,7 @@ canvas {
 }
 
 .acoes-produto .btn-gold {
-  background: linear-gradient(135deg, #ffd84d 0%, #f5c400 100%);
+  background: linear-gradient(135deg, #F2C84B 0%, #F2C84B 100%);
   color: #000;
   box-shadow: 0 4px 12px rgba(255, 216, 77, 0.3);
   border: 2px solid transparent;
@@ -1381,7 +1381,7 @@ canvas {
 .acoes-produto .btn-gold:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(255, 216, 77, 0.5);
-  border-color: #ffd84d;
+  border-color: #F2C84B;
 }
 
 .acoes-produto .btn-danger {
@@ -1414,21 +1414,21 @@ canvas {
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  border-bottom: 2px solid #ffd84d;
+  border-bottom: 2px solid #F2C84B;
   margin-bottom: 20px;
 }
 
 .modal-header h3 {
   margin: 0;
   font-size: 24px;
-  color: #ffd84d;
+  color: #F2C84B;
 }
 
 .btn-close-modal {
   background: none;
   border: none;
   font-size: 32px;
-  color: #ffd84d;
+  color: #F2C84B;
   cursor: pointer;
   padding: 0;
   width: 40px;
@@ -1454,7 +1454,7 @@ canvas {
 .modal-body label {
   display: block;
   margin-bottom: 8px;
-  color: #ffd84d;
+  color: #F2C84B;
   font-weight: 600;
   font-size: 13px;
 }
@@ -1471,7 +1471,7 @@ canvas {
 
 .modal-body .form-control:focus {
   background: #222;
-  border-color: #ffd84d;
+  border-color: #F2C84B;
   color: #fff;
   outline: none;
   box-shadow: 0 0 8px rgba(255, 216, 77, 0.3);
@@ -1501,17 +1501,17 @@ canvas {
 
 .btn-outline-secondary:hover {
   background: #222;
-  border-color: #ffd84d;
+  border-color: #F2C84B;
 }
 
 .btn-gold {
-  background: #f5c400;
+  background: #F2C84B;
   color: #000;
   border: none;
 }
 
 .btn-gold:hover {
-  background: #ffd84d;
+  background: #F2C84B;
 }
 
 .btn-gold:disabled {

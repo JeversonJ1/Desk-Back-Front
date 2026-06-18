@@ -255,52 +255,7 @@
     margin: 15px auto;
 }
 
-/* 5. Top Bar (Info Boxes) Modernizada */
-.top-bar {
-    padding: 60px 20px;
-    gap: 30px;
-    background: #080808;
-    /* Mais escuro e elegante */
-    border-top: 1px solid rgba(248, 211, 70, 0.1);
-    border-bottom: 1px solid rgba(248, 211, 70, 0.1);
-}
 
-.info-box {
-    padding: 20px;
-    border-radius: var(--radius-sm);
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid transparent;
-    transition: all 0.4s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: left;
-}
-
-.info-box:hover {
-    background: rgba(248, 211, 70, 0.05);
-    border-color: rgba(248, 211, 70, 0.2);
-    transform: translateY(-5px);
-}
-
-.info-box i {
-    font-size: 2rem;
-    color: var(--color-primary);
-    margin-right: 20px;
-    filter: drop-shadow(0 0 5px rgba(248, 211, 70, 0.3));
-}
-
-.info-box h4 {
-    font-size: 0.9rem;
-    margin-bottom: 5px;
-    color: var(--color-light);
-    font-weight: 800;
-}
-
-.info-box p {
-    font-size: 0.75rem;
-    color: var(--color-gray-medium);
-}
 
 /* 6. Ticker Posicionado */
 .announcement-ticker {
@@ -330,14 +285,5 @@
         grid-template-columns: 1fr;
         grid-template-rows: repeat(4, 350px);
         padding: 0 20px;
-    }
-
-    .top-bar {
-        padding: 40px 10px;
-    }
-
-    .info-box {
-        width: 100%;
-        justify-content: flex-start;
     }
 }

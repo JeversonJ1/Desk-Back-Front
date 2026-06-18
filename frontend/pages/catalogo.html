@@ -4,8 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catá Premium | Koketsu Grife</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Catálogo | Koketsu Grife</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = { corePlugins: { preflight: false } }
+    </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +18,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/global/variables.css">
     <link rel="stylesheet" href="../assets/css/global/main.css">
+    <link rel="stylesheet" href="../assets/css/components/menu-modal.css">
     <link rel="stylesheet" href="../assets/css/global/footer.css">
     <link rel="stylesheet" href="../assets/css/global/catalogo.css">
     <link rel="stylesheet" href="../assets/css/global/catalogo-modern.css">
@@ -21,239 +26,90 @@
     <link rel="icon" type="image/png" href="../assets/img/logo2026.png">
 </head>
 
-<body class="bg-black text-white">
+<body class="bg-[var(--brand-dark)] text-white">
 
-    <header>
-        <nav id="navbar" class="navbar d-flex align-items-center px-4 sticky-top">
-            <div class="navbar-section d-flex align-items-center">
-                <button class="btn btn-link text-white d-flex align-items-center p-0 me-4" data-bs-toggle="offcanvas"
-                    data-bs-target="#menuOffcanvas" aria-label="Abrir menu">
-                    <i class="bi bi-list fs-4"></i> <span class="ms-1 d-none d-md-inline">Menu</span>
-                </button>
-                <div class="search-container d-none d-lg-flex position-relative">
-                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"></i>
-                    <input type="text" id="globalSearch" class="search-input ps-5" placeholder="Buscar na Koketsu...">
-                    <div id="searchResults" class="search-dropdown d-none"></div>
-                </div>
-            </div>
+    <header></header>
 
-            <div class="navbar-center">
-                <a href="../index.html" aria-label="Página inicial">
-                    <img src="../assets/img/logo2026.png" alt="Logo Koketsu Grife" class="logo" />
-                </a>
-            </div>
-
-            <div class="navbar-end d-flex justify-content-end align-items-center">
-                <!-- Estado: Deslogado -->
-                <a href="#" id="navLoginBtn" class="icon-button" aria-label="Fazer login">
-                    <i class="bi bi-person"></i> Login
-                </a>
-
-                <!-- Estado: Logado -->
-                <div id="navUserContainer" class="user-nav-container" style="display: none;">
-                    <button id="userAvatarBtn" class="user-avatar-btn" aria-label="Menu do usuário">
-                        <img id="userAvatarImg" src="" alt="Avatar" style="display: none;">
-                        <i id="userAvatarFallback" class="bi bi-person-fill avatar-fallback"></i>
-                    </button>
-                    <span id="navUserName" class="user-nav-name d-none d-md-inline"></span>
-                    <div id="userDropdown" class="user-dropdown">
-                        <div class="user-dropdown-header">
-                            <img id="ddAvatarImg" src="" alt="Avatar" style="display: none;">
-                            <div id="ddAvatarFallback" class="avatar-fallback-lg"><i class="bi bi-person-fill"></i>
-                            </div>
-                            <div class="user-dropdown-info">
-                                <div id="ddUserName" class="dd-name">Cliente</div>
-                                <span class="dd-badge">Membro Koketsu</span>
-                            </div>
-                        </div>
-                        <div class="user-dropdown-links">
-                            <a id="ddProfileLink" href="/backend/cliente/meu-perfil/0"><i class="bi bi-person"></i> Meu
-                                Perfil</a>
-                            <a href="/backend/cliente/pedidos"><i class="bi bi-bag-check"></i> Meus Pedidos</a>
-                            <a href="/backend/configuracoes"><i class="bi bi-gear"></i> Preferências</a>
-                            <div class="user-dropdown-divider"></div>
-                            <a href="#" id="ddLogoutBtn" class="logout-link"><i class="bi bi-box-arrow-right"></i>
-                                Sair</a>
-                        </div>
-                    </div>
-                </div>
-
-                <a href="carrinho.html" class="icon-button" aria-label="Abrir carrinho">
-                    <i class="bi bi-bag"></i> Carrinho
-                </a>
-            </div>
-        </nav>
-
-        <div class="offcanvas offcanvas-start" tabindex="-1" id="menuOffcanvas" aria-labelledby="menuOffcanvasLabel">
-            <div class="offcanvas-header border-bottom border-dark">
-                <h5 class="offcanvas-title fw-bold text-white" id="menuOffcanvasLabel">CATEGORIAS</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
-                    aria-label="Close"></button>
-            </div>
-
-            <div class="offcanvas-body p-0">
-                <div class="accordion accordion-flush" id="accordionMenu">
-                    <div class="accordion-item bg-transparent">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#itemsCamisetas">
-                                CAMISETAS
-                            </button>
-                        </h2>
-                        <div id="itemsCamisetas" class="accordion-collapse collapse" data-bs-parent="#accordionMenu">
-                            <div class="accordion-body">
-                                <a href="catalogo.html?cat=Camisetas Oversized">Oversized</a>
-                                <a href="catalogo.html?cat=Camisetas Streetwear">Streetwear</a>
-                                <a href="catalogo.html?cat=Camisetas">Ver Todas</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item bg-transparent">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#itemsMoletons">
-                                MOLETONS
-                            </button>
-                        </h2>
-                        <div id="itemsMoletons" class="accordion-collapse collapse" data-bs-parent="#accordionMenu">
-                            <div class="accordion-body">
-                                <a href="catalogo.html?cat=Moletons">Todos os Moletons</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item bg-transparent">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#itemsCalcas">
-                                CALÇAS
-                            </button>
-                        </h2>
-                        <div id="itemsCalcas" class="accordion-collapse collapse" data-bs-parent="#accordionMenu">
-                            <div class="accordion-body">
-                                <a href="catalogo.html?cat=Calças">Todas as Calças</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item bg-transparent">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#itemsAcessorios">
-                                CHAPÉUS & BONÉS
-                            </button>
-                        </h2>
-                        <div id="itemsAcessorios" class="accordion-collapse collapse" data-bs-parent="#accordionMenu">
-                            <div class="accordion-body">
-                                <a href="catalogo.html?cat=Chapéus e Bonés">Chapéus e Bonés</a>
-                                <a href="catalogo.html?cat=Chapéus e Bonés">Bonés Exclusivos</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item bg-transparent">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#itemsTenis">
-                                TÊNIS
-                            </button>
-                        </h2>
-                        <div id="itemsTenis" class="accordion-collapse collapse" data-bs-parent="#accordionMenu">
-                            <div class="accordion-body">
-                                <a href="catalogo.html?cat=Tenis">Coleção Tênis</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item bg-transparent">
-                        <h2 class="accordion-header">
-                            <a href="catalogo.html" class="accordion-button no-arrow text-warning">CATÁLOGO COMPLETO</a>
-                        </h2>
-                    </div>
-                </div>
-
-                <div class="menu-footer mt-auto p-4">
-                    <a href="sobre.html" class="d-block text-secondary small py-1 text-decoration-none">Sobre a
-                        Koketsu</a>
-                    <a href="politica.html"
-                        class="d-block text-secondary small py-1 text-decoration-none">Privacidade</a>
-                    <a href="#" class="d-block text-secondary small py-1 text-decoration-none">Suporte</a>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <section class="catalog-hero-new text-center">
-        <div class="container">
-            <span class="catalog-badge">
-                <i class="bi bi-stars me-2"></i>COLEÇÃO EXCLUSIVA 2026
-            </span>
-            <h1 class="catalog-title">DESCUBRA SEU ESTILO</h1>
-            <p class="catalog-subtitle">Peças exclusivas para quem domina a cidade com elegância e atitude</p>
+    <section class="catalog-hero-new text-center py-16 bg-[#111] border-b border-white/10 mt-20">
+        <div class="container mx-auto px-4">
+            <h1 class="shimmer-title drop-shadow-[0_0_15px_rgba(242,200,75,0.3)]">DESCUBRA SEU ESTILO</h1>
+            <p class="text-gray-400 max-w-2xl mx-auto text-lg tracking-wider font-light">Peças exclusivas para quem domina a cidade com elegância e atitude</p>
         </div>
     </section>
 
-    <div class="container-fluid px-lg-5 pt-4">
-        <nav class="breadcrumb-catalog" aria-label="breadcrumb">
-            <ol>
-                <li><a href="../index.html">Home</a></li>
-                <li class="active">Catálogo</li>
+    <div class="container mx-auto px-4 lg:px-12 pt-8">
+        <nav aria-label="breadcrumb">
+            <ol class="flex text-sm text-gray-500 space-x-2">
+                <li><a href="/" class="hover:text-white transition uppercase tracking-wider text-[10px] font-bold">Home</a> <span class="mx-2">/</span></li>
+                <li class="text-[var(--brand-yellow)] uppercase tracking-wider text-[10px] font-bold">Catálogo</li>
             </ol>
         </nav>
     </div>
 
-    <main class="container-fluid px-lg-5 pb-5">
-        <div class="row g-5">
+    <main class="container mx-auto px-4 lg:px-12 pb-16 mt-8">
+        <div class="flex flex-col lg:flex-row gap-8 lg:gap-12">
 
-            <aside class="col-lg-3">
-                <div class="sticky-sidebar">
-                    <div class="filter-card">
-                        <div class="filter-header d-flex justify-content-between align-items-center mb-4">
-                            <h2 class="h5 fw-bold mb-0 gold-text"><i class="bi bi-sliders2-vertical me-2"></i>FILTROS
+            <!-- Sidebar Filtros -->
+            <aside class="w-full lg:w-1/4">
+                <div class="sticky top-[100px]">
+                    <div class="bg-[#111] border border-white/5 rounded-2xl p-6 shadow-2xl">
+                        <div class="flex justify-between items-center mb-8 pb-4 border-b border-white/10">
+                            <h2 class="text-[var(--brand-yellow)] font-bold tracking-[0.1em] uppercase flex items-center gap-2"><i class="bi bi-sliders2-vertical"></i>FILTROS
                             </h2>
-                            <button class="btn btn-sm text-secondary p-0">Limpar Tudo</button>
+                            <button class="text-xs text-gray-500 hover:text-white transition uppercase tracking-[0.1em] font-bold">Limpar Tudo</button>
                         </div>
 
-                        <div class="filter-group">
-                            <button class="filter-collapse-btn" data-bs-toggle="collapse" data-bs-target="#collapseCat">
-                                CATEGORIAS <i class="bi bi-chevron-down"></i>
+                        <!-- Categoria -->
+                        <div class="mb-4">
+                            <button class="w-full flex justify-between items-center text-left text-xs font-bold text-white uppercase tracking-[0.1em] focus:outline-none" onclick="toggleFilter('collapseCat', 'iconCat')">
+                                CATEGORIAS <i class="bi bi-chevron-up transition-transform" id="iconCat"></i>
                             </button>
-                            <div class="collapse show" id="collapseCat">
+                            <div class="block mt-3" id="collapseCat">
                                 <div class="filter-content" id="category-filter-container">
-                                    <p class="small text-secondary m-0">Carregando categorias...</p>
+                                    <p class="text-xs text-gray-500 m-0">Carregando categorias...</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="filter-group">
-                            <span class="filter-label">TAMANHOS</span>
-                            <div class="size-grid mt-3" id="size-filter-container">
-                                <p class="small text-secondary m-0">Carregando tamanhos...</p>
+                        <hr class="border-white/10 my-4">
+
+                        <!-- Tamanhos -->
+                        <div class="mb-4">
+                            <span class="block text-xs font-bold text-white uppercase tracking-[0.1em] mb-3">TAMANHOS</span>
+                            <div class="size-grid" id="size-filter-container">
+                                <p class="text-xs text-gray-500 m-0">Carregando tamanhos...</p>
                             </div>
                         </div>
 
-                        <div class="filter-group">
-                            <button class="filter-collapse-btn" data-bs-toggle="collapse"
-                                data-bs-target="#collapseCores">
-                                CORES <i class="bi bi-chevron-down"></i>
+                        <hr class="border-white/10 my-4">
+
+                        <!-- Cores -->
+                        <div class="mb-4">
+                            <button class="w-full flex justify-between items-center text-left text-xs font-bold text-white uppercase tracking-[0.1em] focus:outline-none" onclick="toggleFilter('collapseCores', 'iconCores')">
+                                CORES <i class="bi bi-chevron-up transition-transform" id="iconCores"></i>
                             </button>
-                            <div class="collapse show" id="collapseCores">
-                                <div class="filter-content" id="color-filter-container">
+                            <div class="block mt-3" id="collapseCores">
+                                <div class="color-filter-grid" id="color-filter-container">
                                     <!-- Carregado dinamicamente via JS -->
-                                    <p class="small text-secondary m-0">Carregando cores...</p>
+                                    <p class="text-xs text-gray-500 m-0">Carregando cores...</p>
                                 </div>
                             </div>
                         </div>
 
+                        <hr class="border-white/10 my-4">
 
-
-                        <div class="filter-group border-0">
-                            <span class="filter-label">FAIXA DE PREÇO</span>
-                            <div class="mt-4">
-                                <div class="range-container">
-                                    <div class="range-tooltip" id="rangeTooltip">R$ 1.000</div>
-                                    <input type="range" class="form-range gold-range" min="0" max="1000" id="rangePreco"
+                        <!-- Faixa de Preço -->
+                        <div class="mb-2">
+                            <span class="block text-xs font-bold text-white uppercase tracking-[0.1em] mb-3">FAIXA DE PREÇO</span>
+                            <div>
+                                <div class="relative pt-6">
+                                    <div class="absolute -top-1 left-1/2 -translate-x-1/2 bg-[var(--brand-yellow)] text-black text-xs font-bold px-2 py-1 rounded hidden" id="rangeTooltip">R$ 1.000</div>
+                                    <input type="range" class="w-full h-1 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-[var(--brand-yellow)]" min="0" max="1000" id="rangePreco"
                                         value="1000">
                                 </div>
-                                <div class="d-flex justify-content-between small opacity-75 mt-2">
+                                <div class="flex justify-between text-xs text-gray-500 mt-2 font-bold tracking-[0.1em]">
                                     <span>R$ 0</span>
-                                    <span class="gold-text fw-bold" id="maxPriceLabel">R$ 1.000</span>
+                                    <span class="text-[var(--brand-yellow)]" id="maxPriceLabel">R$ 1.000</span>
                                 </div>
                             </div>
                         </div>
@@ -261,13 +117,13 @@
                 </div>
             </aside>
 
-            <section class="col-lg-9">
-                <div class="catalog-toolbar">
-                    <span class="product-count">EXIBINDO <b>0</b> PRODUTOS</span>
-                    <div class="d-flex align-items-center gap-3">
-                        <span class="small text-uppercase opacity-50 d-none d-md-inline"
-                            style="letter-spacing: 1px; font-size: 0.7rem;">Ordenar:</span>
-                        <select class="form-select sort-select shadow-none">
+            <!-- Produtos -->
+            <section class="w-full lg:w-3/4">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 bg-[#111] p-4 rounded-xl border border-white/5">
+                    <span class="text-sm text-gray-400 tracking-[0.1em] uppercase font-bold">EXIBINDO <b id="catalogCount" class="text-[var(--brand-yellow)]">0</b> PRODUTOS</span>
+                    <div class="flex items-center gap-3 w-full md:w-auto">
+                        <span class="text-xs text-gray-500 uppercase tracking-[0.1em] font-bold hidden md:inline">Ordenar:</span>
+                        <select class="sort-select w-full md:w-auto bg-black text-white border border-gray-700 rounded-lg px-4 py-2 text-sm focus:border-[var(--brand-yellow)] focus:ring-1 focus:ring-[var(--brand-yellow)] outline-none transition">
                             <option selected>Lançamentos</option>
                             <option>Menor Preço</option>
                             <option>Maior Preço</option>
@@ -276,159 +132,63 @@
                     </div>
                 </div>
 
-                <div class="row g-4" id="vitrine-catalogo">
+                <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6" id="vitrine-catalogo">
                     <!-- Conteúdo carregado via JS -->
-                    <div class="col-12 text-center py-5">
-                        <div class="spinner-border text-warning" role="status">
-                            <span class="visually-hidden">Carregando...</span>
-                        </div>
+                    <div class="col-span-full flex justify-center py-16">
+                        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--brand-yellow)]"></div>
                     </div>
                 </div>
 
-                <nav class="mt-5 pt-5">
-                    <ul class="pagination-premium justify-content-center">
-                        <li><a href="#" class="prev"><i class="bi bi-arrow-left"></i></a></li>
-                        <li><a href="#" class="active">01</a></li>
-                        <li><a href="#">02</a></li>
-                        <li><a href="#">03</a></li>
-                        <li><span>...</span></li>
-                        <li><a href="#">12</a></li>
-                        <li><a href="#" class="next"><i class="bi bi-arrow-right"></i></a></li>
+                <nav class="mt-16 flex justify-center w-full">
+                    <ul class="flex items-center gap-2">
+                        <li><a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 text-gray-500 hover:text-[var(--brand-yellow)] hover:border-[var(--brand-yellow)] transition"><i class="bi bi-arrow-left"></i></a></li>
+                        <li><a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--brand-yellow)] text-black font-bold">01</a></li>
+                        <li><a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 text-white hover:border-[var(--brand-yellow)] transition">02</a></li>
+                        <li><a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 text-white hover:border-[var(--brand-yellow)] transition">03</a></li>
+                        <li><span class="w-10 h-10 flex items-center justify-center text-gray-500">...</span></li>
+                        <li><a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 text-white hover:border-[var(--brand-yellow)] transition">12</a></li>
+                        <li><a href="#" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-800 text-gray-500 hover:text-[var(--brand-yellow)] hover:border-[var(--brand-yellow)] transition"><i class="bi bi-arrow-right"></i></a></li>
                     </ul>
                 </nav>
             </section>
 
         </div>
     </main>
-    <div class="top-bar">
-        <div class="info-box">
-            <i class="bi bi-clock"></i>
-            <div>
-                <h4>ATENDIMENTO</h4>
-                <p>SEG A SEX DAS 08H-11:30 E DAS 13H-17:30H</p>
-            </div>
-        </div>
 
-        <div class="info-box">
-            <i class="bi bi-box-seam"></i>
-            <div>
-                <h4>TROCAS E DEVOLUÇÕES</h4>
-                <p>ATÉ 7 DIAS PARA TROCAS OU DEVOLUÇÕES</p>
-            </div>
-        </div>
+    <footer></footer>
 
-        <div class="info-box">
-            <i class="bi bi-truck"></i>
-            <div>
-                <h4>FRETE</h4>
-                <p>GRÁTIS PARA COMPRAS ACIMA DE R$349<br>PARA TODO O BRASIL</p>
-            </div>
-        </div>
-
-        <div class="info-box">
-            <i class="bi bi-credit-card"></i>
-            <div>
-                <h4>PARCELAMENTO</h4>
-                <p>EM ATÉ 4X SEM JUROS NO CARTÃO</p>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        <div class="container">
-            <div class="coluna-footer newsletter">
-                <h3 class="titulo">Faça parte da nossa família e receba acessos exclusivos e novidades.</h3>
-                <p>Inscreva-se para ter acesso a exclusivo á venda antecipada, novidades promoções.</p>
-                <form action="/contato/salvar" method="POST" class="form-email">
-                    <div class="input-group">
-                        <input type="email" name="email_contato" placeholder="Seu e-mail" required>
-                        <button type="submit">OK</button>
-                    </div>
-                </form>
-                <div class="redes-sociais-icones mt-4">
-                    <a href="#"><i class="bi bi-instagram me-3"></i></a>
-                    <a href="#"><i class="bi bi-facebook me-3"></i></a>
-                    <a href="#"><i class="bi bi-tiktok"></i></a>
-                </div>
-            </div>
-
-            <div class="coluna-footer">
-                <h3 class="titulo">INSTITUCIONAL</h3>
-                <a href="sobre.html">Sobre a Koketsu</a>
-                <a href="politica.html">Política de Privacidade</a>
-                <a href="fidelidade.html">Programa de Fidelidade</a>
-            </div>
-
-            <div class="coluna-footer">
-                <h3 class="titulo">AJUDA</h3>
-                <a href="duvidas.html">Dúvidas Frequentes</a>
-                <a href="Trocas.html">Trocas e Devoluções</a>
-                <a href="frete.html">Frete e Entrega</a>
-            </div>
-
-            <div class="coluna-footer">
-                <h3 class="titulo">FALE CONOSCO</h3>
-                <p class="small">Seg a Sáb (exceto feriados)<br>09h às 19h</p>
-                <p class="email-sac">sac@koketsu.com.br</p>
-                <a href="https://WhatsApp.com" target="_blank" class="btn-whatsapp-footer">
-                    WHATSAPP <i class="bi bi-whatsapp"></i>
-                </a>
-            </div>
-        </div>
-
-        <div class="copyright-container">
-            <div class="container">
-                <p>© 2026 KOKETSU GRIFE. TODOS OS DIREITOS RESERVADOS.</p>
-                <div class="pagamentos">
-                    <i class="bi bi-credit-card-2-back mx-1"></i>
-                    <i class="bi bi-qr-code mx-1"></i>
-                    <i class="bi bi-bank mx-1"></i>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-
-    <!-- Modal de Login -->
-    <div id="loginModalOverlay" class="login-modal-overlay">
-        <div class="login-modal-card">
-            <button id="loginModalClose" class="login-modal-close" aria-label="Fechar">&times;</button>
-            <img src="../assets/img/logo2026.png" alt="Koketsu" class="login-modal-logo">
-            <h2 class="login-modal-title">BEM-VINDO</h2>
-            <p class="login-modal-subtitle">Acesse sua área exclusiva</p>
-            <div id="loginModalError" class="login-modal-error"></div>
-            <form id="loginModalForm" class="login-modal-form">
-                <div class="form-group-auth">
-                    <input type="email" id="loginModalEmail" placeholder="E-mail de acesso" required
-                        autocomplete="email">
-                    <i class="bi bi-envelope"></i>
-                </div>
-                <div class="form-group-auth">
-                    <input type="password" id="loginModalSenha" placeholder="Sua senha secreta" required
-                        autocomplete="current-password">
-                    <i class="bi bi-lock"></i>
-                </div>
-                <button type="submit" id="loginModalSubmit" class="login-modal-btn">
-                    <span class="spinner"></span> Entrar
-                </button>
-            </form>
-            <div class="login-modal-links">
-                Não faz parte da elite? <a href="/backend/register">Cadastre-se</a>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleFilter(collapseId, iconId) {
+            const collapse = document.getElementById(collapseId);
+            const icon = document.getElementById(iconId);
+            if(collapse.classList.contains('hidden')) {
+                collapse.classList.remove('hidden');
+                collapse.classList.add('block');
+                icon.classList.remove('bi-chevron-down');
+                icon.classList.add('bi-chevron-up');
+            } else {
+                collapse.classList.add('hidden');
+                collapse.classList.remove('block');
+                icon.classList.add('bi-chevron-down');
+                icon.classList.remove('bi-chevron-up');
+            }
+        }
+    </script>
     <script src="../assets/js/utils.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            window.Utils.loadPartials();
+        });
+    </script>
     <script src="../assets/js/animations.js"></script>
     <script src="../assets/js/navbar.js"></script>
-    <script src="../assets/js/search.js"></script>
+  <script src="../assets/js/mega-menu.js?v=1.1"></script>
+    <script src="../assets/js/search.js?v=2.1"></script>
     <script src="../assets/js/cart.js"></script>
-    <script src="../assets/js/catalogo.js"></script>
+    <script src="../assets/js/catalogo.js?v=1.1"></script>
     <script src="../assets/js/auth.js"></script>
-<script src="../assets/js/categorias.js"></script>
+    <script src="../assets/js/categorias.js"></script>
 </body>
 
 </html>
-
 
